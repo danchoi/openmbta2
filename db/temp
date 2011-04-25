@@ -1,0 +1,35 @@
+Below are the relevant table definitions. There are approximately 72K
+trips, 8K stops, and 2 million stop_times. Maybe an average of 20? stops
+per trip (just guessing).
+
+    create table stop_times (
+      trip_id varchar(255),
+      departure_time time,
+      stop_id varchar(255),
+      stop_sequence int unsigned,
+    ) type=MyISAM;
+
+    alter table stop_times add index stop_id (stop_id(5));
+    alter table stop_times add index trip_id (trip_id(5));
+
+    create table stops (
+      stop_id varchar(255),
+      stop_name varchar(255),
+      stop_lat float,
+      stop_lon float,
+      primary key (stop_id)
+    ) type=MyISAM;
+
+    create table trips (
+      route_id varchar(255),
+      trip_id varchar(255), /* primary key is here */
+      /* denormalized fields */
+      origin varchar(255),
+      destination varchar(255),
+      starts time,
+      ends time,
+      primary key(trip_id)
+    ) type=MyISAM;
+    alter table trips add index route_id (route_id(5));
+
+
