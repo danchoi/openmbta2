@@ -5,17 +5,10 @@ require 'date'
 
 # TODO make this return the list of service ideas as a bare list?
 
-date = %Q("#{ARGV.first || Date.today.strftime("%Y%m%d")}")
-# find weekday
-wday = Date.parse(date).wday
-type = case wday
-       when 6
-         "Saturday"
-       when 0
-         "Sunday"
-       else
-         "Weekday"
-       end
+
+date = ARGV.first || Date.today.strftime("%Y%m%d")
+
+wday = Date.strptime(date, '%Y%m%d').strftime('%A').downcase
   
 sql = <<SQL
 select c.service_id, start_date, end_date, cd.exception_type, cd.date exception_date
@@ -23,14 +16,11 @@ from calendar c
 left outer join
   calendar_dates cd
     on
-      exception_type = 1 
-      and cd.service_id = c.service_id
-        and cd.date = #{date}
-
+      (cd.exception_type = 1 and cd.service_id = c.service_id and cd.date = #{date})
 where 
   (start_date <= #{date}
     and end_date >= #{date}
-    and c.service_id like "%#{type}%" /* this is particular to MBTA's service_id's */
+    and c.#{wday} is true
     and c.service_id not in
       (select service_id 
         from calendar_dates
