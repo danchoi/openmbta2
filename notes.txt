@@ -4,3 +4,12 @@ Thu Apr 28 12:30:14 EDT 2011
 
 Queries from OpenMBTA1
 
+  TransportType = {
+    0 => 'subway',
+    1 => 'streetcar',
+    2 => 'commuter rail',
+    3 => 'bus',
+    4 => 'ferry'
+  }
+
+
