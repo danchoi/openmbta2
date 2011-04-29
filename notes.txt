@@ -12,4 +12,5 @@ Queries from OpenMBTA1
     4 => 'ferry'
   }
 
-
+\x
+select * from pg_stat_activity;
