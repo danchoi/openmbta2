@@ -14,6 +14,7 @@ load data local infile  '#{path}'
   into table #{table}
   fields terminated by ','
   optionally enclosed by '"'
+  lines terminated by '\r\n'
   ignore 1 lines;
 
 SQL

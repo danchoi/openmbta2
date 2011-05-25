@@ -55,8 +55,8 @@ create table shapes (
 
 create table stop_times (
   trip_id varchar(255),
-  arrival_time varchar(12),
-  departure_time varchar(12),
+  arrival_time time,
+  departure_time time,
   stop_id varchar(255),
   stop_sequence int,
   stop_headsign varchar(255),
