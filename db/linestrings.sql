@@ -1,3 +1,4 @@
+
 -- This makes linestrings
 select AddGeometryColumn('shapes', 'geom', 2163, 'POINT', 2);
 
