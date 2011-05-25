@@ -32,5 +32,5 @@ psql mbta < db/create.sql
 echo "database created, loading data"
 ruby db/gen_load_script.rb > db/load.sql
 psql mbta < db/load.sql
-psql mbta < db/denormalize.sql
+#psql mbta < db/denormalize.sql
 exit
