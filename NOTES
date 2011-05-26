@@ -294,9 +294,88 @@ inner join routes r using (route_id)
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;
 
-select trips.* 
-from active_trips(date(now())) as trips 
-inner join routes r using (route_id) 
-where trips.direction_id = 1 and coalesce(nullif(r.route_long_name, ''),
-nullif(r.route_short_name, '')) = 'Red Line';
+mbta=# select * from route_trips_today('Red Line', 1);
+mbta=# select * from route_trips_today('Providence/Stoughton Line', 1);
+mbta=# select * from route_trips_today('1', 1);
+
+
+ route_id |         service_id         | trip_id  |         trip_headsign         | direction_id | block_id | shape_id
+----------+----------------------------+----------+-------------------------------+--------------+----------+----------
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438274 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438276 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438278 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438280 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438283 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438285 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438286 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438288 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438290 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438292 | Dudley Station via Mass. Ave. |            1 | C01-6    | 10016
+ 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438293 | Dudley Station via Mass. Ave. |            1 | C01-2    | 10016
+
+
+   route_id    | service_id |            trip_id            |       trip_headsign       | direction_id | block_id | shape_id
+---------------+------------+-------------------------------+---------------------------+--------------+----------+----------
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8802 | Providence (Train 8802)   |            1 |          |
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8804 | Providence (Train 8804)   |            1 |          |
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8806 | Providence (Train 8806)   |            1 |          |
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-800  | South Station (Train 800) |            1 |          |
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-802  | South Station (Train 802) |            1 |          |
+ CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-804  | South Station (Train 804) |            1 |          |
+
+Now we make the schedule grid
+
+
+mbta=# select * from stop_times where trip_id = 'CR-Providence-CR-Weekday-800';
+           trip_id            | arrival_time | departure_time |     stop_id     | stop_sequence | stop_headsign | pickup_type | drop_off_type
+------------------------------+--------------+----------------+-----------------+---------------+---------------+-------------+---------------
+ CR-Providence-CR-Weekday-800 | 05:07:00     | 05:07:00       | Providence      |             1 |               |           0 |             1
+ CR-Providence-CR-Weekday-800 | 05:17:00     | 05:17:00       | South Attleboro |             2 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 05:27:00     | 05:27:00       | Attleboro       |             3 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 05:36:00     | 05:36:00       | Mansfield       |             4 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 05:44:00     | 05:44:00       | Sharon          |             5 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 05:51:00     | 05:51:00       | Canton Junction |             8 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 05:56:00     | 05:56:00       | Route 128       |             9 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 06:01:00     | 06:01:00       | Hyde Park       |            10 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 06:11:00     | 06:11:00       | Ruggles         |            11 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 06:15:00     | 06:15:00       | Back Bay        |            12 |               |           0 |             0
+ CR-Providence-CR-Weekday-800 | 06:20:00     | 06:20:00       | South Station   |            13 |               |           1 |             0
+(11 rows)
+
+
+
+Version 1 method:
+
+"select stoppings.stop_id, group_concat(stoppings.arrival_time, '|', stoppings.trip_id) as arrival_times from stoppings " +
+      "where stoppings.trip_id in (#{trips.map(&:id).join(',')}) and stoppings.arrival_time > '#{now.time}' " +
+      "group by stoppings.stop_id"
+
+
+  def all_next_arrivals_for_stops(trips, now)
+    result = ActiveRecord::Base.connection.select_all("select stoppings.stop_id, group_concat(stoppings.arrival_time, '|', stoppings.trip_id) as arrival_times from stoppings " +
+      "where stoppings.trip_id in (#{trips.map(&:id).join(',')}) and stoppings.arrival_time > '#{now.time}' " +
+      "group by stoppings.stop_id")
+    # each arrival time has this format:
+    # 16:21:00|49739
+    # the second number is the trip id
+
+    data = result.inject({}) do |memo, hash|
+      stop_id = hash["stop_id"].to_i
+      arrival_times = hash["arrival_times"].
+        split(',').
+        map {|x| x.split('|')}.  # split into arrival time and trip id number
+        select {|x| x[0] > now.time.to_s
+      }.sort. # normally, we would limit the number here, but not now since we allow user to shift grid
+        map {|x|
+          @ordered_trip_ids << x[1] unless @ordered_trip_ids.include?(x[1])
+          [format_time(x[0]),x[1].to_i] }
+      if !arrival_times.empty?
+        memo[stop_id] = @options[:limit] ? arrival_times[0,@options[:limit]] :  arrival_times
+      end
+      memo
+    end
+    #logger.debug "ALL NEXT ARRIVALS: #{data.inspect}"
+    data
+  end
+
 
