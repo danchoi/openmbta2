@@ -353,6 +353,10 @@ select * from stop_times st where trip_id in
 order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
+
+This should produce the raw data from which to generate the table grid
+for a day:
+
 select stops.stop_name, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
 
 
@@ -370,7 +374,7 @@ Version 1 method:
 PostgreSQL
 
 
-
+// don't use
 select stop_times.stop_id, array_agg(stop_times.arrival_time)
 from stop_times
 where trip_id in
@@ -389,7 +393,6 @@ where trips.direction_id = $2 and coalesce(nullif(r.route_long_name,
 ''), nullif(r.route_short_name, '')) = $1
 )
 group by stop_times.stop_id ;
-
 
 
 SELECT id_field, array_agg(value_field1), array_agg(value_field2)
@@ -424,34 +427,5 @@ GROUP BY id_field
     data
   end
 
-
-
-
-  def all_next_arrivals_for_stops(trips, now)
-    result = ActiveRecord::Base.connection.select_all("select stoppings.stop_id, group_concat(stoppings.arrival_time, '|', stoppings.trip_id) as arrival_times from stoppings " +
-      "where stoppings.trip_id in (#{trips.map(&:id).join(',')}) and stoppings.arrival_time > '#{now.time}' " +
-      "group by stoppings.stop_id")
-    # each arrival time has this format:
-    # 16:21:00|49739
-    # the second number is the trip id
-
-    data = result.inject({}) do |memo, hash|
-      stop_id = hash["stop_id"].to_i
-      arrival_times = hash["arrival_times"].
-        split(',').
-        map {|x| x.split('|')}.  # split into arrival time and trip id number
-        select {|x| x[0] > now.time.to_s
-      }.sort. # normally, we would limit the number here, but not now since we allow user to shift grid
-        map {|x|
-          @ordered_trip_ids << x[1] unless @ordered_trip_ids.include?(x[1])
-          [format_time(x[0]),x[1].to_i] }
-      if !arrival_times.empty?
-        memo[stop_id] = @options[:limit] ? arrival_times[0,@options[:limit]] :  arrival_times
-      end
-      memo
-    end
-    #logger.debug "ALL NEXT ARRIVALS: #{data.inspect}"
-    data
-  end
 
 
