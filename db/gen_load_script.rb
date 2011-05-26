@@ -17,14 +17,16 @@ SQL
   puts sql
 end
 
+require 'csv'
 # improve the calendar schema
 file = 'data/calendar.txt'
 CSV.foreach(file, headers: true) do |row|
   service_days = "{" + (1..7).map {|i| row[i] == "1"}.join(",") + "}"
   sql = "insert into calendar (service_id, service_days, start_date, end_date) " +
-  "values ('%s', '%s', %s, %s);" % [row[0], service_days, row[-2], row[-1]]
+  "values ('%s', '%s', '%s', '%s');" % [row[0], service_days, row[-2], row[-1]]
   puts sql
 end
+
 __END__
 
 
