@@ -148,11 +148,24 @@ select service_id, service_type from (
   UNION
   select service_id, 'added' as service_type from calendar_dates 
   where exception_type = 'add' and date = now()
-) results1
+) services
 EXCEPT 
   select service_id, 'removed' as service_type from calendar_dates 
   where exception_type = 'removed' and date = now();
 
 
+CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
+select service_id from (
+  select service_id from calendar 
+  where service_days[(select to_char($1, 'ID'))::int] = true and start_date <= $1 and end_date >= $1
+  UNION
+  select service_id from calendar_dates 
+  where exception_type = 'add' and date = $1
+) services
+EXCEPT 
+  select service_id from calendar_dates 
+  where exception_type = 'removed' and date = $1;
+$$ language sql;
 
+select active_services(date('20110511'));
 
