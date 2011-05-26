@@ -169,6 +169,11 @@ $$ language sql;
 
 select active_services(date('20110511'));
 
+------------------------------------------------------------------------
+
+This is better:
+
+
 CREATE FUNCTION active_services2(date) RETURNS setof record AS $$
   select service_id, 'normal' as service_type from calendar 
   where service_days[(select to_char($1, 'ID'))::int] = true and start_date <= $1 and end_date >= $1
@@ -203,44 +208,11 @@ select * from active_services2(date('20110530')) f(service_id text, service_type
 
 Got it:
 
-select * from active_services2(date('20110530')) f(service_id text, service_type text) where service_type != 'remove' order by service_type;
+These two should be equivalent:
 
+select active_services(date('20110530')) as service_id order by service_id;
 
-         service_id         | service_type
-----------------------------+--------------
- BUSS21-hbq21hl7-Sunday-02  | added
- RTL211-hmb21me7-Sunday-01  | added
- RTL211-hms21me7-Sunday-01  | added
- BUSN21-hbg21hl7-Sunday-02  | added
- LRV211-hlm21me7-Sunday-01  | added
- BUSS21-hbc21hl7-Sunday-02  | added
- BUSS21-hbs21hl7-Sunday-02  | added
- Boat-FallSaturday          | added
- RTL211-hmo21me7-Sunday-01  | added
- CR-Saturday                | added
- BUSN21-hbl21hl7-Sunday-02  | added
- BUSN21-hbt21hl7-Sunday-02  | added
- BUSS21-hbb21hl7-Sunday-02  | added
- LRV211-hlb21me7-Sunday-01  | added
- LRV211-hlm21021-Weekday-01 | normal
- RTL211-hmo21011-Weekday-01 | normal
- BUSN21-hbt21021-Weekday-02 | normal
- CR-Weekday                 | normal
- RTL211-hms21011-Weekday-01 | normal
- BUSN21-hbl21011-Weekday-02 | normal
- Logan-Weekday              | normal
- BUSN21-htt21021-Weekday-02 | normal
- BUSS21-hba21011-Weekday-02 | normal
- BUSN21-hbg21011-Weekday-02 | normal
- BUSS21-hbc21011-Weekday-02 | normal
- BUSS21-hbq21011-Weekday-02 | normal
- LRV211-hlb21021-Weekday-01 | normal
- Boat-FallWeekday           | normal
- BUSN21-hbf21011-Weekday-02 | normal
- BUSS21-hbb21011-Weekday-02 | normal
- RTL211-hmb21011-Weekday-01 | normal
- BUSS21-hbs21011-Weekday-02 | normal
-(32 rows)
+select service_id, count(service_id) from active_services2(date('20110530')) f(service_id text, service_type text) group by service_id having count(service_id) < 2 order by service_id;
 
-
+Use the first version, the second to check.
 
