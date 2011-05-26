@@ -16,8 +16,8 @@ create table calendar (
 
 create table calendar_dates (
   service_id varchar(255),
-  date int,
-  exception_type smallint
+  date date,
+  exception_type varchar(10)
 ) ;
 
 create table frequencies (

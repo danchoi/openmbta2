@@ -1,0 +1,158 @@
+
+
+select routes.route_id, max(routes.route_short_name) as route_short_name, count(route_id) from routes join trips using (route_id) group by routes.route_
+id order by max(routes.route_short_name);
+
+
+
+mbta=# select * from trips limit 10;
+ route_id  |         service_id         | trip_id  | trip_headsign | direction_id | block_id | shape_id
+-----------+----------------------------+----------+---------------+--------------+----------+----------
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942700 | Bowdoin       |            0 | B946_-6  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942701 | Wonderland    |            1 | B946_-6  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942702 | Wonderland    |            1 | B946_-18 |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942703 | Bowdoin       |            0 | B946_-7  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942704 | Wonderland    |            1 | B946_-7  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942705 | Bowdoin       |            0 | B946_-6  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942706 | Bowdoin       |            0 | B946_-6  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942707 | Wonderland    |            1 | B946_-6  |
+ 948_-1079 | RTL111-hmb11011-Weekday-01 | 13942708 | Bowdoin       |            0 | B9462-3  |
+ 946_-1079 | RTL111-hmb11011-Weekday-01 | 13942709 | Wonderland    |            1 | B9462-3  |
+
+
+mbta=# select * from stops limit 10;
+   stop_id   | stop_code |     stop_name     | stop_desc |  stop_lat   |   stop_lon   | zone_id | stop_url | location_type | parent_station
+-------------+-----------+-------------------+-----------+-------------+--------------+---------+----------+---------------+----------------
+ place-alfcl |           | Alewife Station   |           |   42.395428 |   -71.142483 |         |          |             1 |
+ place-andrw |           | Andrew Station    |           |   42.330154 |   -71.057655 |         |          |             1 |
+ place-aport |           | Airport Station   |           |   42.374262 |   -71.030395 |         |          |             1 |
+ place-aqucl |           | Aquarium Station  |           |   42.359784 |   -71.051652 |         |          |             1 |
+ place-armnl |           | Arlington Station |           |   42.351902 |   -71.070893 |         |          |             1 |
+ place-asmnl |           | Ashmont Station   |           |   42.284652 |   -71.064489 |         |          |             1 |
+ place-bbsta |           | Back Bay Station  |           |    42.34735 |   -71.075727 |         |          |             1 |
+ place-bmmnl |           | Beachmont Station |           | 42.39754234 | -70.99231944 |         |          |             1 |
+ place-bomnl |           | Bowdoin Station   |           |   42.361365 |   -71.062037 |         |          |             1 |
+ place-brdwy |           | Broadway Station  |           |   42.342622 |   -71.056967 |         |          |             1 |
+
+
+mbta=# select * from stop_times limit 10;
+ trip_id  | arrival_time | departure_time | stop_id | stop_sequence | stop_headsign | pickup_type | drop_off_type
+----------+--------------+----------------+---------+---------------+---------------+-------------+---------------
+ 14021448 | 06:40:00     | 06:40:00       | 1       |             2 |               |           0 |             0
+ 14021524 | 06:15:00     | 06:15:00       | 1       |             2 |               |           0 |             0
+ 14045401 | 06:00:00     | 06:00:00       | 1       |             2 |               |           0 |             0
+ 14045403 | 07:05:00     | 07:05:00       | 1       |             2 |               |           0 |             0
+ 14045405 | 08:05:00     | 08:05:00       | 1       |             2 |               |           0 |             0
+ 14045407 | 09:05:00     | 09:05:00       | 1       |             2 |               |           0 |             0
+ 14045408 | 10:25:00     | 10:25:00       | 1       |             2 |               |           0 |             0
+ 14045409 | 19:00:00     | 19:00:00       | 1       |             2 |               |           0 |             0
+ 14045410 | 19:18:00     | 19:18:00       | 1       |             2 |               |           0 |             0
+ 14045411 | 20:30:00     | 20:30:00       | 1       |             2 |               |           0 |             0
+
+
+Problem with arrival times in Postgres
+
+
+mbta=# select max(arrival_time) from stop_times;
+max
+---------
+9:52:00
+(1 row)
+
+May need to switch over to MySQL and use Postgres just for the
+geographical part for now?
+
+Try loading the CSV data into MySQL
+
+
+Mysql load data infile 
+https://bugs.launchpad.net/ubuntu/+source/mysql-dfsg-5.0/+bug/244406
+
+
+sed 's/"""/"/g' stops.txt > stops.fixed.txt
+
+
+The CSV import is messed up for MySQL.
+
+Trying Postgresql furhter
+
+
+grep  '"[[:digit:]]\{1\}:' stop_times.txt > bad.stoptimes.txt
+sed 's/\<[[:digit:]]\{1\}:/0&/g'
+
+
+------------------------------------------------------------------------
+Thu May 26 10:58:53 EDT 2011
+
+Reorganized the calendar table. Now we can do this sort of query:
+
+mbta=# select * from calendar where service_days[(select 2)] = true;
+mbta=# select * from calendar where service_days[(select 7)] = true;
+mbta=# select * from calendar where service_days[(select 6)] = true;
+
+Much happier with that.
+
+select * from calendar where service_days[(select to_char(now(), 'ID'))::int - 1] = true;
+
+
+OK I now have a much more useful calendar table.
+
+
+         service_id          |  service_days   | start_date |  end_date
+-----------------------------+-----------------+------------+------------
+ BUSN11-hbf11011-Weekday-02  | {t,t,t,t,t,f,f} | 2011-02-28 | 2011-03-18
+ BUSN11-hbg11011-Weekday-03  | {t,t,t,t,t,f,f} | 2011-02-28 | 2011-03-18
+ BUSN11-hbg11016-Saturday-03 | {f,f,f,f,f,t,f} | 2011-03-05 | 2011-03-12
+ BUSN11-hbg11017-Sunday-03   | {f,f,f,f,f,f,t} | 2011-03-06 | 2011-03-13
+ BUSN11-hbl11011-Weekday-02  | {t,t,t,t,t,f,f} | 2011-02-28 | 2011-03-18
+ BUSN11-hbl11016-Saturday-02 | {f,f,f,f,f,t,f} | 2011-03-05 | 2011-03-12
+ BUSN11-hbl11017-Sunday-02   | {f,f,f,f,f,f,t} | 2011-03-06 | 2011-03-13
+
+
+select * from calendar where service_days[(select to_char(now(), 'ID'))::int - 1] = true and start_date <= now() and end_date >= now();
+
+This works great
+
+select * from calendar where service_days[(select to_char(now(), 'ID'))::int - 1] = true and start_date <= now() and end_date >= now();
+         service_id         |  service_days   | start_date |  end_date
+----------------------------+-----------------+------------+------------
+ BUSN21-hbf21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSN21-hbg21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSN21-hbl21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSN21-hbt21021-Weekday-02 | {t,t,t,t,t,f,f} | 2011-05-02 | 2011-06-24
+ BUSN21-htt21021-Weekday-02 | {t,t,t,t,t,f,f} | 2011-05-02 | 2011-06-24
+ BUSS21-hba21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSS21-hbb21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSS21-hbc21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSS21-hbq21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ BUSS21-hbs21011-Weekday-02 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ LRV211-hlb21021-Weekday-01 | {t,t,t,t,t,f,f} | 2011-05-02 | 2011-06-24
+ LRV211-hlm21021-Weekday-01 | {t,t,t,t,t,f,f} | 2011-05-02 | 2011-06-24
+ RTL211-hmb21011-Weekday-01 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ RTL211-hmo21011-Weekday-01 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ RTL211-hms21011-Weekday-01 | {t,t,t,t,t,f,f} | 2011-03-21 | 2011-06-24
+ CR-Weekday                 | {t,t,t,t,t,f,f} | 2011-03-19 | 2011-06-24
+ Boat-FallWeekday           | {t,t,t,t,t,f,f} | 2011-03-19 | 2011-06-24
+ Logan-Weekday              | {t,t,t,t,t,f,f} | 2011-03-19 | 2011-06-24
+(18 rows)
+
+
+create view current_services as select * from calendar where service_days[(select to_char(now(), 'ID'))::int - 1] = true and start_date <= now() and end_date >= now();
+
+fix calendar_date table to use date type
+
+
+select service_id, service_type from (
+  select service_id, 'normal' as service_type from calendar 
+  where service_days[(select to_char(now(), 'ID'))::int - 1] = true and start_date <= now() and end_date >= now() 
+  UNION
+  select service_id, 'added' as service_type from calendar_dates 
+  where exception_type = 'add' and date = now()
+) results1
+EXCEPT 
+  select service_id, 'removed' as service_type from calendar_dates 
+  where exception_type = 'removed' and date = now();
+
+
+
+
