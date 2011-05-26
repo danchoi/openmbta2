@@ -230,7 +230,7 @@ select count(*) from trips where service_id in ( select active_services(date('20
 
 Now create a function that produces the trips records for a certain date.
 
-CREATE FUNCTION active_trips(date) RETURNS SETOF tripss AS $$
+CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
 select * from trips where service_id in (select active_services($1) as service_id);
 $$ LANGUAGE SQL;
 
@@ -247,4 +247,56 @@ select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(
 trips.trip_id, trips.trip_headsign, trips.direction_id 
 from active_trips(date(now())) as trips 
 inner join routes r using (route_id) order by r.route_type, route, trips.direction_id;
+
+
+get routes for the day, and the number of trips per route
+
+select r.route_type, coalesce(nullif(r.route_long_name, ''),
+nullif(r.route_short_name, '')) route, 
+trips.direction_id, count(*) as trips_count
+from active_trips(date(now())) as trips inner join routes r using (route_id) 
+group by r.route_type, route, trips.direction_id
+order by r.route_type, route, trips.direction_id;
+
+
+ route_type |                     route                     | direction_id | trips_count
+------------+-----------------------------------------------+--------------+-------------
+          0 | Green Line                                    |            0 |         578
+          0 | Green Line                                    |            1 |         577
+          0 | Mattapan High-Speed Line                      |            0 |         163
+          0 | Mattapan High-Speed Line                      |            1 |         163
+          1 | Blue Line                                     |            0 |         177
+          1 | Blue Line                                     |            1 |         177
+          1 | Orange Line                                   |            0 |         164
+          1 | Orange Line                                   |            1 |         164
+          1 | Red Line                                      |            0 |         214
+          1 | Red Line                                      |            1 |         213
+          2 | Fairmount Line                                |            0 |          14
+          2 | Fairmount Line                                |            1 |          14
+          2 | Fitchburg/South Acton Line                    |            0 |          17
+          2 | Fitchburg/South Acton Line                    |            1 |          17
+
+          2 | Providence/Stoughton Line                     |            0 |          36
+          2 | Providence/Stoughton Line                     |            1 |          37
+          3 | 1                                             |            0 |         116
+          3 | 1                                             |            1 |         112
+
+We can show this in the routes list
+
+Next: the core part. Take one route name and direction, and return all
+the trips for that route and direction.
+
+
+CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
+select trips.* 
+from active_trips(date(now())) as trips 
+inner join routes r using (route_id) 
+where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
+$$ LANGUAGE SQL;
+
+select trips.* 
+from active_trips(date(now())) as trips 
+inner join routes r using (route_id) 
+where trips.direction_id = 1 and coalesce(nullif(r.route_long_name, ''),
+nullif(r.route_short_name, '')) = 'Red Line';
 
