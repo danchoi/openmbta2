@@ -241,4 +241,10 @@ select * from active_trips(date(now()));
 Next we need a function that shows the active trips for a mode of transport
 
 
+use nullif and coalesce:
+
+select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
+trips.trip_id, trips.trip_headsign, trips.direction_id 
+from active_trips(date(now())) as trips 
+inner join routes r using (route_id) order by route;
 
