@@ -9,13 +9,7 @@ create table agency (
 
 create table calendar (
   service_id varchar(255) primary key,
-  monday bool,
-  tuesday bool,
-  wednesday bool,
-  thursday bool,
-  friday bool,
-  saturday bool,
-  sunday bool,
+  service_days bool[],
   start_date int,
   end_date int
 ) ;
