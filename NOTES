@@ -180,5 +180,67 @@ UNION
   where exception_type = 'remove' and date = $1;
 $$ language sql;
 
+
+          active_services2
+-------------------------------------
+ (BUSN21-hbt21021-Weekday-02,normal)
+ (RTL211-hmb21me7-Sunday-01,added)
+ (Logan-Weekday,normal)
+ (BUSN21-htt21021-Weekday-02,normal)
+ (BUSS21-hba21011-Weekday-02,normal)
+ (BUSN21-hbg21011-Weekday-02,normal)
+ (LRV211-hlm21021-Weekday-01,remove)
+ (BUSS21-hbc21011-Weekday-02,normal)
+ (RTL211-hms21me7-Sunday-01,added)
+ (BUSN21-hbl21011-Weekday-02,remove)
+ (LRV211-hlb21021-Weekday-01,normal)
+ (Boat-FallWeekday,normal)
+
+
 select active_services2(date('20110530'));
+
+select * from active_services2(date('20110530')) f(service_id text, service_type text);
+
+Got it:
+
+select * from active_services2(date('20110530')) f(service_id text, service_type text) where service_type != 'remove' order by service_type;
+
+
+         service_id         | service_type
+----------------------------+--------------
+ BUSS21-hbq21hl7-Sunday-02  | added
+ RTL211-hmb21me7-Sunday-01  | added
+ RTL211-hms21me7-Sunday-01  | added
+ BUSN21-hbg21hl7-Sunday-02  | added
+ LRV211-hlm21me7-Sunday-01  | added
+ BUSS21-hbc21hl7-Sunday-02  | added
+ BUSS21-hbs21hl7-Sunday-02  | added
+ Boat-FallSaturday          | added
+ RTL211-hmo21me7-Sunday-01  | added
+ CR-Saturday                | added
+ BUSN21-hbl21hl7-Sunday-02  | added
+ BUSN21-hbt21hl7-Sunday-02  | added
+ BUSS21-hbb21hl7-Sunday-02  | added
+ LRV211-hlb21me7-Sunday-01  | added
+ LRV211-hlm21021-Weekday-01 | normal
+ RTL211-hmo21011-Weekday-01 | normal
+ BUSN21-hbt21021-Weekday-02 | normal
+ CR-Weekday                 | normal
+ RTL211-hms21011-Weekday-01 | normal
+ BUSN21-hbl21011-Weekday-02 | normal
+ Logan-Weekday              | normal
+ BUSN21-htt21021-Weekday-02 | normal
+ BUSS21-hba21011-Weekday-02 | normal
+ BUSN21-hbg21011-Weekday-02 | normal
+ BUSS21-hbc21011-Weekday-02 | normal
+ BUSS21-hbq21011-Weekday-02 | normal
+ LRV211-hlb21021-Weekday-01 | normal
+ Boat-FallWeekday           | normal
+ BUSN21-hbf21011-Weekday-02 | normal
+ BUSS21-hbb21011-Weekday-02 | normal
+ RTL211-hmb21011-Weekday-01 | normal
+ BUSS21-hbs21011-Weekday-02 | normal
+(32 rows)
+
+
 
