@@ -353,8 +353,7 @@ select * from stop_times st where trip_id in
 order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
-
-
+select stops.stop_name, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
 
 
 
