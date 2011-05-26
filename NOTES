@@ -344,7 +344,22 @@ mbta=# select * from stop_times where trip_id = 'CR-Providence-CR-Weekday-800';
 
 
 This approach may need rethinking. To make the grid, we can do most of
-that on the Ruby side:
+that on the Ruby side: We can build a big table of all the stop_times
+for a certain trip id set. Conceptually, this is easier.
+
+CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
+select * from stop_times st where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_id, arrival_time, stop_sequence;
+$$ LANGUAGE SQL;
+
+
+
+
+
+
+------------------------------------------------------------------------
+scrap
 
 
 Version 1 method:
