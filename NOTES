@@ -168,10 +168,11 @@ EXCEPT
 $$ language sql;
 
 select active_services(date('20110511'));
+select active_services(date('20110530')) as service_id order by service_id;
 
 ------------------------------------------------------------------------
 
-This is better:
+This is more explicit:
 
 
 CREATE FUNCTION active_services2(date) RETURNS setof record AS $$
@@ -215,4 +216,29 @@ select active_services(date('20110530')) as service_id order by service_id;
 select service_id, count(service_id) from active_services2(date('20110530')) f(service_id text, service_type text) group by service_id having count(service_id) < 2 order by service_id;
 
 Use the first version, the second to check.
+
+
+mbta=# select count(*) from trips where service_id in (select service_id current_services);
+count
+--------
+121866
+(1 row)
+
+select count(*) from trips where service_id in ( select active_services(date('20110530')) as service_id order by service_id);
+
+
+
+Now create a function that produces the trips records for a certain date.
+
+CREATE FUNCTION active_trips(date) RETURNS SETOF tripss AS $$
+select * from trips where service_id in (select active_services($1) as service_id);
+$$ LANGUAGE SQL;
+
+This works:
+
+select * from active_trips(date(now()));
+
+Next we need a function that shows the active trips for a mode of transport
+
+
 
