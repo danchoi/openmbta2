@@ -10,7 +10,12 @@ QUERY
 trips = Hash.new {|hash, key| hash[key] = []}
 
 DB[query].each do |row|
-  stopping = [ row[:arrival_time], row[:stop_name], row[:stop_sequence] ]
+  stopping = { 
+    arrival_time: row[:arrival_time], 
+    stop_name: row[:stop_name], 
+    stop_sequence: row[:stop_sequence],
+    stop_id: row[:stop_id]
+  }
   trips[row[:trip_id]] << stopping
 end
 
@@ -20,5 +25,5 @@ puts '-' * 80
 
 trips.each do |k, v|
   puts k
-  puts v.sort_by {|x| x[-1]}.inspect
+  puts v.sort_by {|x| x[:stop_sequence]}.inspect
 end
