@@ -275,29 +275,26 @@ group by r.route_type, route, trips.direction_id
 order by r.route_type, route, trips.direction_id;
 
 
-
-
  route_type |                     route                     | direction_id | trips_count
 ------------+-----------------------------------------------+--------------+-------------
           0 | Green Line                                    |            0 |         578
           0 | Green Line                                    |            1 |         577
           0 | Mattapan High-Speed Line                      |            0 |         163
-          0 | Mattapan High-Speed Line                      |            1 |         163
-          1 | Blue Line                                     |            0 |         177
-          1 | Blue Line                                     |            1 |         177
-          1 | Orange Line                                   |            0 |         164
-          1 | Orange Line                                   |            1 |         164
-          1 | Red Line                                      |            0 |         214
-          1 | Red Line                                      |            1 |         213
-          2 | Fairmount Line                                |            0 |          14
-          2 | Fairmount Line                                |            1 |          14
-          2 | Fitchburg/South Acton Line                    |            0 |          17
-          2 | Fitchburg/South Acton Line                    |            1 |          17
-
           2 | Providence/Stoughton Line                     |            0 |          36
           2 | Providence/Stoughton Line                     |            1 |          37
-          3 | 1                                             |            0 |         116
-          3 | 1                                             |            1 |         112
+
+should remaining trips
+
+select r.route_type, coalesce(nullif(r.route_long_name, ''),
+nullif(r.route_short_name, '')) route, 
+trips.direction_id, count(*) as trips_left
+from active_trips(date(now())) as trips inner join routes r using (route_id) 
+where trips.finished_at > '20:00:00'
+group by r.route_type, route, trips.direction_id 
+order by r.route_type, route, trips.direction_id;
+
+
+
 
 We can show this in the routes list
 
