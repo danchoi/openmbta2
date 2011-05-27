@@ -2,7 +2,7 @@
 ALTER table trips ADD COLUMN finished_at varchar(12);
 
  
-UPDATE trips SET finished_at = (SELECT MAX(stop_times.arrival_time) from stop_times where stop_times.trip_id = trip_id); 
+UPDATE trips SET finished_at = (SELECT MAX(stop_times.arrival_time) from stop_times where stop_times.trip_id = trips.trip_id); 
 
 /* much slower:
 
