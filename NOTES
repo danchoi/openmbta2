@@ -251,6 +251,8 @@ inner join routes r using (route_id) order by r.route_type, route, trips.directi
 
 get routes for the day, and the number of trips per route
 
+THIS IS IMPORTRANT:
+
 select r.route_type, coalesce(nullif(r.route_long_name, ''),
 nullif(r.route_short_name, '')) route, 
 trips.direction_id, count(*) as trips_count
@@ -303,7 +305,7 @@ mbta=# select * from route_trips_today('1', 1);
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438274 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438276 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438278 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438280 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
+ 03-1084  | BUSS21-hbc21011-Weekday-02 | 14438280 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438283 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438285 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
  01-1084  | BUSS21-hbc21011-Weekday-02 | 14438286 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
@@ -341,11 +343,10 @@ mbta=# select * from stop_times where trip_id = 'CR-Providence-CR-Weekday-800';
  CR-Providence-CR-Weekday-800 | 06:20:00     | 06:20:00       | South Station   |            13 |               |           1 |             0
 (11 rows)
 
-
-
 This approach may need rethinking. To make the grid, we can do most of
 that on the Ruby side: We can build a big table of all the stop_times
 for a certain trip id set. Conceptually, this is easier.
+
 
 CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
 select * from stop_times st where trip_id in 
@@ -353,11 +354,14 @@ select * from stop_times st where trip_id in
 order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
-
 This should produce the raw data from which to generate the table grid
 for a day:
 
+IMPORTANT:
+
 select stops.stop_name, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
+
+
 
 
 
