@@ -338,11 +338,9 @@ DROP FUNCTION available_routes(timestamp);
 select available_routes(now()::timestamp);
 
 
-USE THIS CALL:
+FOR ROUTES USE THIS CALL:
 
 select * from available_routes(now()::timestamp) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint);
-
-
 
  route_type |                    route                    | direction_id | trips_left
 ------------+---------------------------------------------+--------------+------------
@@ -353,17 +351,25 @@ select * from available_routes(now()::timestamp) as (route_type smallint, route 
 Make this into a database function?
 
 
+\df+ available_routes
 
 
 to_char(timestamp, "HH24:MI:SS")
 p.191 postgres pdf
 
-
+------------------------------------------------------------------------
+TRIPS FOR A ROUTE
 
 We can show this in the routes list
 
 Next: the core part. Take one route name and direction, and return all
 the trips for that route and direction.
+
+
+Two functions:
+- route_trips_today
+- stop_times_today (calls the former)
+
 
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
@@ -375,50 +381,7 @@ $$ LANGUAGE SQL;
 mbta=# select * from route_trips_today('Red Line', 1);
 mbta=# select * from route_trips_today('Providence/Stoughton Line', 1);
 mbta=# select * from route_trips_today('1', 1);
-
-
- route_id |         service_id         | trip_id  |         trip_headsign         | direction_id | block_id | shape_id
-----------+----------------------------+----------+-------------------------------+--------------+----------+----------
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438274 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438276 | Dudley Station via Mass. Ave. |            1 | C01-26   | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438278 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
- 03-1084  | BUSS21-hbc21011-Weekday-02 | 14438280 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438283 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438285 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438286 | Dudley Station via Mass. Ave. |            1 | C01-9    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438288 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438290 | Dudley Station via Mass. Ave. |            1 | C01-8    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438292 | Dudley Station via Mass. Ave. |            1 | C01-6    | 10016
- 01-1084  | BUSS21-hbc21011-Weekday-02 | 14438293 | Dudley Station via Mass. Ave. |            1 | C01-2    | 10016
-
-
-   route_id    | service_id |            trip_id            |       trip_headsign       | direction_id | block_id | shape_id
----------------+------------+-------------------------------+---------------------------+--------------+----------+----------
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8802 | Providence (Train 8802)   |            1 |          |
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8804 | Providence (Train 8804)   |            1 |          |
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-8806 | Providence (Train 8806)   |            1 |          |
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-800  | South Station (Train 800) |            1 |          |
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-802  | South Station (Train 802) |            1 |          |
- CR-Providence | CR-Weekday | CR-Providence-CR-Weekday-804  | South Station (Train 804) |            1 |          |
-
-Now we make the schedule grid
-
-
 mbta=# select * from stop_times where trip_id = 'CR-Providence-CR-Weekday-800';
-           trip_id            | arrival_time | departure_time |     stop_id     | stop_sequence | stop_headsign | pickup_type | drop_off_type
-------------------------------+--------------+----------------+-----------------+---------------+---------------+-------------+---------------
- CR-Providence-CR-Weekday-800 | 05:07:00     | 05:07:00       | Providence      |             1 |               |           0 |             1
- CR-Providence-CR-Weekday-800 | 05:17:00     | 05:17:00       | South Attleboro |             2 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 05:27:00     | 05:27:00       | Attleboro       |             3 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 05:36:00     | 05:36:00       | Mansfield       |             4 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 05:44:00     | 05:44:00       | Sharon          |             5 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 05:51:00     | 05:51:00       | Canton Junction |             8 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 05:56:00     | 05:56:00       | Route 128       |             9 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 06:01:00     | 06:01:00       | Hyde Park       |            10 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 06:11:00     | 06:11:00       | Ruggles         |            11 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 06:15:00     | 06:15:00       | Back Bay        |            12 |               |           0 |             0
- CR-Providence-CR-Weekday-800 | 06:20:00     | 06:20:00       | South Station   |            13 |               |           1 |             0
-(11 rows)
 
 This approach may need rethinking. To make the grid, we can do most of
 that on the Ruby side: We can build a big table of all the stop_times
@@ -434,10 +397,13 @@ $$ LANGUAGE SQL;
 This should produce the raw data from which to generate the table grid
 for a day:
 
-IMPORTANT:
+CALL FOR TRIPS FOR A ROUTE:
+
+first argument is route name, then direction
 
 select stops.stop_name, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
 
+This will return 4032 rows for Bus, fewer for other routes;
 
 
 
