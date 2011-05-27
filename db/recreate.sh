@@ -37,7 +37,8 @@ else
 fi
 
 psql mbta < db/load.sql
-# skip denormalize (ver 1)
+psql mbta < db/denormalize.sql
+
 # add postGIS ; works for ubuntu
 echo "Adding plpgsql"
 createlang plpgsql mbta;

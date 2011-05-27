@@ -234,6 +234,20 @@ CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
 select * from trips where service_id in (select active_services($1) as service_id);
 $$ LANGUAGE SQL;
 
+------------------------------------------------------------------------
+# FIND TRIPS REMAINING
+
+# We should denormalize! This is too slow.
+
+select trip_id, max(stop_times.arrival_time) from trips 
+inner join stop_times using(trip_id)
+where service_id in (select active_services(date(now())) as service_id)
+group by trips.trip_id
+having max(stop_times.arrival_time) > '12:00:00'
+;
+------------------------------------------------------------------------
+
+
 This works:
 
 select * from active_trips(date(now()));
@@ -251,7 +265,7 @@ inner join routes r using (route_id) order by r.route_type, route, trips.directi
 
 get routes for the day, and the number of trips per route
 
-THIS IS IMPORTRANT:
+GET ROUTES
 
 select r.route_type, coalesce(nullif(r.route_long_name, ''),
 nullif(r.route_short_name, '')) route, 
@@ -259,6 +273,8 @@ trips.direction_id, count(*) as trips_count
 from active_trips(date(now())) as trips inner join routes r using (route_id) 
 group by r.route_type, route, trips.direction_id
 order by r.route_type, route, trips.direction_id;
+
+
 
 
  route_type |                     route                     | direction_id | trips_count

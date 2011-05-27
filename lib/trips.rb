@@ -2,7 +2,8 @@ require 'sequel'
 DB = Sequel.connect 'postgres:///mbta'
 # don't put semicolon at the end of sequel query
 require 'yaml'
-route = '1'
+#route = '1'
+route = 'Providence/Stoughton Line'
 query = <<QUERY
 select stops.stop_name, stops.stop_code, st.* from stop_times_today('#{route}', 1) st join stops using(stop_id)
 QUERY
