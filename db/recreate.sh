@@ -36,7 +36,10 @@ else
   echo "Bad stop times seems to have been fixed already"
 fi
 
+echo "running load.sql"
 psql mbta < db/load.sql
+
+echo "running denormalize.sql"
 psql mbta < db/denormalize.sql
 
 # add postGIS ; works for ubuntu
