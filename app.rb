@@ -15,7 +15,7 @@ get '/routes/:transport_type' do
   when /subway/
     [0, 1]
   end
-  sql = "select * from available_routes(now()::timestamp) 
+  sql = "select * from available_routes(now()) 
   as (route_type smallint, route varchar, direction_id smallint, trips_left bigint) 
   where route_type in ?"
   routes = DB[sql, route_types]
