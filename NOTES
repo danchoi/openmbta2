@@ -431,9 +431,34 @@ Need to fix available trip calculation for times from 12 am to 3am
 
 The date also needs to be the PREVIOUS date if the time is after midnight.
 
-The simple way is to parameterize available_routes(date, text) # where text is the time string
-e.g., "24:05:00" for 5 minutes past midnight.
+The simple way is to parameterize available_routes(date, text) # where text is
+the time string e.g., "24:05:00" for 5 minutes past midnight.
 
+
+CREATE FUNCTION adjusted_date(x timestamp with time zone) RETURNS date AS $$
+BEGIN
+  IF extract(hour from x) < 4 THEN 
+    RETURN date( x - interval '24 hours' );    
+  ELSE 
+    RETURN date(x);
+  END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) AS $$
+DECLARE
+  h integer;
+  m integer;
+  s  integer;
+BEGIN
+  h := extract(hour from x);
+  m := extract(minutes from x);
+  IF h  < 4 THEN 
+    h := h + 24;
+  END IF;
+  RETURN lpad(h::text, 2, '0') || ':' || m || ':00';
+END;
+$$ LANGUAGE plpgsql;
 
 
 
