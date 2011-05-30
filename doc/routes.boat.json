@@ -1,0 +1,18 @@
+{"data"=>
+  [{"route_short_name"=>"Hingham Boat",
+    "headsigns"=>
+     [["Hewitt's Cove, Hingham to Hewitt's Cove, Hingham", 8],
+      ["Rowes Wharf, Boston to Rowes Wharf, Boston", 11]]},
+   {"route_short_name"=>"Quincy Boat",
+    "headsigns"=>
+     [["Fore River Shipyard, Quincy to Fore River Shipyard, Quincy", 1]]},
+   {"route_short_name"=>"Quincy/Hull Boat",
+    "headsigns"=>
+     [["Central Wharf (Aquarium), Boston to Central Wharf (Aquarium), Boston",
+       1],
+      ["Fore River Shipyard, Quincy to Fore River Shipyard, Quincy", 4],
+      ["Pemberton Point, Hull to Pemberton Point, Hull", 5]]},
+   {"route_short_name"=>"Charlestown Ferry",
+    "headsigns"=>
+     [["Charlestown Navy Yard to Charlestown Navy Yard", 18],
+      ["Long Wharf, Boston to Long Wharf, Boston", 18]]}]}

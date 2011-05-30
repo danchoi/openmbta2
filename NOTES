@@ -387,7 +387,6 @@ This approach may need rethinking. To make the grid, we can do most of
 that on the Ruby side: We can build a big table of all the stop_times
 for a certain trip id set. Conceptually, this is easier.
 
-
 CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
 select * from stop_times st where trip_id in 
 (select trip_id from route_trips_today($1, $2))
@@ -403,12 +402,60 @@ CALL FOR TRIPS FOR A ROUTE:
 
 select stops.stop_name, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
 
-- more complete
+- more complete example:
 
 select stops.stop_name, stops.stop_lat, stops.stop_lon, stops.parent_station, stops.stop_code, st.* from stop_times_today('1', 1) st join stops using(stop_id);
 
 This will return 4032 rows for Bus, fewer for other routes;
 
+Example record:
+-[ RECORD 1 ]--+------------------------------------------------
+stop_name      | Albany St @ Northampton St
+stop_lat       | 42.33279
+stop_lon       | -71.074516
+parent_station |
+stop_code      | 10099
+trip_id        | 14442911
+arrival_time   | 05:30:00
+departure_time | 05:30:00
+stop_id        | 10099
+stop_sequence  | 30
+stop_headsign  |
+pickup_type    | 0
+drop_off_type  | 0
 
 
+------------------------------------------------------------------------
+
+Need to fix available trip calculation for times from 12 am to 3am
+
+The date also needs to be the PREVIOUS date if the time is after midnight.
+
+The simple way is to parameterize available_routes(date, text) # where text is the time string
+e.g., "24:05:00" for 5 minutes past midnight.
+
+
+
+
+
+mbta=# select extract(hour from now());
+ date_part
+-----------
+         0
+(1 row)
+
+mbta=# select extract(minutes from now());
+ date_part
+-----------
+        33
+
+
+mbta=# select extract(hour from now()) || ':' || extract(minutes from now()) || ':00';
+ ?column?
+----------
+ 0:36:00
+(1 row)
+
+
+May need to assign variables before function.
 

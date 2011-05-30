@@ -1,0 +1,23 @@
+{"data"=>
+  [{"route_short_name"=>"Red Line",
+    "headsigns"=>
+     [["Alewife", 110, "all points"],
+      ["Ashmont", 135, "all points"],
+      ["Braintree", 56, "all points"],
+      ["Mattapan", 80, "all points"]]},
+   {"route_short_name"=>"Green Line",
+    "headsigns"=>
+     [["B - Boston College", 76, "all points"],
+      ["C - Cleveland Circle", 72, "all points"],
+      ["D - Reservoir", 5, "all points"],
+      ["D - Riverside", 73, "all points"],
+      ["E - Heath Street", 68, "all points"],
+      ["Government Center", 143, "all points"],
+      ["Lechmere", 73, "all points"],
+      ["North Station", 69, "all points"]]},
+   {"route_short_name"=>"Blue Line",
+    "headsigns"=>
+     [["Bowdoin", 85, "all points"], ["Wonderland", 88, "all points"]]},
+   {"route_short_name"=>"Orange Line",
+    "headsigns"=>
+     [["Forest Hills", 80, "all points"], ["Oak Grove", 81, "all points"]]}]}
