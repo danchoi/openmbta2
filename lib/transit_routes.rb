@@ -1,4 +1,6 @@
 require 'sequel'
+require 'direction'
+require 'bus_routes'
 DB = Sequel.connect 'postgres:///mbta'
 
 class TransitRoutes
@@ -7,13 +9,27 @@ class TransitRoutes
     routes = DB[sql, route_types]
     res = {:data => []}
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
-      data = {:route_short_name => route, :headsigns => []}
+      data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
       directions.each do |d|
-        direction_name = d[:direction_id] == 0 ? 'Inbound' : 'Outbound'
+        direction_name = Direction.id2name d[:direction_id] 
         data[:headsigns] << [direction_name, d[:trips_left]] 
+        # If subway, the v3 client expects three elements.
+        # Just repeat the 1st one. Clean this up in v4
+        if !([0, 1] & route_types).empty?
+          data[:headsigns][-1] << direction_name
+        end
       end
       res[:data] << data
     end
+    res[:data] = res[:data].sort_by {|route| 
+      name = route[:route_short_name]
+      if name =~ /^\d+/
+        "%.5d" % name[/^\d+/, 0]  # front-pad with zeros to sort correctly
+      else
+        name
+      end
+    }
+    res
   end
 end
 

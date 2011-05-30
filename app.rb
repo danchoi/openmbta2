@@ -2,6 +2,7 @@ require 'sinatra'
 require 'json'
 require 'transit_routes'
 require 'transit_trips'
+require 'direction'
 
 # TODO start logging analytics
 
@@ -19,7 +20,6 @@ get '/routes/:transport_type' do
   res = TransitRoutes.routes(route_types)
   res.to_json
 end
-
 
 get 'trips' do
 
