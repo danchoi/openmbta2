@@ -4,6 +4,8 @@ require 'json'
 
 DB = Sequel.connect "postgres:///mbta"
 
+# TODO start logging analytics
+
 get '/routes/:transport_type' do
   route_types = case params[:transport_type].downcase
   when /bus/
@@ -26,6 +28,10 @@ get '/routes/:transport_type' do
     end
     res[:data] << data
   end
-  puts routes.all.to_json
   res.to_json
+end
+
+
+get 'trips' do
+
 end
