@@ -21,7 +21,12 @@ get '/routes/:transport_type' do
   res.to_json
 end
 
-get 'trips' do
-
-
+get '/trips' do
+  # irrelevant for now params[:headsign]
+  route = params['route_short_name']
+  direction_id = Direction.name2id params['headsign'] # now inbound or outbound
+  puts params.inspect
+  x = TransitTrips.new(route, direction_id)
+  puts x.trips
+    
 end
