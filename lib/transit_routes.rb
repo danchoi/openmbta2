@@ -21,6 +21,7 @@ class TransitRoutes
       end
       res[:data] << data
     end
+    # sort bus routes correctly
     res[:data] = res[:data].sort_by {|route| 
       name = route[:route_short_name]
       if name =~ /^\d+/
