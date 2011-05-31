@@ -487,3 +487,15 @@ mbta=# select extract(hour from now()) || ':' || extract(minutes from now()) || 
 
 May need to assign variables before function.
 
+
+
+------------------------------------------------------------------------
+Tue May 31 11:50:36 EDT 2011
+
+
+The v3 client assumes stop_id is an integer because it calls stringValue on it.
+
+Need to assign integer IDs to all the stops with string ids?
+
+ALTER table stops add column stop_integer_id serial;
+

@@ -3,6 +3,9 @@ ALTER table trips ADD COLUMN finished_at varchar(12);
 
 UPDATE trips SET finished_at = (SELECT MAX(stop_times.arrival_time) from stop_times where stop_times.trip_id = trips.trip_id); 
 
+-- The legacy iOS clients assume integer stop_ids
+ALTER table stops add column stop_integer_id serial;
+
 /* much slower:
 
 UPDATE trips
