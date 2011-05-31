@@ -524,3 +524,5 @@ Use this query to match nextbus routeTags with routes from GTFS
 select route_id, route_short_name, tag nextbus_tag from routes left outer join nextbus_routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_routes.
 tag) where routes.route_type = 3;
 
+TODO: created_at for predictions
+

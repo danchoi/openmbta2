@@ -1,5 +1,4 @@
-require 'sequel'
-DB = Sequel.connect 'postgres:///mbta'
+require 'database'
 # don't put semicolon at the end of sequel query
 require 'yaml'
 require 'set'

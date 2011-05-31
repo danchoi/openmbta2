@@ -3,8 +3,8 @@ require 'nokogiri'
 require 'open-uri'
 
 # This module contains scripts that populate the real-time data tables for MBTA buses.
-# Another module should inject this data into the trip data returned to the iOS client.
-#
+# Another module should inject this data into the trip data returned to the mobile client.
+
 module Nextbus
 
   PING_INTERVAL = 1.5
@@ -59,7 +59,7 @@ module Nextbus
       params = get_stop_tags(route_tag).map {|stoptag| "stops=#{route_tag}|null|#{stoptag}"}.join('&')
       url += "&" + params
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
-      DB["delete from nextbus_predictions where routetag = ? ", route_tag]
+      DB.run("delete from nextbus_predictions where routetag = '#{route_tag}'")
       Nokogiri::XML.parse(xml).xpath('//predictions').each do |s|
         stop_tag = s[:stopTag] 
         s.xpath('./direction/prediction').each do |p|
@@ -72,7 +72,13 @@ module Nextbus
             block: p[:block],
             triptag: p[:tripTag]
           }
-          DB[:nextbus_predictions].insert params
+          begin
+            DB[:nextbus_predictions].insert params
+          rescue
+            puts xml
+            puts params.inspect
+            raise
+          end
         end
       end
     end
@@ -94,3 +100,4 @@ if __FILE__ == $0
   #Nextbus.get_predictions("4")
   Nextbus.get_all_predictions
 end
+

@@ -12,7 +12,7 @@ create table nextbus_route_configs (
   stoptitle varchar
 );
 
-create index nextbus_route_configs_unique_idx on nextbus_route_configs (routeTag, stopTag);
+create unique index nextbus_route_configs_unique_idx on nextbus_route_configs (routeTag, stopTag);
 
 create table nextbus_predictions (
   routetag varchar,
@@ -23,5 +23,8 @@ create table nextbus_predictions (
   vehicle varchar,
   block varchar
 );
+
+create index nextbus_predictions_routetag_idx on nextbus_predictions (routetag);
+
 
 
