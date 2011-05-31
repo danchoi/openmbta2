@@ -14,13 +14,15 @@ class TransitTrips
     @next_arrivals = {}
     calc_next_arrivals
     make_grid
+    fix_grid_stop_ids
   end
 
   def result
+
     {
-      stops: @stops,
+      stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
-      imminent_stop_ids: imminent_stop_ids,
+      imminent_stop_ids: imminent_stop_ids.map{|x| to_int_key(x)},
       ordered_stop_ids: ordered_stop_ids,
       region: region,
       grid: @grid
@@ -84,6 +86,7 @@ class TransitTrips
   def convert_stop_data(row)
     {
       name: row[:stop_name],
+      stop_integer_id: row[:stop_integer_id],
       parent_stop_mbta_id: null_or_value(row[:parent_station]),
       mbta_id: row[:stop_id],
       lat: row[:stop_lat],
@@ -99,6 +102,25 @@ class TransitTrips
   def imminent_stop_ids
     @next_arrivals.map {|trip_id, (stop_id, time)|
       stop_id
+    }
+  end
+
+  def use_int_keys(stops)
+    @fixed_stops = {}
+    stops.each {|k, v| @fixed_stops[v[:stop_integer_id]] = v }
+    @fixed_stops
+  end
+
+  def to_int_key(stop_id)
+    @stops[stop_id][:stop_integer_id]
+  end
+
+  # use serial int stop ids instead of native ones
+  def fix_grid_stop_ids
+    @grid = @grid.map {|row|
+      x = row[:stop][:stop_id] 
+      row[:stop][:stop_id] = to_int_key x
+      row
     }
   end
 
@@ -151,8 +173,9 @@ class TransitTrips
     if now_hour < 4 # 24 hour clock, 1 am
       now_hour += + 24
     end
-    time_now = "%.2d:.2d" % [now_hour, Time.now.min]
+    time_now = "%.2d:%.2d" % [now_hour, Time.now.min]
 
+    puts "time compare: %s %s" % [time_now, time_string]
     if time_string < time_now
       [format_time(time), -1]
     else
