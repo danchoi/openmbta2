@@ -1,11 +1,10 @@
-require 'sequel'
+require 'database'
 require 'direction'
 require 'bus_routes'
-DB = Sequel.connect 'postgres:///mbta'
 
 class TransitRoutes
   def self.routes(route_types)
-    sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ?"
+    sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ? order by route, - direction_id"
     routes = DB[sql, route_types]
     res = {:data => []}
     routes.all.group_by {|x| x[:route]}.each do |route, directions|

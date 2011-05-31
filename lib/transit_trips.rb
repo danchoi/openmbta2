@@ -6,6 +6,8 @@ require 'set'
 
 class TransitTrips
 
+  class NoRouteData < StandardError; end
+
   NEXT_ARRIVALS_MAX = 4
 
   attr :trips, :grid, :stops
@@ -21,7 +23,6 @@ class TransitTrips
   end
 
   def result
-
     {
       stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
@@ -46,6 +47,9 @@ class TransitTrips
       @trips[row[:trip_id]] << stopping
       # fill in these values later
       @stops[row[:stop_id]] = {}
+    end
+    if @trips.empty?
+      raise NoRouteData
     end
     DB["select * from stops where stop_id in ?", @stops.keys].each do |row|
       @stops[row[:stop_id]] = convert_stop_data(row)
