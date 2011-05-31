@@ -500,3 +500,24 @@ Need to assign integer IDs to all the stops with string ids?
 
 ALTER table stops add column stop_integer_id serial;
 
+
+------------------------------------------------------------------------
+
+REALTIME
+
+route config has <direction tag="1_01203213_0" title="Harvard Station via Mass Ave." etc.
+
+This looks like all that is necessary
+
+_0 means outbound
+
+The predictions file has 
+<predictions routeTitle="1" routeTag="1" stopTitle="Dudley station" stopTag="64">
+  <direction title="[headsign]">
+   <prediction -> has a dirTag="1_100117v0_0" 
+
+  I think I can infer everything from the prediction thing
+
+
+
+

@@ -8,7 +8,7 @@ class TransitTrips
 
   class NoRouteData < StandardError; end
 
-  NEXT_ARRIVALS_MAX = 4
+  NEXT_ARRIVALS_MAX = 3
 
   attr :trips, :grid, :stops
   def initialize(route, direction_id)
@@ -103,7 +103,7 @@ class TransitTrips
       mbta_id: row[:stop_id],
       lat: row[:stop_lat],
       lng: row[:stop_lon],
-      next_arrivals: []
+      next_arrivals: [['(sched)',nil]]
     }
   end
 
@@ -155,10 +155,10 @@ class TransitTrips
   end
 
   def add_next_arrival(stop_id, time, trip_id)
-    return if @stops[stop_id][:next_arrivals].length >= NEXT_ARRIVALS_MAX
+    return if @stops[stop_id][:next_arrivals].length >= NEXT_ARRIVALS_MAX + 1
     time_string, in_future = *format_and_flag_time(time)
     if in_future == 1
-      @stops[stop_id][:next_arrivals] << [time_string, trip_id]
+      @stops[stop_id][:next_arrivals].insert(-2, [time_string, trip_id])
       # track this for figuring out imminent stops
       if @next_arrivals[trip_id].nil?
         @next_arrivals[trip_id] = [stop_id, time]
