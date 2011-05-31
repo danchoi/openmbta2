@@ -4,6 +4,8 @@ require 'open-uri'
 
 module Nextbus
 
+  PING_INTERVAL = 1.5
+
   class << self
     def populate_route_list
       url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=mbta'
@@ -40,6 +42,15 @@ module Nextbus
       end
     end
 
+    def get_all_predictions
+      puts "Getting all predictions -- #{Time.now}"
+      DB["select tag from nextbus_routes"].each do |x|
+        puts "Getting predictions for route #{x[:tag]} -- #{Time.now}"
+        get_predictions x[:tag]
+        sleep PING_INTERVAL
+      end
+    end
+
     def get_predictions(route_tag)
       url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=mbta'
       params = get_stop_tags(route_tag).map {|stoptag| "stops=#{route_tag}|null|#{stoptag}"}.join('&')
@@ -58,14 +69,17 @@ module Nextbus
             block: p[:block],
             triptag: p[:tripTag]
           }
-          puts params.inspect
           DB[:nextbus_predictions].insert params
         end
       end
     end
 
     def get_stop_tags(route_tag)
-      DB["select stoptag from nextbus_route_configs where routetag = ?", route_tag].map {|s| s[:stoptag]}
+      res = DB["select stoptag from nextbus_route_configs where routetag = ?", route_tag].map {|s| s[:stoptag]}
+      if res.empty?
+        raise "No stop tags found for route tag #{route_tag}"
+      end
+      res
     end
   end
 end
@@ -73,5 +87,7 @@ end
 
 if __FILE__ == $0
   #Nextbus.populate_route_list
-  Nextbus.get_predictions("1")
+  #Nextbus.populate_route_configs
+  #Nextbus.get_predictions("4")
+  Nextbus.get_all_predictions
 end
