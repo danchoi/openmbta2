@@ -2,6 +2,7 @@ require 'sequel'
 DB = Sequel.connect 'postgres:///mbta'
 # don't put semicolon at the end of sequel query
 require 'yaml'
+require 'set'
 
 class TransitTrips
   attr :trips, :grid, :stops
@@ -17,10 +18,10 @@ class TransitTrips
   def result
     {
       stops: @stops,
-      first_stop: [],
-      ordered_trip_ids: [],
+      first_stop: @first_stops.to_a,
       imminent_stop_ids: [],
-      ordered_stop_ids: [],
+      ordered_stop_ids: ordered_stop_ids,
+      region: {},
       grid: @grid
     }
   end
@@ -47,7 +48,7 @@ class TransitTrips
 
   def make_grid
     @grid = [] 
-    first_stops = []
+    @first_stops = Set.new
     @trips.each.with_index do |x, col|
       trip_id = x[0] # key
       stoppings = x[1].sort_by {|stopping| stopping[:stop_sequence]} # x[1] is values
@@ -59,10 +60,8 @@ class TransitTrips
         add_next_arrival(stop_id, stopping[:arrival_time], stopping[:trip_id])
 
         pos = stopping[:stop_sequence]
-        if i == 0 && !first_stops.include?(stop_id)
-          first_stops << stop_id
-          #puts "FIRST STOPS"
-          #puts first_stops.inspect
+        if i == 0 && !@first_stops.include?( stopping[:stop_name] )
+          @first_stops << stopping[:stop_name]
         end
         stop_row = @grid.detect {|x| x.is_a?(Hash) && x[:stop][:stop_id] == stop_id}
         if stop_row
@@ -92,6 +91,10 @@ class TransitTrips
       lng: row[:stop_lon],
       next_arrivals: []
     }
+  end
+
+  def ordered_stop_ids
+    @grid.map {|row| row[:stop][:stop_id]}
   end
 
   def add_next_arrival(stop_id, time, trip_id)
@@ -157,13 +160,11 @@ end
 
 
 if __FILE__ == $0
+  require 'pp'
   route = ARGV.first || 'Providence/Stoughton Line'
   direction_id = (ARGV[1] || 1).to_i
   tt = TransitTrips.new route, direction_id
-  puts tt.stops
-  puts tt.grid
-  puts '-' * 80
-  puts 
+  pp tt.result
 end
 
 __END__
