@@ -2,6 +2,9 @@ require 'database'
 require 'nokogiri'
 require 'open-uri'
 
+# This module contains scripts that populate the real-time data tables for MBTA buses.
+# Another module should inject this data into the trip data returned to the iOS client.
+#
 module Nextbus
 
   PING_INTERVAL = 1.5
