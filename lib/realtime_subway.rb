@@ -22,6 +22,27 @@ module RealtimeSubway
       end
     end
 
+    def get_predictions(line)
+      handle = open("http://developer.mbta.com/Data/#{line}.txt")
+      DB.run("delete from rt_subway_predictions  where line = '#{line}'")
+      headers = %w( line trip_id platform_key information_type arrival_time wait_time revenue route ).map {|x| x.to_sym}
+      CSV.new(handle, headers: headers).each do |row|
+        data = row.to_hash
+        data = data.inject({}) {|memo, (k, v)|
+          memo[k] = v.is_a?(String) ? v.strip : v
+          memo
+        }
+        data.delete(:wait_time)
+        data.delete(:revenue)
+        DB[:rt_subway_predictions].insert data
+      end
+    end
+
+    def get_all_predictions
+      %w( Red orange blue ).each do |line|
+        get_predictions line
+      end
+    end
 
     def camel2underscore(s)
       s.gsub(/(\w)([A-Z])/) {|match|
@@ -32,5 +53,6 @@ module RealtimeSubway
 end
 
 if __FILE__ == $0
-  RealtimeSubway.populate_keys
+  #RealtimeSubway.populate_keys
+  RealtimeSubway.get_all_predictions 
 end
