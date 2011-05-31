@@ -3,6 +3,7 @@ require 'json'
 require 'transit_routes'
 require 'transit_trips'
 require 'direction'
+require 'merge_realtime'
 
 # TODO start logging analytics
 
@@ -32,7 +33,14 @@ get '/trips' do
       route = BusRoutes.find_route(route)
     end
     x = TransitTrips.new(route, direction_id)
-    x.result.to_json
+    result = x.result
+    resp = if params[:transport_type] == 'Bus'
+      realtime = RealtimeBus.new(route, direction_id)
+      MergeRealtime.merge_bus(result, realtime)
+    else
+      result
+    end
+    resp.to_json
   rescue TransitTrips::NoRouteData
     resp = {message: {title: 'Alert', body: 'No trips found'}}
     resp.to_json
