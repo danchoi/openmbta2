@@ -5,6 +5,9 @@ require 'yaml'
 require 'set'
 
 class TransitTrips
+
+  NEXT_ARRIVALS_MAX = 4
+
   attr :trips, :grid, :stops
   def initialize(route, direction_id)
     @route = route # a route name
@@ -22,7 +25,7 @@ class TransitTrips
     {
       stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
-      imminent_stop_ids: imminent_stop_ids.map{|x| to_int_key(x)},
+      imminent_stop_ids: imminent_stop_ids.map{|x| to_int_key(x).to_s}.uniq,
       ordered_stop_ids: ordered_stop_ids,
       region: region,
       grid: @grid
@@ -105,9 +108,10 @@ class TransitTrips
     }
   end
 
+  # This is for legacy client compatibility
   def use_int_keys(stops)
     @fixed_stops = {}
-    stops.each {|k, v| @fixed_stops[v[:stop_integer_id]] = v }
+    stops.each {|k, v| @fixed_stops[v[:stop_integer_id].to_s] = v }
     @fixed_stops
   end
 
@@ -142,7 +146,7 @@ class TransitTrips
   end
 
   def add_next_arrival(stop_id, time, trip_id)
-    return if @stops[stop_id][:next_arrivals].length >= 3
+    return if @stops[stop_id][:next_arrivals].length >= NEXT_ARRIVALS_MAX
     time_string, in_future = *format_and_flag_time(time)
     if in_future == 1
       @stops[stop_id][:next_arrivals] << [time_string, trip_id]
@@ -174,8 +178,6 @@ class TransitTrips
       now_hour += + 24
     end
     time_now = "%.2d:%.2d" % [now_hour, Time.now.min]
-
-    puts "time compare: %s %s" % [time_now, time_string]
     if time_string < time_now
       [format_time(time), -1]
     else
