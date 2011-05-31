@@ -104,7 +104,7 @@ class TransitTrips
       mbta_id: row[:stop_id],
       lat: row[:stop_lat],
       lng: row[:stop_lon],
-      next_arrivals: [['(sched)',nil]]
+      next_arrivals: [['(scheduled)',nil]]
     }
   end
 

@@ -1,6 +1,7 @@
 require 'database'
 require 'direction'
 require 'bus_routes'
+require 'realtime_bus'
 
 class TransitRoutes
   def self.routes(route_types)
@@ -15,7 +16,10 @@ class TransitRoutes
         # If subway, the v3 client expects three elements.
         if !([0, 1] & route_types).empty?
           data[:headsigns][-1] << route
-        end
+        # if realtime bus data is available, flag the route as realtime-data-available
+        elsif route_types == [3] && RealtimeBus.available?(route, d[:direction_id])
+          data[:headsigns][-1] << "+ realtime data"
+        end 
       end
       res[:data] << data
     end
