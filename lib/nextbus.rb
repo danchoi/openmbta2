@@ -45,10 +45,10 @@ module Nextbus
       params = get_stop_tags(route_tag).map {|stoptag| "stops=#{route_tag}|null|#{stoptag}"}.join('&')
       url += "&" + params
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
-
+      DB["delete from nextbus_predictions where routetag = ? ", route_tag]
       Nokogiri::XML.parse(xml).xpath('//predictions').each do |s|
         stop_tag = s[:stopTag] 
-        s.xpath('//prediction').each do |p|
+        s.xpath('./direction/prediction').each do |p|
           params = {
             routetag: route_tag,
             stoptag: stop_tag,
@@ -58,6 +58,7 @@ module Nextbus
             block: p[:block],
             triptag: p[:tripTag]
           }
+          puts params.inspect
           DB[:nextbus_predictions].insert params
         end
       end
