@@ -4,25 +4,33 @@ DB = Sequel.connect 'postgres:///mbta'
 require 'yaml'
 
 class TransitTrips
-  attr :trips, :grid
+  attr :trips, :grid, :stops
   def initialize(route, direction_id)
     @route = route # a route name
     @direction_id = direction_id # let direction by 0 or 1
     @trips = Hash.new {|hash, key| hash[key] = []}
+    @stops = {}
     calc_next_arrivals
     make_grid
   end
 
   def calc_next_arrivals
-    query = "select stops.stop_name, stops.stop_code, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
+    #query = "select stops.stop_name, stops.stop_id, stops.parent_station, stops.stop_code, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
+    query = "select stops.stop_name, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
     DB[query, @route, @direction_id].each do |row|
       stopping = { 
         arrival_time: row[:arrival_time], 
         stop_name: row[:stop_name], 
         stop_sequence: row[:stop_sequence],
-        stop_id: row[:stop_id]
+        stop_id: row[:stop_id],
+        trip_id: row[:trip_id]
       }
       @trips[row[:trip_id]] << stopping
+      # fill in these values later
+      @stops[row[:stop_id]] = {}
+    end
+    DB["select * from stops where stop_id in ?", @stops.keys].each do |row|
+      @stops[row[:stop_id]] = convert_stop_data(row)
     end
   end
 
@@ -34,27 +42,60 @@ class TransitTrips
       stoppings = x[1].sort_by {|stopping| stopping[:stop_sequence]} # x[1] is values
       next_grid_row = 0
       stoppings.each_with_index do |stopping, i|
-        stop = stopping[:stop_name]
-        # TODO mark time if past or future
+        stop_id = stopping[:stop_id]
         time = format_and_flag_time stopping[:arrival_time]
+
+        add_next_arrival(stop_id, stopping[:arrival_time], stopping[:trip_id])
+
         pos = stopping[:stop_sequence]
-        if i == 0 && !first_stops.include?(stop)
-          first_stops << stop
+        if i == 0 && !first_stops.include?(stop_id)
+          first_stops << stop_id
           #puts "FIRST STOPS"
           #puts first_stops.inspect
         end
-        stop_row = @grid.detect {|x| x.is_a?(Hash) && x[:stop] == stop}
+        stop_row = @grid.detect {|x| x.is_a?(Hash) && x[:stop][:stop_id] == stop_id}
         if stop_row
           stop_row[:times][col] = time
           next_grid_row = @grid.index(stop_row) + 1
         else
           values = Array.new(@trips.size)
           values[col] = time
-          stop_row = {:stop => stop, :times => values}
+          stop_data = {
+            stop_id: stop_id,
+            name: stopping[:stop_name]
+          }
+          stop_row = {:stop => stop_data, :times => values}
           @grid.insert(next_grid_row, stop_row)
           next_grid_row += 1
         end
       end
+    end
+  end
+
+  def convert_stop_data(row)
+    {
+      name: row[:stop_name],
+      parent_stop_mbta_id: null_or_value(row[:parent_station]),
+      mbta_id: row[:stop_id],
+      lat: row[:stop_lat],
+      lng: row[:stop_lon],
+      next_arrivals: []
+    }
+  end
+
+  def add_next_arrival(stop_id, time, trip_id)
+    return if @stops[stop_id][:next_arrivals].length >= 3
+    time_string, in_future = *format_and_flag_time(time)
+    if in_future == 1
+      @stops[stop_id][:next_arrivals] << [time_string, trip_id]
+    end
+  end
+
+  def null_or_value(x)
+    if x.nil? || x == ''
+      nil
+    else
+      x
     end
   end
 
@@ -108,72 +149,10 @@ if __FILE__ == $0
   route = ARGV.first || 'Providence/Stoughton Line'
   direction_id = (ARGV[1] || 1).to_i
   tt = TransitTrips.new route, direction_id
-  puts tt.trips
+  puts tt.stops
   puts tt.grid
+  puts '-' * 80
+  puts 
 end
 
 __END__
-
-#route = '1'
-route = 'Providence/Stoughton Line'
-query = <<QUERY
-select stops.stop_name, stops.stop_code, st.* from stop_times_today('#{route}', 1) st join stops using(stop_id)
-QUERY
-
-@trips = Hash.new {|hash, key| hash[key] = []}
-DB[query].each do |row|
-  stopping = { 
-    arrival_time: row[:arrival_time], 
-    stop_name: row[:stop_name], 
-    stop_sequence: row[:stop_sequence],
-    stop_id: row[:stop_id]
-  }
-  trips[row[:trip_id]] << stopping
-end
-
-puts '-' * 80
-
-#puts trips.to_yaml
-
-trips.each do |k, v|
-  puts
-  puts "trip: #{k}"
-  puts v.sort_by {|x| x[:stop_sequence]}.inspect
-end
-
-def make_grid(trips)
-  puts "trips: %s" % trips.size
-  grid = [] 
-  first_stops = []
-  trips.each.with_index do |x, col|
-    trip_id = x[0]
-    stoppings = x[1]
-    next_grid_row = 0
-    stoppings.each_with_index do |stopping, i|
-      stop = stopping[:stop_name]
-      time = stopping[:arrival_time]
-      pos = stopping[:stop_sequence]
-      if i == 0 && !first_stops.include?(stop)
-        first_stops << stop
-        #puts "FIRST STOPS"
-        #puts first_stops.inspect
-      end
-      stop_row = grid.detect {|x| x.is_a?(Hash) && x[:stop] == stop}
-      if stop_row
-        stop_row[:times][col] = time
-        next_grid_row = grid.index(stop_row) + 1
-      else
-        values = Array.new(trips.size)
-        values[col] = time
-        stop_row = {:stop => stop, :times => values}
-        grid.insert(next_grid_row, stop_row)
-        next_grid_row += 1
-      end
-    end
-  end
-  puts grid.inspect
-  grid
-end
-puts '-' * 80
-
-make_grid(trips)
