@@ -14,6 +14,17 @@ class TransitTrips
     make_grid
   end
 
+  def result
+    {
+      stops: @stops,
+      first_stop: [],
+      ordered_trip_ids: [],
+      imminent_stop_ids: [],
+      ordered_stop_ids: [],
+      grid: @grid
+    }
+  end
+
   def calc_next_arrivals
     #query = "select stops.stop_name, stops.stop_id, stops.parent_station, stops.stop_code, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
     query = "select stops.stop_name, st.* from stop_times_today(?, ?) st join stops using(stop_id)"

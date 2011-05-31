@@ -27,6 +27,5 @@ get '/trips' do
   direction_id = Direction.name2id params['headsign'] # now inbound or outbound
   puts params.inspect
   x = TransitTrips.new(route, direction_id)
-  puts x.trips
-    
+  x.result.to_json
 end
