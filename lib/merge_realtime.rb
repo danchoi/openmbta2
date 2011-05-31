@@ -21,9 +21,17 @@ module MergeRealtime
         data[:next_arrivals] = realtime_predictions.map {|x|
           time, trip_id = *x
           time_s = time.strftime("%I:%M:%S")
-          [ format_time(time_s), trip_id ]
+          [ time_s, trip_id ]
+        }.select {|x|
+          time_s, trip_id = *x
+          time_s > Time.now.strftime('%I:%M%S')
+        }.map {|x|
+          time_s, trip_id = *x
+          [format_time(time_s), trip_id]
         }[0,3] + [["(realtime)", nil]]
-        data
+        if data[:next_arrivals].size == 1
+          data[:next_arrivals] = data[:sched_arrivals]
+        end
         memo[stop_id] = data
         memo
       end
