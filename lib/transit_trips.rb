@@ -22,7 +22,7 @@ class TransitTrips
       first_stop: @first_stops.to_a,
       imminent_stop_ids: imminent_stop_ids,
       ordered_stop_ids: ordered_stop_ids,
-      region: {},
+      region: region,
       grid: @grid
     }
   end
@@ -97,9 +97,25 @@ class TransitTrips
   end
 
   def imminent_stop_ids
-    puts "@next_arrivals"
     @next_arrivals.map {|trip_id, (stop_id, time)|
       stop_id
+    }
+  end
+
+  def region
+    lats  = @stops.map {|stop_id, data| data[:lat]}
+    lngs  = @stops.map {|stop_id, data| data[:lng]}
+    center_lat = lats.size > 1 ? ((lats.max + lats.min) / 2) : lats[0]
+    center_lng = lngs.size > 1 ? ((lngs.max + lngs.min) / 2) : lngs[0]
+    lat_span = lats.size > 1 ? ((lats.max - lats.min) * 0.95) : 0.0219
+    lng_span = lngs.size > 1 ? ((lngs.max - lngs.min) * 0.9) : 0.023
+    # Shift center lat up a little to compensate for height of pin
+    center_lat = center_lat + (lat_span * 0.05)
+    {
+      center_lat: center_lat,
+      center_lng: center_lng,
+      lat_span: lat_span,
+      lng_span: lng_span
     }
   end
 
