@@ -26,6 +26,7 @@ get '/trips' do
   route = params['route_short_name']
   direction_id = Direction.name2id params['headsign'] # now inbound or outbound
   puts params.inspect
+  puts direction_id
   begin
     if params[:transport_type] == 'Bus'
       route = BusRoutes.find_route(route)
@@ -33,7 +34,7 @@ get '/trips' do
     x = TransitTrips.new(route, direction_id)
     x.result.to_json
   rescue TransitTrips::NoRouteData
-    puts "eception'{w;"
+    resp = {message: {title: 'Alert', body: 'No trips found'}}
+    resp.to_json
   end
-
 end

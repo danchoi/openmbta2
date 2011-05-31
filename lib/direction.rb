@@ -7,6 +7,6 @@ module Direction
   end
 
   def self.name2id(name)
-    name.downcase =~ /^in\b/ ? 1 : 0
+    (name.downcase =~ /^inbound/) ? 1 : 0
   end
 end

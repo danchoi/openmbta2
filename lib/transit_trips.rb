@@ -23,7 +23,7 @@ class TransitTrips
   end
 
   def result
-    {
+    r = {
       stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
       imminent_stop_ids: imminent_stop_ids.map{|x| to_int_key(x).to_s}.uniq,
@@ -31,6 +31,11 @@ class TransitTrips
       region: region,
       grid: @grid
     }
+
+    if @next_arrivals.empty?
+      r[:message] = {title: 'Alert', body: 'No more trips for the day'}
+    end
+    r
   end
 
   def calc_next_arrivals
