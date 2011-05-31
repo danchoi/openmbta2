@@ -5,13 +5,13 @@ DB = Sequel.connect 'postgres:///mbta'
 
 class TransitRoutes
   def self.routes(route_types)
-    sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint) where route_type in ?"
+    sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ?"
     routes = DB[sql, route_types]
     res = {:data => []}
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
       directions.each do |d|
-        direction_name = Direction.id2name d[:direction_id] 
+        direction_name = Direction.id2name(d[:direction_id], d[:headsign])  
         data[:headsigns] << [direction_name, d[:trips_left]] 
         # If subway, the v3 client expects three elements.
         # Just repeat the 1st one. Clean this up in v4
@@ -35,5 +35,6 @@ class TransitRoutes
 end
 
 if __FILE__ == $0
-  puts TransitRoutes.routes([ARGV.first.to_i])
+  require 'pp'
+  pp TransitRoutes.routes([ARGV.first.to_i])
 end
