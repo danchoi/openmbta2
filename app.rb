@@ -34,7 +34,8 @@ get '/trips' do
     end
     x = TransitTrips.new(route, direction_id)
     result = x.result
-    resp = if params[:transport_type] == 'Bus'
+    resp = if params[:transport_type] == 'Bus' && 
+             RealtimeBus.available?(route, direction_id)
       realtime = RealtimeBus.new(route, direction_id)
       MergeRealtime.merge_bus(result, realtime)
     else

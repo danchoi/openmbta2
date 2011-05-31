@@ -526,3 +526,8 @@ tag) where routes.route_type = 3;
 
 TODO: created_at for predictions
 
+DONE: realtime bus
+
+next: realtime subway
+
+
