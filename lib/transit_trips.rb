@@ -11,6 +11,7 @@ class TransitTrips
     @direction_id = direction_id # let direction by 0 or 1
     @trips = Hash.new {|hash, key| hash[key] = []}
     @stops = {}
+    @next_arrivals = {}
     calc_next_arrivals
     make_grid
   end
@@ -19,7 +20,7 @@ class TransitTrips
     {
       stops: @stops,
       first_stop: @first_stops.to_a,
-      imminent_stop_ids: [],
+      imminent_stop_ids: imminent_stop_ids,
       ordered_stop_ids: ordered_stop_ids,
       region: {},
       grid: @grid
@@ -56,9 +57,7 @@ class TransitTrips
       stoppings.each_with_index do |stopping, i|
         stop_id = stopping[:stop_id]
         time = format_and_flag_time stopping[:arrival_time]
-
         add_next_arrival(stop_id, stopping[:arrival_time], stopping[:trip_id])
-
         pos = stopping[:stop_sequence]
         if i == 0 && !@first_stops.include?( stopping[:stop_name] )
           @first_stops << stopping[:stop_name]
@@ -97,11 +96,22 @@ class TransitTrips
     @grid.map {|row| row[:stop][:stop_id]}
   end
 
+  def imminent_stop_ids
+    puts "@next_arrivals"
+    @next_arrivals.map {|trip_id, (stop_id, time)|
+      stop_id
+    }
+  end
+
   def add_next_arrival(stop_id, time, trip_id)
     return if @stops[stop_id][:next_arrivals].length >= 3
     time_string, in_future = *format_and_flag_time(time)
     if in_future == 1
       @stops[stop_id][:next_arrivals] << [time_string, trip_id]
+      # track this for figuring out imminent stops
+      if @next_arrivals[trip_id].nil?
+        @next_arrivals[trip_id] = [stop_id, time]
+      end
     end
   end
 
