@@ -72,13 +72,7 @@ module Nextbus
             block: p[:block],
             triptag: p[:tripTag]
           }
-          begin
-            DB[:nextbus_predictions].insert params
-          rescue
-            puts xml
-            puts params.inspect
-            raise
-          end
+          DB[:nextbus_predictions].insert params
         end
       end
     end
