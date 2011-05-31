@@ -13,9 +13,8 @@ class TransitRoutes
         direction_name = Direction.id2name(d[:direction_id], d[:headsign])  
         data[:headsigns] << [direction_name, d[:trips_left]] 
         # If subway, the v3 client expects three elements.
-        # Just repeat the 1st one. Clean this up in v4
         if !([0, 1] & route_types).empty?
-          data[:headsigns][-1] << direction_name
+          data[:headsigns][-1] << route
         end
       end
       res[:data] << data
