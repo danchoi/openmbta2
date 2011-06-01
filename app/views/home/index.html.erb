@@ -1,0 +1,146 @@
+
+<h2>OpenMBTA for the iPad</h2>
+
+<p>
+ You can get OpenMBTA for the Apple iPad from the iTunes App Store for free <%= link_to "by
+clicking here", "http://ax.itunes.apple.com/us/app/openmbta-for-ipad/id395963566?mt=8#ls=1" %>. 
+</p>
+
+<%= image_tag "ipad-screens/IMG_0007.jpg", :class => 'ipad-screenshot' %>
+
+
+<hr/>
+
+<h2>OpenMBTA for the iPhone</h2>
+<p>
+ You can get the OpenMBTA iPhone app from the iTunes App Store for free <%= link_to "by
+clicking here", "http://ax.itunes.apple.com/us/app/openmbta/id336082252?mt=8#ls=1" %>. 
+The current version is <strong>1.3</strong>. The new version introduces a new
+scrolling schedule view and multitasking support.
+</p>
+
+
+<p>OpenMBTA will show you today's scheduled and real-time arrival times for
+MBTA buses, subway trains, commuter rail lines, and ferries. (Real-time information is available
+for certain buses and subway lines.) It also shows you the latest service delay
+announcements from the MBTA.</p> 
+
+<%= image_tag "screens1.3/IMG_0004.jpg", :class => 'screenshot' %>
+<%= image_tag "screens1.3/IMG_0002.jpg", :class => 'screenshot' %>
+
+<p>This application is under continual development. If you
+find any bugs or have a good feature or user interface suggestion, please let
+us know on the <%= link_to "Support & Feedback Page", "/support" %>.  </p>
+
+<a name="how-to"></a>
+
+<h2>How to use the iPhone app</h2>
+
+<p>Let's just run through a basic use case. Say you're somewhere in
+Cambridgeport, and you want to know where the nearest stop for the Number 1 Bus
+to the Boston side of the Charles River is and when it's going to arrive next.</p>
+
+<p>Starting at the main menu, you want to press <b>Bus</b>.</p> 
+
+<p>The next screen will show you all the bus routes with trips still scheduled 
+today, ordered by number. If the bus you're interested in has a high number, you
+can navigate to it more quickly using the number index along the right. In this
+case, we don't need to do that because Bus 1 is at the top of the list. </p>
+
+<p>For every bus route, you'll see all the headsigns for that route. Usually
+this means that there is one headsign for each direction, but some routes are
+more complicated and have more than two headsigns. For each headsign, you'll
+also see the number of trips left for today.</p>
+
+<p> Please note that if a bus route isn't in service today, it won't show up at all on this list. </p>
+
+<p>We've found Bus 1 going toward Boston, so let's tap that. </p>
+
+<%= image_tag "screens/bus-routes-annotated.jpg", :class => "screenshot" %>
+
+<p>The next screen is the heart of the application. It is actually two views.
+By default, you'll see the map view. If you tap on the "Schedule"
+button, you'll see a scrollable schedule. The map view will show real-time information when a real-time data
+feed for that route is available; otherwise, it shows next scheduled arrival
+times. The schedule view always presents scheduled arrival times.</p>
+
+<%= image_tag "screens1.3/IMG_0004.jpg", :class => 'screenshot' %>
+<%= image_tag "screens1.3/IMG_0008.jpg", :class => 'screenshot' %>
+
+<%= render :partial => 'help/guide' %>
+
+
+<p>
+You can also bookmark routes using the bookmark button the top of the map or
+schedule screens. Bookmarked routes will show up at the top of the main
+menu.
+</p>
+
+<p>
+Finally, check out the T-Alerts and the Twitter #mbta feed screens. 
+</p>
+
+
+<%= image_tag "screens1.2/IMG_0011.PNG", :class => 'screenshot' %>
+<%= image_tag "screens1.2/IMG_0010.PNG", :class => 'screenshot' %>
+
+<%= render :partial => 'help/guide3' %>
+
+<a name='mobile-web'></a>
+<h2>OpenMBTA for Mobile Browsers</h2>
+
+<p>
+A beta version of OpenMBTA for mobile web browsers is now available.
+Visit this URL on your mobile browser to use it:
+</p>
+
+<p>
+  <a href="http://openmbta.org/mobile">http://openmbta.org/mobile</a>
+</p>
+
+<p>
+  To save typing, you can also visit:
+</p>
+
+<p>
+  <a href="http://m.openmbta.org">http://m.openmbta.org</a>
+</p>
+
+
+<hr/>
+
+<a name='developers'></a>
+
+<h3>OpenMBTA is an open source project</h3>
+
+<p> The code for OpenMBTA is open source. Developers based in other metro areas who would like to
+adapt the source code for OpenMBTA to produce free iPhone apps for their own
+public transit systems are especially welcome to use the code base.</p>
+
+<p>The code for the project is available on GitHub at
+<%= link_to "http://github.com/danchoi/openmbta", "http://github.com/danchoi/openmbta" %>.
+</p>
+
+<p>A Google Group has been set up for OpenMBTA project development:
+<%= link_to "OpenMBTA Google Group", "http://groups.google.com/group/openmbta" %>.
+</p>
+
+<p>The iPhone client is written in Objective-C. The data backend is written in Ruby, using
+Ruby on Rails.</p>
+
+<hr/>
+<a name="next-release"></a>
+
+<h3>Goals for the next release</h3>
+
+<p>You can help determine next features through user feedback. Please leave your
+suggestions on the <%= link_to 'Support & Feedback Page', '/support' %>.</p>
+
+<hr/>
+<a name='credits'></a>
+<%= render :partial => 'credits' %>
+
+
+<br/>
+<br/>
+
