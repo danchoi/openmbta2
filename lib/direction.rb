@@ -23,6 +23,9 @@ module Direction
 
   def self.name2id(name, route=nil)
     name = name.split(':')[0]
+    if name.downcase !~ /^\w+bound/
+      raise OpenMBTA::InvalidDirection
+    end
     REVERSE_DIRECTION_MAPPING[[route, name]] ||
       (name.downcase =~ /^inbound/ ? 1 : 0)
     

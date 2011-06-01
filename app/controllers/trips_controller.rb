@@ -4,8 +4,8 @@ class TripsController < ApplicationController
     # irrelevant for now params[:headsign]
     route = params['route_short_name']
     direction = params['headsign'].split(':')[0]
-    direction_id = Direction.name2id(direction, route) # now inbound or outbound
     begin
+      direction_id = Direction.name2id(direction, route) # now inbound or outbound
       if params[:transport_type] == 'Bus'
         route = BusRoutes.find_route(route)
       end
@@ -21,7 +21,7 @@ class TripsController < ApplicationController
                result 
              end
       render :json => resp.to_json
-    rescue TransitTrips::NoRouteData
+    rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection
       resp = {message: {title: 'Alert', body: 'No trips found, You may need to update your bookmark, as the dataset has changed.'}}
       render :json => resp.to_json
     end

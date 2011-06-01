@@ -8,3 +8,6 @@ require 'rexml/document'
 require 'nextbus_feeds'
 require 'subway_feed'
 
+module OpenMBTA
+  class InvalidDirection < StandardError; end
+end
