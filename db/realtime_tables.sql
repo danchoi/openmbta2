@@ -53,6 +53,9 @@ create table rt_subway_predictions (
   route varchar
 );
 
+create VIEW view_subway_predictions 
+as select platform_name, keys.stop_id, direction, platform_order, rt_subway_predictions.* from rt_subway_predictions inner join rt_subway_keys keys using(platform_key);
+
 create table t_alerts (
   title varchar,
   route varchar,
