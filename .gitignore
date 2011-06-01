@@ -5,3 +5,4 @@ mbta.dump
 log/*.log
 tmp/
 
+t_alerts/curl.sh
