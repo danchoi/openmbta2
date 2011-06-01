@@ -3,11 +3,8 @@ class TweetsController < ApplicationController
   layout 'mobile'
   def index
     cmd  = "curl -s http://search.twitter.com/search.atom?q=%23mbta"
-    logger.debug cmd
     xml_string = `#{cmd}`
-
     doc = REXML::Document.new(xml_string)
-
     @entries = []
     doc.elements.each("//entry") do |entry|
       image = nil
@@ -23,7 +20,7 @@ class TweetsController < ApplicationController
         :content => entry.elements["content"].text
       }
     end
-    logger.debug @entries.inspect
+    #logger.debug @entries.inspect
 
   end
 
