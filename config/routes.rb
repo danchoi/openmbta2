@@ -5,6 +5,17 @@ Openmbta2::Application.routes.draw do
   match '/routes/:transport_type', :to => OpenMBTA2
   match '/trips', :to => OpenMBTA2
 
+  match '/alerts' => 'alerts#index'
+  match '/alerts.:format' => 'alerts#index'
+  resources :tweets
+  match '/alerts/:guid' => 'alerts#show'
+  match '/help/:target_controller/:transport_type' => 'help#show'
+  match '/about/:action' => 'about#index'
+  match '/support/:action' => 'support#index'
+  match '/mobile' => 'main#index'
+  match '/main' => 'main#index'
+  match '/' => 'home#index'
+  match '/:controller(/:action(/:id))'
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
