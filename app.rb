@@ -61,6 +61,11 @@ helpers do
   end
 end
 
+get '/mobile.css' do
+  content_type 'text/css', :charset => 'utf-8'
+  scss :mobile
+end
+
 get '/help/:target_controller/:transport_type' do
   @transport_type = params[:transport_type] || "bus"
   if ['subway', 'commuter rail'].include? @transport_type.downcase
@@ -86,6 +91,14 @@ get '/tweets' do
     }
   end
   haml :tweets
+end
+
+get '/alerts' do
+
+end
+
+get '/alerts/:guid' do
+
 end
 
 
