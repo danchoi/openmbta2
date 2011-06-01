@@ -17,8 +17,7 @@ module Openmbta2
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-    require 'subway_feed'
-    require 'nextbus_feeds'
+    require 'openmbta2'
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
