@@ -7,7 +7,7 @@ require 'open-uri'
 
 module NextbusFeeds
 
-  PING_INTERVAL = 1.5
+  PING_INTERVAL = 0.1
 
   class << self
     def populate_route_list
