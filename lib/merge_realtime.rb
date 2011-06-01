@@ -34,11 +34,11 @@ module MergeRealtime
           data[:sched_arrivals] = data[:next_arrivals]
           data[:next_arrivals] = realtime_predictions.map {|x|
             time, trip_id = *x
-            time_s = time.strftime("%I:%M:%S")
+            time_s = time.strftime("%H:%M:%S")
             [ time_s, trip_id ]
           }.select {|x|
             time_s, trip_id = *x
-            time_s > Time.now.strftime('%I:%M%S')
+            time_s > Time.now.strftime('%H:%M%S')
           }.map {|x|
             time_s, trip_id = *x
             [format_time(time_s), trip_id]
