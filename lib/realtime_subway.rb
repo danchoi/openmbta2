@@ -3,7 +3,8 @@ require 'database'
 class RealtimeSubway
 
   def self.available?(route, direction)
-    route = route.split(/\s/)[0]
+
+    route = route.split(/\s/)[0] # Red instead of Red Line
     dataset = DB["select count(*) from view_subway_predictions where line =  ? and direction = ? and arrival_time >= now()", route, direction].first
     dataset[:count] > 0
   end

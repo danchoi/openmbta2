@@ -17,7 +17,7 @@ module SubwayFeed
           memo
         end
         direction_mapping = {
-          'NB' => 'Northbound', 'SB' => 'Soutbound',
+          'NB' => 'Northbound', 'SB' => 'Southbound',
           'EB' => 'Eastbound', 'WB' => 'Westbound'
         }
         dir_id = direction_mapping[data[:direction]]

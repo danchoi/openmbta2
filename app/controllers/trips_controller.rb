@@ -3,7 +3,7 @@ class TripsController < ApplicationController
   def show
     # irrelevant for now params[:headsign]
     route = params['route_short_name']
-    direction = params['headsign']
+    direction = params['headsign'].split(':')[0]
     direction_id = Direction.name2id(direction, route) # now inbound or outbound
     begin
       if params[:transport_type] == 'Bus'
