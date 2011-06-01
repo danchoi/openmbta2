@@ -7,6 +7,6 @@ select date_trunc('minute', now())
 
 - t-alerts; don't cron? why not? keep a record? analyze
   - rails runner 'Alert.update'
-  - later, match with routes!
-
+  - match alerts to routes
+  - http://groups.google.com/group/massdotdevelopers/browse_thread/thread/44dc5e7254d322ac/745ca06632769a09?lnk=gst&q=t-alerts#745ca06632769a09
 
