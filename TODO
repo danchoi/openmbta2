@@ -1,10 +1,4 @@
-- round realtime seconds
-http://stackoverflow.com/questions/6195439/postgres-how-do-you-round-a-timestamp-up-or-down-to-the-nearest-minute
-
-  select date_trunc('minute', now())
-
 - alert people to update bookmarks
-
 
 LATER
 

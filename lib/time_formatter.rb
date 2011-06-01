@@ -21,7 +21,7 @@ module TimeFormatter
     # "%H:%M:%S" -> 12 hour clock with am or pm
     hour, min, secs = time.split(":")
     if secs.to_i > 29
-      min = min.to_i + 1
+      min = "%.2d" % (min.to_i + 1)
     end
     hour = hour.to_i
     suffix = 'a'
