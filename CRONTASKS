@@ -1,14 +1,10 @@
 
 SETUP
 NextbusFeeds.popular_route_list
-NextbusFeeds.popular_route_tags
+NextbusFeeds.popular_route_configs
 SubwayFeed.populate_keys
 
-
-nextbus_feeds.rb
-subway_feed.rb
-
-Three tasks:
+Three Cron tasks:
 
 NextbusFeeds.get_all_predictions
 SubwayFeed.get_all_predictions

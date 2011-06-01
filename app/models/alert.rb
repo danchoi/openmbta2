@@ -12,7 +12,6 @@ class Alert
   end
 
   def self.parse(xml)
-    puts xml
     doc = Nokogiri::XML.parse(xml)
     items = doc.xpath("//item").map do |item|
       %w{title description link guid pubDate}.inject({}) do |memo, x|
@@ -20,7 +19,6 @@ class Alert
         memo
       end
     end
-    pp items.inspect
     items
   end
 end
