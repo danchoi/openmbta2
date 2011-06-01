@@ -1,4 +1,10 @@
 
+SETUP
+NextbusFeeds.popular_route_list
+NextbusFeeds.popular_route_tags
+SubwayFeed.populate_keys
+
+
 nextbus_feeds.rb
 subway_feed.rb
 
