@@ -1,0 +1,11 @@
+- @entries.each do |t| 
+  / use css classes for this .odd .evn
+  .alert{:style=>"clear:left;min-height:48px;"}
+    = link_to(image_tag(t[:image], :style => "float:left; padding-right: 5px;width:48px", :border => 0), t[:uri]) 
+    %h4
+      = t[:name] 
+      %span.time= t[:published].strftime("%b %d %I:%M%p ") 
+    = t[:content] 
+
+
+

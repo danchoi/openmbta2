@@ -4,6 +4,7 @@ require 'transit_routes'
 require 'transit_trips'
 require 'direction'
 require 'merge_realtime'
+require 'rexml/document'
 
 # TODO start logging analytics
 
@@ -55,8 +56,8 @@ helpers do
     "<a href='#{url}'>#{text}</a>"
   end
 
-  def image_tag url
-    "<img src='#{url}'/>"
+  def image_tag url, opts={}
+    "<img src='#{url}' style='#{opts[:style]}'/>"
   end
 end
 
@@ -66,6 +67,25 @@ get '/help/:target_controller/:transport_type' do
     @transport_type = @transport_type + ' train'
   end
   haml :help
+end
+
+get '/tweets' do
+  cmd  = "curl -s http://search.twitter.com/search.atom?q=%23mbta"
+  xml_string = `#{cmd}`
+  doc = REXML::Document.new(xml_string)
+  @entries = []
+  doc.elements.each("//entry") do |entry|
+    image = nil
+    # This long winded way is required because of a weird server Ruby issue
+    entry.each_element_with_attribute("rel", "image") {|link| image = link.attributes["href"]}
+    @entries << { :published => DateTime.parse(entry.elements["published"].text),
+      :image => image,
+      :name => entry.elements["author/name"].text,
+      :uri => entry.elements["author/uri"].text,
+      :content => entry.elements["content"].text
+    }
+  end
+  haml :tweets
 end
 
 
