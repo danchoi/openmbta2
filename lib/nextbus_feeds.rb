@@ -5,7 +5,7 @@ require 'open-uri'
 # This module contains scripts that populate the real-time data tables for MBTA buses.
 # Another module should inject this data into the trip data returned to the mobile client.
 
-module Nextbus
+module NextbusFeeds
 
   PING_INTERVAL = 1.5
 
@@ -89,9 +89,9 @@ end
 
 
 if __FILE__ == $0
-  #Nextbus.populate_route_list
-  #Nextbus.populate_route_configs
-  #Nextbus.get_predictions("4")
-  Nextbus.get_all_predictions
+  #NextbusFeeds.populate_route_list
+  #NextbusFeeds.populate_route_configs
+  #NextbusFeeds.get_predictions("4")
+  NextbusFeeds.get_all_predictions
 end
 
