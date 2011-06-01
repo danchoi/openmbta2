@@ -1,12 +1,16 @@
 - round realtime seconds
 http://stackoverflow.com/questions/6195439/postgres-how-do-you-round-a-timestamp-up-or-down-to-the-nearest-minute
 
-select date_trunc('minute', now())
+  select date_trunc('minute', now())
 
 - alert people to update bookmarks
+
+
+LATER
 
 - t-alerts; don't cron? why not? keep a record? analyze
   - rails runner 'Alert.update'
   - match alerts to routes
   - http://groups.google.com/group/massdotdevelopers/browse_thread/thread/44dc5e7254d322ac/745ca06632769a09?lnk=gst&q=t-alerts#745ca06632769a09
+  - ASSOCIATE THE ROUTES LATER
 
