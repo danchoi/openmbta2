@@ -7,8 +7,6 @@ module RealtimeSubway
 
   class << self
     def populate_keys
-      fields = {"Line"=>"Blue", "PlatformKey"=>"BORHW", "PlatformName"=>"ORIENT HEIGHTS WB", "StationName"=>"ORIENT HEIGHTS", "PlatformOrder"=>"4", "StartOfLine"=>"FALSE", "EndOfLine"=>"FALSE", "Branch"=>"Trunk", "Direction"=>"WB", "stop_id"=>"place-orhte", "stop_code"=>nil, "stop_name"=>"Orient Heights Station", "stop_desc"=>nil, "stop_lat"=>"42.386867", "stop_lon"=>"-71.004736"}.keys
-
       url = 'http://developer.mbta.com/RT_Archive/RealTimeHeavyRailKeys.csv'
       handle = open(url)
       DB[:rt_subway_keys].delete
@@ -18,6 +16,12 @@ module RealtimeSubway
           memo[ camel2underscore(k) ] = v
           memo
         end
+        direction_mapping = {
+          'NB' => 'Northbound', 'SB' => 'Soutbound',
+          'EB' => 'Eastbound', 'WB' => 'Westbound'
+        }
+        dir_id = direction_mapping[data[:direction]]
+        data[:direction] = dir_id
         DB[:rt_subway_keys].insert data
       end
     end
@@ -34,6 +38,7 @@ module RealtimeSubway
         }
         data.delete(:wait_time)
         data.delete(:revenue)
+
         DB[:rt_subway_predictions].insert data
       end
     end
@@ -53,6 +58,6 @@ module RealtimeSubway
 end
 
 if __FILE__ == $0
-  #RealtimeSubway.populate_keys
-  RealtimeSubway.get_all_predictions 
+  RealtimeSubway.populate_keys
+  #RealtimeSubway.get_all_predictions 
 end

@@ -25,9 +25,9 @@ end
 get '/trips' do
   # irrelevant for now params[:headsign]
   route = params['route_short_name']
-  direction_id = Direction.name2id params['headsign'] # now inbound or outbound
+  direction = params['headsign']
+  direction_id = Direction.name2id(direction, route) # now inbound or outbound
   puts params.inspect
-  puts direction_id
   begin
     if params[:transport_type] == 'Bus'
       route = BusRoutes.find_route(route)

@@ -530,7 +530,6 @@ DONE: realtime bus
 
 next: realtime subway
 
-
 select platform_name, keys.stop_id, direction, platform_order, rt_subway_predictions.* from rt_subway_predictions inner join rt_subway_keys keys using(platform_key);
 
 
@@ -553,12 +552,12 @@ as select platform_name, keys.stop_id, direction, platform_order, rt_subway_pred
 mbta=# select line, direction, count(*) from view_subway_predictions group by line, direction;
   line  | direction | count
 --------+-----------+-------
- Blue   | EB        |    13
- Blue   | WB        |    18
- Orange | NB        |    21
- Orange | SB        |    31
- Red    | NB        |    88
- Red    | SB        |    74
+ Blue   | EB        |    13   INBOUND
+ Blue   | WB        |    18   OUTBOUND
+ Orange | NB        |    21   INBOUND
+ Orange | SB        |    31   OUTBOUND
+ Red    | NB        |    88   IN 
+ Red    | SB        |    74   OUT
 (6 rows)
 
 
