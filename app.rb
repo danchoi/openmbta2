@@ -49,3 +49,23 @@ get '/trips' do
     resp.to_json
   end
 end
+
+helpers do
+  def link_to text, url
+    "<a href='#{url}'>#{text}</a>"
+  end
+
+  def image_tag url
+    "<img src='#{url}'/>"
+  end
+end
+
+get '/help/:target_controller/:transport_type' do
+  @transport_type = params[:transport_type] || "bus"
+  if ['subway', 'commuter rail'].include? @transport_type.downcase
+    @transport_type = @transport_type + ' train'
+  end
+  haml :help
+end
+
+
