@@ -1,9 +1,11 @@
 require 'open-uri'
+require 'openmbta2'
 
 class Alert
   FEED_URL = "http://talerts.com/rssfeed/alertsrss.aspx"
 
   def self.update
+    puts "Updating t-alerts at #{Time.now}"
     items = parse(open(FEED_URL).read)
     items.each do |item_hash|
       DB[:t_alerts].filter(:guid => item_hash[:guid]).delete
@@ -21,4 +23,8 @@ class Alert
     end
     items
   end
+end
+
+if __FILE__ == $0
+  Alert.update
 end
