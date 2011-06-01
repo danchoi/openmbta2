@@ -43,14 +43,15 @@ echo "running denormalize.sql"
 psql mbta < db/denormalize.sql
 
 echo "adding functions"
+createlang plpgsql mbta;
 psql mbta < db/functions.sql
 
 echo "adding realtime tables"
 psql mbta < db/realtime_tables.sql
 
 # add postGIS ; works for ubuntu
+# TODO change this to work with different versions of postgis
 echo "Adding plpgsql"
-createlang plpgsql mbta;
 psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql && \
 psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql && \
 psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis_comments.sql
