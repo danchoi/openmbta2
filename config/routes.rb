@@ -11,6 +11,7 @@ Openmbta2::Application.routes.draw do
   match '/about/:action' => 'about#index'
   match '/support/:action' => 'support#index'
   match '/mobile' => 'main#index'
+  match '/trips/realtime' => 'main#index'
   match '/main' => 'main#index'
   match '/' => 'home#index'
   match '/:controller(/:action(/:id))'
