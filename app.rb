@@ -34,13 +34,15 @@ get '/trips' do
     end
     x = TransitTrips.new(route, direction_id)
     result = x.result
-    resp = if params[:transport_type] == 'Bus' && 
-             RealtimeBus.available?(route, direction_id)
-      realtime = RealtimeBus.new(route, direction_id)
-      MergeRealtime.merge_bus(result, realtime)
-    else
-      result
-    end
+    resp = if params[:transport_type] == 'Bus' && RealtimeBus.available?(route, direction_id) 
+             realtime = RealtimeBus.new(route, direction_id) 
+             MergeRealtime.merge(result, realtime) 
+           elsif params[:transport_type] == 'Subway' && RealtimeSubway.available?(route, direction) 
+             realtime = RealtimeSubway.new(route, direction)  # use direction label
+             MergeRealtime.merge(result, realtime, :subway) 
+           else 
+             result 
+           end
     resp.to_json
   rescue TransitTrips::NoRouteData
     resp = {message: {title: 'Alert', body: 'No trips found'}}
