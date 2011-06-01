@@ -26,5 +26,11 @@ create table nextbus_predictions (
 
 create index nextbus_predictions_routetag_idx on nextbus_predictions (routetag);
 
-
+create table t_alerts (
+  title varchar,
+  link varchar,
+  description text,
+  pubdate timestamp,
+  guid varchar primary key
+);
 

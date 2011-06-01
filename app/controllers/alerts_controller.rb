@@ -2,16 +2,11 @@ class AlertsController < ApplicationController
   layout 'mobile'
 
   def index
-    @alerts = Alert.all(:limit => 40, :order => "pub_date  desc")
-
-    respond_to do |format|
-      format.json { render :json => {:data => @alerts} }
-      format.html { }
-    end
+    @alerts = DB["select * from t_alerts order by pubdate desc limit 40"].all
   end
 
   def show
-    @alert = Alert.find_by_guid params[:guid]
+    @alert = DB[:t_alerts].filter(:guid => params[:guid]).first
     render :layout => 'iphone_layout'
   end
 

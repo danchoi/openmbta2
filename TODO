@@ -3,7 +3,6 @@ http://stackoverflow.com/questions/6195439/postgres-how-do-you-round-a-timestamp
 
 select date_trunc('minute', now())
 
-
 - alert people to update bookmarks
 - t-alerts; don't cron? why not? keep a record? analyze
 
