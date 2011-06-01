@@ -1,14 +1,54 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Openmbta2</title>
-  <%= stylesheet_link_tag :all %>
-  <%= javascript_include_tag :defaults %>
-  <%= csrf_meta_tag %>
-</head>
-<body>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>OpenMBTA iPhone App</title>
+    <% %w{ reset 960 text site }.each do |stylesheet| %>
+      <%= stylesheet_link_tag "#{stylesheet}.css" %>
+    <% end %>
+    <%= csrf_meta_tag %>
+  </head>
+  <body>
+    <div class="container_12">
+      <div class="grid_7 prefix_1" id="main">
+        <% if flash[:notice] %>
+          <div class='flash'>
+            <%= flash[:notice] %>
 
-<%= yield %>
+          </div>
+        <% end %>
+        <%= yield %>
+      </div>
+      <div class="grid_3 suffix_1">
+        
+        <div class="grid_3">
+          <div class="sidebar">
+            <h4>Navigation</h4>
+            <ul>
+              <li><%= link_to "Home", "/" %></li>
+              <li><%= link_to "How to use the iPhone app", :controller => "home", :anchor => "how-to" %></li>
+              <li><%= link_to "Mobile Web Version", :controller => "home", :anchor => "mobile-web" %></li>
+              <li><%= link_to "FAQ", :controller => "support" %></li>
+              <li><%= link_to "Support & Feedback", :controller => "support" %></li>
+              <li><%= link_to "Source Code", :controller => "home", :anchor => "developers" %></li>
+              <li><%= link_to "Goals for the next release", :controller => "home", :anchor => "next-release" %></li>
+              <li><%= link_to "Source Code on GitHub", "http://github.com/danchoi/openmbta" %></li>
+              <li><%= link_to "Google Group for OpenMBTA", "http://groups.google.com/group/openmbta" %></li>
+              <li><%= link_to "Credits", :controller => "home", :anchor => "credits" %></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
-</body>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4028996-8");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
 </html>
