@@ -1,4 +1,6 @@
-- alert people to update bookmarks
+- set up a daemonized things that keeps updating bus realtime
+- wrap subway feed in Timeout 
+- cron subway feeds and Alert.update
 
 LATER
 

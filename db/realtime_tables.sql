@@ -26,6 +26,9 @@ create table nextbus_predictions (
 
 create index nextbus_predictions_routetag_idx on nextbus_predictions (routetag);
 
+CREATE VIEW view_bus_predictions AS 
+select nextbus_predictions.*, stop_name from nextbus_predictions inner join stops on stops.stop_id = nextbus_predictions.stoptag ;
+
 create table rt_subway_keys (
   line varchar,
   platform_key varchar,
