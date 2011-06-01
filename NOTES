@@ -317,6 +317,7 @@ order by route_type, route, direction_id;
 GET ROUTES III
 
 DROP FUNCTION available_routes(timestamp with time zone);
+
 CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
@@ -327,7 +328,7 @@ left outer join
   (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
   trips.direction_id,
   count(*) as trips_left,
-  max(trip_headsign) as headsign
+  array_to_string(array_agg(trip_headsign), ';') as headsign
   from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
   where trips.finished_at > adjusted_time($1)
   group by r.route_type, route, trips.direction_id) b
@@ -574,5 +575,23 @@ https://github.com/brasten/sequel-rails
 
 We can use the Sintra app for serving routes and trips inside Rails
 http://lindsaar.net/2010/2/7/rails_3_routing_with_rack
+
+
+
+Wed Jun  1 14:19:31 EDT 2011
+Deployed. waiting for DNS to update
+
+Next bus google groups announced
+http://groups.google.com/group/massdotdevelopers/browse_thread/thread/ecd7e68b908d2b3a
+
+
+http://groups.google.com/group/massdotdevelopers
+
+commuter connect API
+
+http://groups.google.com/group/massdotdevelopers/browse_thread/thread/483254ba45a737c7
+http://www.mbta.com/uploadedfiles/Rider_Tools/Developer_Page/CommuterConnectDoc_JKR%204%2015%201%2028pm.pdf
+
+http://www.rajsingh.org/boston-area-data-feeds/
 
 

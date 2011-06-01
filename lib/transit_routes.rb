@@ -11,6 +11,7 @@ class TransitRoutes
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
       directions.each do |d|
+        puts d.inspect
         direction_name = Direction.id2name(d[:direction_id], route_types, route)
         data[:headsigns] << [direction_name, d[:trips_left]] 
         # If subway, the v3 client expects three elements.

@@ -51,13 +51,14 @@ left outer join
   (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
   trips.direction_id,
   count(*) as trips_left,
-  max(trip_headsign) as headsign
+  array_to_string(array_agg(trip_headsign), ';') as headsign
   from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
   where trips.finished_at > adjusted_time($1)
   group by r.route_type, route, trips.direction_id) b
   on (a.route_type = b.route_type and a.route = b.route and a.direction_id = b.direction_id)
   order by route_type, route, direction_id;
 $$ language sql;
+
 
 
 
