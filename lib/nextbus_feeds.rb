@@ -92,6 +92,8 @@ if __FILE__ == $0
   #NextbusFeeds.populate_route_list
   #NextbusFeeds.populate_route_configs
   #NextbusFeeds.get_predictions("4")
-  NextbusFeeds.get_all_predictions
+  loop do
+    NextbusFeeds.get_all_predictions
+  end
 end
 
