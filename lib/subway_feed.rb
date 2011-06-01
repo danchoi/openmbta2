@@ -3,7 +3,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'csv'
 
-module RealtimeSubway
+module SubwayFeed
 
   class << self
     def populate_keys
@@ -28,6 +28,7 @@ module RealtimeSubway
 
     def get_predictions(line)
       handle = open("http://developer.mbta.com/Data/#{line}.txt")
+      puts handle
       DB.run("delete from rt_subway_predictions  where line = '#{line}'")
       headers = %w( line trip_id platform_key information_type arrival_time wait_time revenue route ).map {|x| x.to_sym}
       CSV.new(handle, headers: headers).each do |row|
@@ -38,7 +39,6 @@ module RealtimeSubway
         }
         data.delete(:wait_time)
         data.delete(:revenue)
-
         DB[:rt_subway_predictions].insert data
       end
     end
@@ -58,6 +58,6 @@ module RealtimeSubway
 end
 
 if __FILE__ == $0
-  RealtimeSubway.populate_keys
-  #RealtimeSubway.get_all_predictions 
+  #SubwayFeed.populate_keys
+  SubwayFeed.get_all_predictions 
 end
