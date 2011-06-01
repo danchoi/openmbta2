@@ -561,4 +561,5 @@ mbta=# select line, direction, count(*) from view_subway_predictions group by li
 (6 rows)
 
 
+Good. Zoe3 RUBY_VERSION is 1.9.1
 

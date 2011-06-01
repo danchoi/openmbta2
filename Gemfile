@@ -1,0 +1,5 @@
+gem 'nokogiri'
+gem 'sequel'
+gem 'pg'
+gem 'sinatra'
+gem 'haml'
