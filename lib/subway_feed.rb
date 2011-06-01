@@ -27,6 +27,7 @@ module SubwayFeed
     end
 
     def get_predictions(line)
+      puts "Getting predictions for #{line} at #{Time.now}"
       handle = open("http://developer.mbta.com/Data/#{line}.txt")
       DB.run("delete from rt_subway_predictions  where line = '#{line}'")
       headers = %w( line trip_id platform_key information_type arrival_time wait_time revenue route ).map {|x| x.to_sym}
@@ -42,7 +43,7 @@ module SubwayFeed
         DB[:rt_subway_predictions].insert data
         i += 1
       end
-      puts "Got predictions for #{line} at #{Time.now} -- #{i} records created"
+      puts "-- #{i} records created"
     end
 
     def get_all_predictions
