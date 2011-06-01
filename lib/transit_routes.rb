@@ -11,8 +11,17 @@ class TransitRoutes
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
       directions.each do |d|
-        puts d.inspect
-        direction_name = Direction.id2name(d[:direction_id], route_types, route)
+        
+        headsigns = (d[:headsign] || '').split(';')
+        headsign = if route!= 'Green Line'
+                     most_common_value(headsigns)
+                   end
+
+
+        direction_name = Direction.id2name(d[:direction_id], route_types, route) 
+        if headsign
+          direction_name += ": " + headsign
+        end
         data[:headsigns] << [direction_name, d[:trips_left]] 
         # If subway, the v3 client expects three elements.
         if !([0, 1] & route_types).empty?
@@ -34,6 +43,16 @@ class TransitRoutes
       end
     }
     res
+  end
+
+  def self.most_common_value(a)
+    return nil if a.empty?
+    # strip train numbers for commuter rails
+    a.map {|e| 
+      e.gsub(/\s*\([^)]+\)/, '')
+    }.group_by do |e|
+      e
+    end.values.max_by(&:size).first
   end
 end
 

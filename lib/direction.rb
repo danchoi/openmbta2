@@ -22,7 +22,9 @@ module Direction
   end
 
   def self.name2id(name, route=nil)
+    name = name.split(':')[0]
     REVERSE_DIRECTION_MAPPING[[route, name]] ||
       (name.downcase =~ /^inbound/ ? 1 : 0)
+    
   end
 end
