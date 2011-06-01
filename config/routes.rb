@@ -1,4 +1,11 @@
+require 'openmbta2'
+
 Openmbta2::Application.routes.draw do
+
+  match '/routes/:transport_type', :to => OpenMBTA2
+  match '/trips', :to => OpenMBTA2
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
