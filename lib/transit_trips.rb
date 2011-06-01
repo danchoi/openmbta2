@@ -104,7 +104,7 @@ class TransitTrips
       mbta_id: row[:stop_id],
       lat: row[:stop_lat],
       lng: row[:stop_lon],
-      next_arrivals: [['(scheduled)',nil]]
+      next_arrivals: [['(no more trips today)',nil]]
     }
   end
 
@@ -159,6 +159,9 @@ class TransitTrips
     return if @stops[stop_id][:next_arrivals].length >= NEXT_ARRIVALS_MAX + 1
     time_string, in_future = *format_and_flag_time(time)
     if in_future == 1
+      if @stops[stop_id][:next_arrivals].length == 1
+        @stops[stop_id][:next_arrivals] = [["(scheduled)", nil]]
+      end
       @stops[stop_id][:next_arrivals].insert(-2, [time_string, trip_id])
       # track this for figuring out imminent stops
       if @next_arrivals[trip_id].nil?

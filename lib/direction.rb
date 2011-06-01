@@ -13,9 +13,7 @@ module Direction
     memo
   }
 
-
   def self.id2name(direction_id, route_types=nil, route=nil)
-    puts route_types
     if (route_types & [0,1]).size > 0 && (d = DIRECTION_MAPPING[[route, direction_id]])
       d
     else

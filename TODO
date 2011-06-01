@@ -1,5 +1,6 @@
-- realtime subway
-- t-alerts
+- round realtime seconds
+http://stackoverflow.com/questions/6195439/postgres-how-do-you-round-a-timestamp-up-or-down-to-the-nearest-minute
+- t-alerts; don't cron? why not? keep a record? analyze
 - tweets
 - homepage
 - help
