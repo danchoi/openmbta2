@@ -531,3 +531,35 @@ DONE: realtime bus
 next: realtime subway
 
 
+select platform_name, keys.stop_id, direction, platform_order, rt_subway_predictions.* from rt_subway_predictions inner join rt_subway_keys keys using(platform_key);
+
+
+      platform_name      |   stop_id    | direction | platform_order |  line  | trip_id | platform_key | information_type |    arrival_time     | route
+-------------------------+--------------+-----------+----------------+--------+---------+--------------+------------------+---------------------+-------
+ BRAINTREE SB            | place-brntn  | SB        |             17 | Red    | 825     | RBRAS        | Arrived          | 2011-05-31 19:50:29 | 0
+ HARVARD NB              | place-harsq  | NB        |             14 | Red    | 828     | RHARN        | Arrived          | 2011-05-31 19:53:04 | 0
+ PORTER NB               | place-portr  | NB        |             15 | Red    | 828     | RPORN        | Predicted        | 2011-05-31 19:55:52 | 0
+ DAVIS NB                | place-davis  | NB        |             16 | Red    | 828     | RDAVN        | Predicted        | 2011-05-31 19:57:59 | 0
+
+To get the direction_id, we have to do a mapping.
+
+
+CREATE VIEW:
+
+create view view_subway_predictions 
+as select platform_name, keys.stop_id, direction, platform_order, rt_subway_predictions.* from rt_subway_predictions inner join rt_subway_keys keys using(platform_key);
+
+
+mbta=# select line, direction, count(*) from view_subway_predictions group by line, direction;
+  line  | direction | count
+--------+-----------+-------
+ Blue   | EB        |    13
+ Blue   | WB        |    18
+ Orange | NB        |    21
+ Orange | SB        |    31
+ Red    | NB        |    88
+ Red    | SB        |    74
+(6 rows)
+
+
+
