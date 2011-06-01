@@ -1,0 +1,55 @@
+body {
+  -moz-background-clip:border;
+  -moz-background-inline-policy:continuous;
+  -moz-background-origin:padding;
+  padding:20px 0;
+  font-size: 14px;
+}
+#main {
+  padding-bottom: 40px;
+}
+hr {
+  margin-top: 28px;
+}
+p {
+}
+img.screenshot {
+  margin-bottom: 20px;
+  width: 260px; 
+}
+img.ipad-screenshot {
+  margin-bottom: 20px;
+  width: 500px; 
+}
+.sidebar {
+  width: 100%;
+  padding: 0 10px;
+}
+.sidebar h4 {
+  background-color: #EFEFEF;
+}
+.sidebar ul {
+  list-style: none;
+  margin-left: 0;
+}
+.sidebar ul li {
+  margin-left: 0;
+  font-weight: bold;
+}
+table.pin td {
+  vertical-align: top;
+  padding-bottom: 10px;
+}
+.red { color: red; font-weight:bold }
+.green {color:green; font-weight:bold}
+.purple {color:purple; font-weight:bold}
+.blue {color:blue; font-weight:bold}
+
+
+.flash {
+  background-color: #FFC9ED;
+  font-size: 15px;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-style: italic;
+}
