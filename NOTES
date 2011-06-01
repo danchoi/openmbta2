@@ -567,4 +567,7 @@ Good. Zoe3 RUBY_VERSION is 1.9.1
 I think I need to switch from Sinatra to Rails 3
 https://github.com/brasten/sequel-rails
 
+We can use the Sintra app for serving routes and trips inside Rails
+http://lindsaar.net/2010/2/7/rails_3_routing_with_rack
+
 

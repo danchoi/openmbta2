@@ -1,3 +1,7 @@
 data/
 db/load.sql
 mbta.dump
+.bundle
+log/*.log
+tmp/
+
