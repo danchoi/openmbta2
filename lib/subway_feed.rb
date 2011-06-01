@@ -29,6 +29,7 @@ module SubwayFeed
     def get_predictions(line)
       puts "Getting predictions for #{line} at #{Time.now}"
       handle = open("http://developer.mbta.com/Data/#{line}.txt")
+      line = line.capitalize
       DB.run("delete from rt_subway_predictions  where line = '#{line}'")
       headers = %w( line trip_id platform_key information_type arrival_time wait_time revenue route ).map {|x| x.to_sym}
       i = 0
