@@ -34,7 +34,7 @@ class TransitTrips
     }
 
     if @next_arrivals.empty?
-      r[:message] = {title: 'Alert', body: 'No more trips for the day'}
+      r[:message] = {title: 'Alert', body: 'No more trips for the day.'}
     end
     r
   end

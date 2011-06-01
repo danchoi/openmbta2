@@ -2,6 +2,8 @@
 nextbus_feeds.rb
 subway_feed.rb
 
+Three tasks:
+
 NextbusFeeds.get_all_predictions
 SubwayFeed.get_all_predictions
 Alert.update
