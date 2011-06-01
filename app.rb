@@ -61,6 +61,10 @@ helpers do
   end
 end
 
+get '/' do
+  File.read(File.join('public', 'index.html'))
+end
+
 get '/mobile.css' do
   content_type 'text/css', :charset => 'utf-8'
   scss :mobile
