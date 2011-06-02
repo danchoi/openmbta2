@@ -17,7 +17,11 @@ class Alert
     doc = Nokogiri::XML.parse(xml)
     items = doc.xpath("//item").map do |item|
       %w{title description link guid pubDate}.inject({}) do |memo, x|
-        memo[(x == 'pubDate' ? :pubdate : x.to_sym)] = item.at(x).inner_text
+        if x == 'pubDate'
+          memo[:pubdate] = Time.parse(item.at(x).inner_text)
+        else
+          memo[x.to_sym] = item.at(x).inner_text
+        end
         memo
       end
     end
