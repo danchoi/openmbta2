@@ -5,10 +5,10 @@ class TripsController < ApplicationController
     route = params['route_short_name']
     direction = params['headsign'].split(':')[0]
     begin
-      direction_id = Direction.name2id(direction, route) # now inbound or outbound
-      if params[:transport_type] == 'Bus'
+      if params[:transport_type] =~ /bus/i
         route = BusRoutes.find_route(route)
       end
+      direction_id = Direction.name2id(direction, route) # now inbound or outbound
       x = TransitTrips.new(route, direction_id)
       result = x.result
       resp = if params[:transport_type] =~ /bus/i && RealtimeBus.available?(route, direction_id) 
@@ -42,6 +42,9 @@ class TripsController < ApplicationController
         @current_column = nil
         i = 0
         while @current_column.nil?
+          if @grid[i].nil?
+            break
+          end
           @current_column = @grid[i][:times].index {|time, flag| flag == 1}
           i += 1
         end
