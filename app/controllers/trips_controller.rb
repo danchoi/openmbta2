@@ -22,29 +22,32 @@ class TripsController < ApplicationController
              end
     rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection
       resp = {message: {title: 'Invalid Bookmark', body: 'You may need to delete all your old bookmarks and create new ones. The dataset has changed. Sorry for the inconvenience.'}}
-      render :json => resp.to_json
+      respond_to do |format|
+        format.json {
+          render :json => resp.to_json
+        }
+        format.html {
+          render :text => resp[:message]
+        }
+      end
+      return
     end
     respond_to do |format|
       format.json { render :json => resp.to_json }
       format.html {
         @result = resp
         @grid = @result[:grid]
-        if @result[:message]
-          logger.debug @result[:message]
-          render(:text => @result[:message][:body]) 
-        else
-          @num_columns = 6
-          @num_pages = (@grid[0][:times].length.to_f / @num_columns).ceil
-          @current_column = nil
-          i = 0
-          while @current_column.nil?
-            @current_column = @grid[i][:times].index {|time, flag| flag == 1}
-            i += 1
-          end
-          @current_page = (@current_column.to_f / @num_columns).floor
-          @stops = @result[:stops].map {|k,v| v[:stop_id] = k; v}
-          render :layout => 'mobile'
+        @num_columns = 6
+        @num_pages = (@grid[0][:times].length.to_f / @num_columns).ceil
+        @current_column = nil
+        i = 0
+        while @current_column.nil?
+          @current_column = @grid[i][:times].index {|time, flag| flag == 1}
+          i += 1
         end
+        @current_page = (@current_column.to_f / @num_columns).floor
+        @stops = @result[:stops].map {|k,v| v[:stop_id] = k; v}
+        render :layout => 'mobile'
       }
     end
   end

@@ -2,7 +2,7 @@ class MainController < ApplicationController
   layout 'mobile'
 
   def index
-    @modes = %W[ bus commuter_rail subway boat ]
+    @modes = ["Bus", "Commuter Rail", "Subway", "Boat"] 
   end
 
 end

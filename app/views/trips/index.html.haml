@@ -1,6 +1,6 @@
+
 - content_for :header do 
   :javascript
-
     var numTripSets = #{ @num_pages }
     var currentTripSet = 0;
   = javascript_include_tag "jquery-1.6.1.min.js"  
@@ -56,4 +56,5 @@
 = render :partial => 'pager_controls' 
 :javascript
   goToPage(#{@current_page});
+
 

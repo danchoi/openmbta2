@@ -5,7 +5,7 @@
 <ul class="main-menu">
   <% @modes.each do |m| %>
     <li>
-    <%= link_to m.split("_").map(&:capitalize).join(' '), "/routes/#{m}" %>
+    <%= link_to m, "/routes/#{m}" %>
     </li>
   <% end %>
   <li>
