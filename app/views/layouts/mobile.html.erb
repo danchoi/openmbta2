@@ -2,30 +2,21 @@
   <head>
     <title>
       OpenMBTA
-      <% if @route %>
-        / <%= @route %>
+      <% if params[:route] %>
+        / <%= params[:route] %>
       <% end %>
-      <% if @headsign  %>
-        / <%= @headsign %>
-      <% end %>
-      <% if @stop  %>
-        / <%= @stop.name %>
+      <% if params[:headsign]  %>
+        / <%= params[:headsign] %>
       <% end %>
     </title>
-
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta name="format-detection" content="telephone=no"/>
     <%= yield :header %>
     <%= stylesheet_link_tag 'mobile' %>
-
   </head>
   <body <%= yield :body_attr %>>
-
     <%= yield %>
-
-
-
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -36,7 +27,6 @@ var pageTracker = _gat._getTracker("UA-4028996-10");
 pageTracker._trackPageview();
 } catch(err) {}</script>
   </body>
-
 </html>
 
 

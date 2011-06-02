@@ -9,6 +9,7 @@ gem 'sinatra'
 gem 'pg'
 gem 'nokogiri'
 gem 'sequel'
+gem 'haml'
 #gem 'sequel-rails'
 
 # Use unicorn as the web server

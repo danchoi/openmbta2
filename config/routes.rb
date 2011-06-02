@@ -2,8 +2,8 @@ require 'openmbta2'
 
 Openmbta2::Application.routes.draw do
 
-  match '/routes/:transport_type' => 'routes#show'
-  match '/trips' => 'trips#show'
+  match '/routes/:transport_type' => 'routes#index'
+  match '/trips' => 'trips#index'
   match '/alerts' => 'alerts#index'
   resources :tweets
   match '/alerts/:guid' => 'alerts#show'

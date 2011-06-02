@@ -1,0 +1,50 @@
+- content_for :header do 
+  :javascript
+    var stops = #{ @stops.map {|stop| stop.dup.delete_if {|k,v| k == :next_arrivals}}.to_json }
+    var numTripSets = #{ @num_pages }
+    var currentTripSet = 0;
+  = javascript_include_tag "jquery-1.6.1.min.js"  
+  = javascript_include_tag "triptable"  
+- content_for :body_attr, 'onload="initialize()"' 
+- unless params[:from_iphone_app] 
+  .nav
+    = link_to "main", "/mobile" 
+    &gt; 
+    = link_to "#{params[:transport_type].gsub('_', ' ')} routes", url_for(:controller => "routes", :transport_type => params[:transport_type]) 
+    &gt; trips
+  .note
+    Bookmark this page if this is one of your regular routes.
+  .note
+    iPhone iOS 4 users: if scrolling doesn't work, try using two fingers to scroll. 
+.info
+  %span{:style=>"font-weight:bold"}
+    = params[:headsign]
+  %br/
+  - if params[:first_stop] && !params[:first_stop].blank? && params[:first_stop] != "(null)" 
+    %span{:style=>"font-weight:bold"}
+      = params[:first_stop] 
+    %br/
+  = params[:route]
+%p 
+  If your device allows geo-location, the closest stop will be 
+  %span.example-blue
+    highlighted in blue.
+%p#closestStopFound
+  = render :partial => 'pager_controls' 
+
+%table.mbta
+  - @grid.each do |stop| 
+    %tr.row-header.stop-name
+      %td{:id => stop[:stop_id], :colspan=> @num_columns, :class=>"stop-name-header"}
+        %spani.stop-name-span
+          = stop[:stop][:name] 
+    - stop[:times].each_slice(@num_columns).with_index do |slice, j| 
+      %tr{:class =>"trip-set_#{j}",:style=> (j != 0 ? 'display:none;' : nil )}
+        - slice = slice + ([nil] * (@num_columns - slice.size))
+        - slice.each_with_index do |box, i|
+          %td{:class => "arrival-time #{ i % 2 == 0 ? 'arrival-time-even' : '' } #{(box.nil? || box[0].nil?) ? 'no-arrival' : nil }"}
+            = box && box[0] 
+= render :partial => 'pager_controls' 
+:javascript
+  goToPage(#{@current_page});
+

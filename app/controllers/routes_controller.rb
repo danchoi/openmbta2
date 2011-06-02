@@ -1,5 +1,5 @@
 class RoutesController < ApplicationController
-  def show
+  def index
     route_types = case params[:transport_type].downcase
     when /bus/
       [3]
@@ -11,6 +11,14 @@ class RoutesController < ApplicationController
       [0, 1]
     end
     res = TransitRoutes.routes(route_types)
-    render :json => res.to_json
+    respond_to do |format|
+      format.json {
+        render :json => res.to_json
+      }
+      format.html {
+        @result = res[:data]
+        render :layout => 'mobile'
+      }
+    end
   end
 end

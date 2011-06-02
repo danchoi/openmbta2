@@ -41,7 +41,8 @@ class TransitTrips
 
   def calc_next_arrivals
     #query = "select stops.stop_name, stops.stop_id, stops.parent_station, stops.stop_code, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
-    query = "select stops.stop_name, st.* from stop_times_today(?, ?) st join stops using(stop_id)"
+    query = "select stops.stop_name, st.* from stop_times_today(?, ?) st join stops using(stop_id) order by arrival_time asc"
+    @trip_order = []
     DB[query, @route, @direction_id].each do |row|
       stopping = { 
         arrival_time: row[:arrival_time], 
@@ -53,6 +54,9 @@ class TransitTrips
       @trips[row[:trip_id]] << stopping
       # fill in these values later
       @stops[row[:stop_id]] = {}
+      unless @trip_order.include?(row[:trip_id])
+        @trip_order << row[:trip_id] 
+      end
     end
     if @trips.empty?
       raise NoRouteData
@@ -65,9 +69,8 @@ class TransitTrips
   def make_grid
     @grid = [] 
     @first_stops = Set.new
-    @trips.each.with_index do |x, col|
-      trip_id = x[0] # key
-      stoppings = x[1].sort_by {|stopping| stopping[:stop_sequence]} # x[1] is values
+    @trip_order.each.with_index do |trip_id, col|
+      stoppings = @trips[trip_id].sort_by {|stopping| stopping[:stop_sequence]} # x[1] is values
       next_grid_row = 0
       stoppings.each_with_index do |stopping, i|
         stop_id = stopping[:stop_id]
