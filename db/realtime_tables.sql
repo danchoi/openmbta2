@@ -21,7 +21,8 @@ create table nextbus_predictions (
   arrival_time timestamp,
   triptag varchar,
   vehicle varchar,
-  block varchar
+  block varchar,
+  created timestamp DEFAULT now();
 );
 
 create index nextbus_predictions_routetag_idx on nextbus_predictions (routetag);

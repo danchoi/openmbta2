@@ -595,3 +595,14 @@ http://www.mbta.com/uploadedfiles/Rider_Tools/Developer_Page/CommuterConnectDoc_
 http://www.rajsingh.org/boston-area-data-feeds/
 
 
+------------------------------------------------------------------------
+Thu Jun  2 12:49:07 EDT 2011
+
+TODO
+- Make realtime fetch for bus live and cache for 1 minute instead of on a loop.
+- restore mobile web 
+
+alter table nextbus_predictions add column created timestamp default now();
+
+
+
