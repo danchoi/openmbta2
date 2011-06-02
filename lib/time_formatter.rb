@@ -20,10 +20,14 @@ module TimeFormatter
   def format_time(time)
     # "%H:%M:%S" -> 12 hour clock with am or pm
     hour, min, secs = *time.split(":")
+    hour = hour.to_i
     if secs.to_i > 29
       min = "%.2d" % (min.to_i + 1)
+      if min == '60'
+        min = '00'
+        hour += 1
+      end
     end
-    hour = hour.to_i
     suffix = 'a'
     if hour > 24
       hour = hour - 24
