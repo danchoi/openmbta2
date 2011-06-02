@@ -29,6 +29,12 @@
   If your device allows geo-location, the closest stop will be 
   %span.example-blue
     highlighted in blue.
+
+- if @result[:message]
+  %p.alert_on_trip_page
+    %strong
+      = @result[:message][:title]
+    = @result[:message][:body]
 %p#closestStopFound
   = render :partial => 'pager_controls' 
 

@@ -101,7 +101,6 @@ td.no-arrival {
   border-top: 1px solid #666;
   padding: 5px 5px;
   font-size: 12px;
-  
 }
 .alert h4 {
   margin: 0;
@@ -109,6 +108,9 @@ td.no-arrival {
 }
 .alert .time {
   color: #FF1F5D;
+}
+.alert_on_trip_page {
+  color: #FF1F5D
 }
 .closestStop {
   background-color: #ABDAFF;

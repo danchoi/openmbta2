@@ -604,5 +604,18 @@ TODO
 
 alter table nextbus_predictions add column created timestamp default now();
 
+Merge alerts with a trip map
 
+select coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) from routes;
+
+(cd /home/zoe/openmbta2 && /usr/local/bin/ruby -Ilib app/models/alert.rb)
+select substring(title for 40), pubdate from t_alerts order by pubdate desc;
+
+
+select substring(title for 90), pubdate from t_alerts where title ? ~ split_part(title, ' ', 1)  order by pubdate desc;
+
+select guid,  CASE WHEN split_part(title, ' ', 1) = 'Red' THEN 'RED' ELSE split_part(title, ' ', 1) END as fixed_routetag, pubdate from t_alerts order by pubdate desc;
+
+matching alerts
+res = DB["select * from t_alerts where ? ~ split_part(title, ' ', 1) and pubdate > now() - interval '1 hour'  order by pubdate desc", route].all
 
