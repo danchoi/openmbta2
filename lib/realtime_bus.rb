@@ -3,8 +3,7 @@ require 'database'
 class RealtimeBus
 
   def self.available?(route, direction_id)
-    dataset = DB["select count(*) from nextbus_predictions 
-      inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
+    dataset = DB["select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
       where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ? and split_part(dirtag, '_', 3) = ? and arrival_time > now()", route, direction_id.to_s].first
     dataset[:count] > 0
   end
@@ -19,7 +18,10 @@ class RealtimeBus
     # direction can be inferred from tail of dirtag
     # 8_80007v0_0
     @stops = Hash.new {|h,k| h[k] = []}
-    DB["select * from nextbus_predictions where routetag = ? and split_part(dirtag, '_', 3) = ?", @route, @direction_id.to_s].each do |x|
+    DB["select * from nextbus_predictions 
+      inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
+      where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ? 
+      and split_part(dirtag, '_', 3) = ?", @route, @direction_id.to_s].each do |x|
       @stops[x[:stoptag]] << [x[:arrival_time], x[:vehicle]]
     end
     @stops
