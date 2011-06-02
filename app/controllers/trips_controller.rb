@@ -22,7 +22,7 @@ class TripsController < ApplicationController
              end
       render :json => resp.to_json
     rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection
-      resp = {message: {title: 'Alert', body: 'No trips found, You may need to update your bookmark, as the dataset has changed.'}}
+      resp = {message: {title: 'Alert', body: 'You may need to delete all yours old bookmarks and create new ones. The dataset has changed. Soryr for the inconvenience.'}}
       render :json => resp.to_json
     end
   end
