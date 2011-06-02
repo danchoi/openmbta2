@@ -54,6 +54,13 @@ td.stop-name-header {
   padding-bottom: 1px;
 
 }
+.realtime {
+  font-weight: normal;
+  font-size: smaller;
+  text-align:right;
+  color: purple;
+}
+
 .imminent-stop {
   background-color: #FFADF4;
 }

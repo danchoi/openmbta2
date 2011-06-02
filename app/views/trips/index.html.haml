@@ -1,6 +1,6 @@
 - content_for :header do 
   :javascript
-    var stops = #{ @stops.map {|stop| stop.dup.delete_if {|k,v| k == :next_arrivals}}.to_json }
+
     var numTripSets = #{ @num_pages }
     var currentTripSet = 0;
   = javascript_include_tag "jquery-1.6.1.min.js"  
@@ -38,12 +38,21 @@
       %td{:id => stop[:stop_id], :colspan=> @num_columns, :class=>"stop-name-header"}
         %spani.stop-name-span
           = stop[:stop][:name] 
+        - realtime = realtime_arrivals(stop[:stop][:stop_id])
+        - if realtime
+          %div.realtime
+            realtime predictions:
+            = realtime
+
+
     - stop[:times].each_slice(@num_columns).with_index do |slice, j| 
       %tr{:class =>"trip-set_#{j}",:style=> (j != 0 ? 'display:none;' : nil )}
         - slice = slice + ([nil] * (@num_columns - slice.size))
         - slice.each_with_index do |box, i|
           %td{:class => "arrival-time #{ i % 2 == 0 ? 'arrival-time-even' : '' } #{(box.nil? || box[0].nil?) ? 'no-arrival' : nil }"}
             = box && box[0] 
+
+
 = render :partial => 'pager_controls' 
 :javascript
   goToPage(#{@current_page});

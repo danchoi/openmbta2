@@ -41,15 +41,11 @@
         %tr
           %td{:colspan => "3"}
             %strong= link_to headsign, "/trips.html?" + URI.escape("transport_type=#{params[:transport_type]}&route_short_name=#{route[:route_short_name]}&headsign=#{headsign.gsub("&", "^")}&first_stop=#{first_stop =~ /realtime/ ? nil : first_stop}")
-            - if !first_stop.blank? && first_stop != "+ realtime data"
-              %br>/
-              from
-              %span.trips-left= first_stop
             %br/
             %span.trips-left
               = pluralize(trips_left, "trip")
               left
             - if first_stop == "+ realtime data"
+              = first_stop
               %br/
-              = link_to "realtime data",  "/trips/realtime.html?" + URI.escape("transport_type=#{params[:transport_type]}&route_short_name=#{route[:route_short_name]}&headsign=#{headsign.gsub("&", "^")}&first_stop=#{first_stop =~ /realtime/ ? nil : first_stop}")
-            %br/
+            
