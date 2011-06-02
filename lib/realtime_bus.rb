@@ -2,6 +2,8 @@ require 'database'
 
 class RealtimeBus
 
+  # We should put the common SQL shared by :available? and :results in a function or view
+  #
   def self.available?(route, direction_id)
     dataset = DB["select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
       where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ? and split_part(dirtag, '_', 3) = ? and arrival_time > now()", route, direction_id.to_s].first
