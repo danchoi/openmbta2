@@ -3,7 +3,7 @@
   :javascript
     var numTripSets = #{ @num_pages }
     
-    var stops = #{ @result[:stops].map {|stop_id, stop| {:stop_id => stop[:stop_id], :lat => stop[:lat], :lng => stop[:lng]}}.to_json };
+    var stops = #{ @result[:stops].map {|stop_id, stop| {:stop_id => stop[:stop_id], :name => stop[:name], :lat => stop[:lat], :lng => stop[:lng]}}.to_json };
     var currentTripSet = 0;
   = javascript_include_tag "jquery-1.6.1.min.js"  
   = javascript_include_tag "triptable"  
