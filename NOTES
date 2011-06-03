@@ -691,4 +691,28 @@ $$ LANGUAGE SQL;
 select trips_for_stops_without_route('2168', '73');
 
 
+Strategy: store the trips_for_stops for 2 stops in SQLITE3 on client. Then
+calculate and show the schedules for selected any on the client side. Use the
+grid to show. No need for map?
+
+So the work on the iPhone side for this is basically done. The client will do the 
+heavy lifting and calculations using Sqlite.
+
+Allow the user to flush the SQLITE cache.
+
+The Sqlite database can also store route bookmarks?
+
+So today, study the Sqlite3 iPhone APIs.
+
+CoreData vs sqlite
+http://cocoawithlove.com/2010/02/differences-between-core-data-and.html
+
+send over the data as CSV
+Plus the calendar table and calendar_dates
+
+mbta=# select routetag, stoptag, dirtag, arrival_time, triptag, vehicle, block, trips.trip_headsign from nextbus_predictions inner join trips on trips.trip_id = triptag limit 20000;
+
+
+
+
 
