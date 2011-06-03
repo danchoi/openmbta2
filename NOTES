@@ -619,3 +619,76 @@ select guid,  CASE WHEN split_part(title, ' ', 1) = 'Red' THEN 'RED' ELSE split_
 matching alerts
 res = DB["select * from t_alerts where ? ~ split_part(title, ' ', 1) and pubdate > now() - interval '1 hour'  order by pubdate desc", route].all
 
+
+fixes to mobile web version done
+
+------------------------------------------------------------------------
+Fri Jun  3 00:28:42 EDT 2011
+
+Enhancements
+
+- Horizontal orientation for better viewing schedules
+- right index should abbreviate long route names and not be fat
+- save start and end point stops, and show much more concise data. collect analytics based on stops.
+
+
+Find all trips connecting two stops.
+
+select array_agg(stop_id) from stop_times group by trip_id limit 10 where trip_id = '13942700';
+
+For stop bookmarking
+- tap a stop on map or grid, show a page where you can bookmark the stop
+- also, here you can specify a destination stop and then get all the times for any point in time
+  - work on the SQL for this.
+  - the date picker should just pick a date, then resuse the grid controller to
+    show all the scheduled time between the two stops for that day
+
+
+
+
+Try to shorten the route coalescing
+
+CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$
+select coalesce(nullif($1, ''), nullif($2, '')); 
+$$ LANGUAGE SQL;
+
+
+SQL to get all trips for route and two stops
+
+-- pass in route, stop_ids. First stop is assumed to be earlier.
+-- route is like '1' 
+CREATE OR REPLACE FUNCTION trips_for_stops(varchar, varchar, varchar) 
+RETURNS setof record AS $$
+  select trips.trip_id, array_agg(st.stop_id), array_agg(st.arrival_time), 
+  max(route_id) ,
+  max(service_id)
+  from trips inner join routes r using(route_id)
+    inner join stop_times st using(trip_id)
+    where coalesce2(r.route_long_name, r.route_short_name) = $1
+      and st.stop_id in ($2, $3) 
+    group by trip_id 
+    having count(trip_id) > 1;
+$$ LANGUAGE SQL;
+
+
+select trips_for_stops('1', '2168', '73');
+
+
+CREATE OR REPLACE FUNCTION trips_for_stops_without_route(varchar, varchar) 
+RETURNS setof record AS $$
+  select trips.trip_id, max(st1.arrival_time), max(st2.arrival_time),
+  max(route_id) ,
+  max(service_id)
+    from trips
+    inner join stop_times st1 on trips.trip_id = st1.trip_id
+    inner join stop_times st2 on trips.trip_id = st2.trip_id
+    where st1.stop_id = $1
+      and st2.stop_id = $2
+      and st1.stop_sequence < st2.stop_sequence
+    group by trips.trip_id ;
+$$ LANGUAGE SQL;
+
+select trips_for_stops_without_route('2168', '73');
+
+
+

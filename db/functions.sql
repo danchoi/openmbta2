@@ -1,3 +1,9 @@
+-- use this to shorten coalescing with ifnull
+CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$
+select coalesce(nullif($1, ''), nullif($2, '')); 
+$$ LANGUAGE SQL;
+
+
 CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
 select service_id from (
   select service_id from calendar 
