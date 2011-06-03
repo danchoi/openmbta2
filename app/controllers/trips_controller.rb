@@ -26,7 +26,7 @@ class TripsController < ApplicationController
         resp[:message] = {title: 'T-Alert', body: alert[:description]}
       end
     rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection
-      resp = {message: {title: 'Invalid Bookmark', body: 'You may need to delete all your old bookmarks and create new ones. The dataset has changed. Sorry for the inconvenience.'}}
+      resp = {message: {title: 'Invalid Bookmark', body: 'Because of recent database changes, please delete all your old bookmarks. Tap the blue Bookmarked button to unbookmark this and other routes that show this message.'}}
       respond_to do |format|
         format.json {
           render :json => resp.to_json
