@@ -1,4 +1,3 @@
-require 'sinatra'
 require 'json'
 require 'transit_routes'
 require 'transit_trips'
