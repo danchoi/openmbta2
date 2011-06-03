@@ -2,10 +2,12 @@
 - content_for :header do 
   :javascript
     var numTripSets = #{ @num_pages }
+    
+    var stops = #{ @result[:stops].map {|stop_id, stop| {:stop_id => stop[:stop_id], :lat => stop[:lat], :lng => stop[:lng]}}.to_json };
     var currentTripSet = 0;
   = javascript_include_tag "jquery-1.6.1.min.js"  
   = javascript_include_tag "triptable"  
-- content_for :body_attr, 'onload="initialize()"' 
+- content_for :onload , 'initialize()' 
 - unless params[:from_iphone_app] 
   .nav
     = link_to "main", "/mobile" 
@@ -41,7 +43,7 @@
 %table.mbta
   - @grid.each do |stop| 
     %tr.row-header.stop-name
-      %td{:id => stop[:stop_id], :colspan=> @num_columns, :class=>"stop-name-header"}
+      %td{:id => stop[:stop][:stop_id], :colspan=> @num_columns, :class=>"stop-name-header"}
         %spani.stop-name-span
           = stop[:stop][:name] 
         - realtime = realtime_arrivals(stop[:stop][:stop_id])

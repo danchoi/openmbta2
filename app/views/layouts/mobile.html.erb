@@ -15,7 +15,7 @@
     <%= yield :header %>
     <%= stylesheet_link_tag 'mobile' %>
   </head>
-  <body <%= yield :body_attr %>>
+  <body onload="<%= yield(:onload) %>">
     <%= yield %>
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

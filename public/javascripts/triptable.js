@@ -186,7 +186,6 @@ function initialize() {
         pageRight();
       else if (e.direction == 'right') 
         pageLeft();
-
       //alert(e.direction); 
   });
 }
