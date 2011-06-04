@@ -68,8 +68,5 @@ end
 
 if __FILE__ == $0
   #SubwayFeed.populate_keys
-  loop do
-    SubwayFeed.get_all_predictions 
-    sleep 15
-  end
+  SubwayFeed.get_all_predictions 
 end
