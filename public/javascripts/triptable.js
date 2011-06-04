@@ -60,6 +60,8 @@ function noLocation()
 // * paging through trip sets
 
 function goToPage(page) {
+  if (page == currentTripSet)
+    return;
   $(".trip-set_" + (page)).fadeIn();
   $(".trip-set_" + currentTripSet).hide();
   currentTripSet = page;

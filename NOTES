@@ -714,5 +714,3 @@ mbta=# select routetag, stoptag, dirtag, arrival_time, triptag, vehicle, block, 
 
 
 
-
-
