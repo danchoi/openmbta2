@@ -23,8 +23,13 @@ class RealtimeBus
     DB["select * from nextbus_predictions 
       inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
       where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ? 
-      and split_part(dirtag, '_', 3) = ?", @route, @direction_id.to_s].each do |x|
-      @stops[x[:stoptag]] << [x[:arrival_time], x[:vehicle]]
+      and split_part(dirtag, '_', 3) = ? order by arrival_time asc", @route, @direction_id.to_s].each do |x|
+      item = [x[:arrival_time], x[:vehicle]]
+      # because the above SQL query can return dup routes (in service at different times)
+      if @stops[x[:stoptag]] &&  @stops[x[:stoptag]].detect {|y| y == item }
+        next
+      end
+      @stops[x[:stoptag]] << item
     end
     @stops
   end
@@ -45,7 +50,9 @@ end
 
 if __FILE__ == $0
   require 'pp'
-  x = RealtimeBus.new('1', 1)
+  route = ARGV.first
+  dir = ARGV[1].to_i
+  x = RealtimeBus.new route, dir
   pp x.results
   pp x.imminent_stops
 end

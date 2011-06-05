@@ -6,6 +6,7 @@ create table nextbus_routes (
   title varchar
 );
 
+
 create table nextbus_route_configs (
   routetag varchar,
   stoptag varchar,
@@ -26,6 +27,10 @@ create table nextbus_predictions (
 );
 
 create index nextbus_predictions_routetag_idx on nextbus_predictions (routetag);
+
+-- because sometimes the feeds contain dup data.
+create unique index nextbus_predictions_unique_idx on nextbus_predictions (routeTag, stoptag, dirtag, arrival_time, triptag, vehicle);
+
 
 CREATE VIEW view_bus_predictions AS 
 select nextbus_predictions.*, stop_name from nextbus_predictions inner join stops on stops.stop_id = nextbus_predictions.stoptag ;
