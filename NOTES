@@ -716,3 +716,12 @@ Trip planner links
 http://opentripplanner.org/wiki/kick-off-workshop
 
 
+
+select shape_id, ST_AsText(geom) as geom FROM polylines;
+select shape_id, ST_GeomFromtText(geom) as geom FROM polylines;
+
+
+just do this to get the trip coordinates. it's simpler than using postgis functions.
+
+select * from shapes where shape_id = '1000002' order by shape_pt_sequence asc; 
+

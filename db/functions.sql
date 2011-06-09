@@ -1,7 +1,6 @@
 -- use this to shorten coalescing with ifnull
-CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$
-select coalesce(nullif($1, ''), nullif($2, '')); 
-$$ LANGUAGE SQL;
+CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$ select
+coalesce(nullif($1, ''), nullif($2, '')); $$ LANGUAGE SQL;
 
 
 CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
@@ -47,7 +46,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
+CREATE OR REPLACE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
 (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
