@@ -712,7 +712,6 @@ Plus the calendar table and calendar_dates
 
 mbta=# select routetag, stoptag, dirtag, arrival_time, triptag, vehicle, block, trips.trip_headsign from nextbus_predictions inner join trips on trips.trip_id = triptag limit 20000;
 
-
 Trip planner links
 http://opentripplanner.org/wiki/kick-off-workshop
 

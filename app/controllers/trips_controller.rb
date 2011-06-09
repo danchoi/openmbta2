@@ -3,6 +3,10 @@ class TripsController < ApplicationController
   def index
     # irrelevant for now params[:headsign]
     route = params['route_short_name']
+    # patch; FIX IN NEXT VERSION
+    if route =~ /Kingston\/Plymouth/
+      route = "Kingston/Plymouth & Middleborough/Lakeville"
+    end
     direction = params['headsign'].split(':')[0]
     begin
       if params[:transport_type] =~ /bus/i
