@@ -12,7 +12,8 @@ create table polylines (
 
 create index idx_polylines_geog on polylines using gist(geog);
 
-insert into polylines (shape_id, geog) select shapes.shape_id, ST_Makeline(shapes.geog::geometry) as polyline 
+-- see http://www.mentby.com/sandro-santilli/makeline-for-geography-coordinates.html 
+insert into polylines (shape_id, geog) select shapes.shape_id, ST_Makeline(shapes.geog::geometry)::geography as polyline 
   from (select shape_id, shapes.geog from shapes order by shape_id, shape_pt_sequence) as shapes
   group by shapes.shape_id;
 

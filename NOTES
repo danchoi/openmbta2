@@ -725,3 +725,25 @@ just do this to get the trip coordinates. it's simpler than using postgis functi
 
 select * from shapes where shape_id = '1000002' order by shape_pt_sequence asc; 
 
+
+
+------------------------------------------------------------------------
+Fri Jun 10 12:26:34 EDT 2011
+
+Linestrings
+
+select ST_AsEWKT(geog::geometry) from polylines where shape_id = '660002';
+select ST_Text(geog::geometry) from polylines where shape_id = '660002';
+
+=>
+ LINESTRING(-71.1191941132 42.3753097136,-71.119142226
+ 42.375137763,-71.1188956911 42.3745329763,-71.1188231985
+ 42.3743414743,-71.1188411146 42.374254821,-71.1188944444
+ 42.3740642846,-71.1189316142 42.3739760486,-71.1189790136
+ 42.3739097991,-71.119098987 42.3737142696,-71.1192676853
+ 42.3735394819,-71.119484753 42.373444432,-71.1197797679
+ 42.3733724152,-71.1199079342 42.3733525326,-71.1203880045 42.3732
+
+Ruby can parse this and pass it on to the iOS client.
+
+
