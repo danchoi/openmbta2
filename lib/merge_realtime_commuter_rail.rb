@@ -17,7 +17,7 @@ class MergeRealtimeCommuterRail
       value[:sched_arrivals] = value[:next_arrivals].dup
       value[:real_time] = value[:next_arrivals].select {|(time, trip_id)| time != '(scheduled)'}.
         map do |(time, trip_id)|
-        val = [time + '(sch)', trip_id]
+        val = [time, trip_id]
         if trip_id
           short_trip_id = trip_id.split('-')[-1]
           puts short_trip_id
@@ -25,7 +25,7 @@ class MergeRealtimeCommuterRail
           if res 
             prediction = res[:scheduled] + ((res[:lateness] || 0).to_i)
             p = prediction.strftime("%H:%M:%S")
-            new_time = TimeFormatter.format_time(p) + '(real)'
+            new_time = TimeFormatter.format_time(p) + ' (realtime)'
             val = [new_time, trip_id]
           end
         end
