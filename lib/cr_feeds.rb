@@ -24,13 +24,12 @@ module CrFeeds
   class << self
 
     def get_predictions(feednum)
+      route = FEEDS[feednum.to_s]
       url = "http://developer.mbta.com/lib/RTCR/RailLine_#{feednum}.csv"
       handle = open(url)
       # headers = %w( TimeStamp Trip Destination Stop Scheduled Flag Vehicle Latitude Longitude Heading Speed Lateness )
       CSV.new(handle, headers: true).each do |row|
-        pp row.to_hash
         data = row.to_hash.inject({}) do |memo, (key, value)|
-
           newkey = key.to_s.downcase.to_sym
           memo[newkey] = if %w(TimeStamp Scheduled).include?(key)
                            Time.at(value.to_i)
@@ -39,7 +38,7 @@ module CrFeeds
                          end
           memo
         end
-
+        data[:route] = route
         DB[:rt_cr_predictions].insert data
       end
     end
@@ -47,7 +46,10 @@ module CrFeeds
 end
 
 if __FILE__ == $0
-  CrFeeds.get_predictions ARGV.first
+  DB.run("delete from rt_cr_predictions")
+  1.upto(12) do |i|
+    CrFeeds.get_predictions i
+  end
 end
 
 

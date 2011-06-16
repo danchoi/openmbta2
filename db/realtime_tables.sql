@@ -77,6 +77,7 @@ create table t_alerts (
 
 create table rt_cr_predictions (
   timestamp timestamp,
+  route varchar,
   trip varchar,
   destination varchar,
   stop varchar,
