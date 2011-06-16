@@ -37,6 +37,10 @@ module SubwayFeed
         i = 0
         CSV.new(handle, headers: headers).each do |row|
           data = row.to_hash
+          if data[:revenue].strip != 'Revenue'
+            puts data.inspect
+            next
+          end
           data = data.inject({}) {|memo, (k, v)|
             memo[k] = v.is_a?(String) ? v.strip : v
             memo
