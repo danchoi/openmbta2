@@ -51,10 +51,11 @@ psql mbta < db/realtime_tables.sql
 
 # postgis installation will vary for each user
 
-echo "Please download PostGIS and install into the mbta database."
+echo "Optional: Please download PostGIS and install into the mbta database."
 echo "Then run:"
 echo "psql mbta < db/linestrings.sql"
 
+echo "Done"
 # source db/postgis.sh
 
 exit
