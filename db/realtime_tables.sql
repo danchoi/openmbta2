@@ -75,3 +75,18 @@ create table t_alerts (
 );
 
 
+create table rt_cr_predictions (
+  timestamp timestamp,
+  trip varchar,
+  destination varchar,
+  stop varchar,
+  scheduled timestamp,
+  flag varchar,
+  vehicle int,
+  latitude float,
+  longitude float,
+  heading int,
+  speed int,
+  lateness int,
+  created timestamp DEFAULT now()
+);

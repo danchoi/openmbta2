@@ -29,6 +29,18 @@ module CrFeeds
       # headers = %w( TimeStamp Trip Destination Stop Scheduled Flag Vehicle Latitude Longitude Heading Speed Lateness )
       CSV.new(handle, headers: true).each do |row|
         pp row.to_hash
+        data = row.to_hash.inject({}) do |memo, (key, value)|
+
+          newkey = key.to_s.downcase.to_sym
+          memo[newkey] = if %w(TimeStamp Scheduled).include?(key)
+                           Time.at(value.to_i)
+                         else
+                           value
+                         end
+          memo
+        end
+
+        DB[:rt_cr_predictions].insert data
       end
     end
   end
