@@ -49,14 +49,12 @@ psql mbta < db/functions.sql
 echo "adding realtime tables"
 psql mbta < db/realtime_tables.sql
 
-# add postGIS ; works for ubuntu
-# TODO change this to work with different versions of postgis
-echo "Adding plpgsql"
-psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql && \
-psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql && \
-psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis_comments.sql
+# postgis installation will vary for each user
 
-psql mbta < db/linestrings.sql
+echo "Please download PostGIS and install into the mbta database."
+echo "Then run:"
+echo "psql mbta < db/linestrings.sql"
 
+# source db/postgis.sh
 
 exit
