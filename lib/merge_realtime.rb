@@ -38,7 +38,7 @@ module MergeRealtime
             [ time_s, trip_id ]
           }.select {|x|
             time_s, trip_id = *x
-            time_s > Time.now.strftime('%H:%M%S')
+            time_s > Time.now.strftime('%H:%M:%S')
           }.map {|x|
             time_s, trip_id = *x
             [format_time(time_s), trip_id]

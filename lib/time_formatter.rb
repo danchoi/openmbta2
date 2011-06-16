@@ -1,4 +1,5 @@
 module TimeFormatter
+  extend self
   def format_and_flag_time(time) # time is HH:MM:SS
     return unless time
     # strip off seconds
@@ -18,7 +19,7 @@ module TimeFormatter
   end
 
   def format_time(time)
-    # "%H:%M:%S" -> 12 hour clock with am or pm
+    # time is "%H:%M:%S" -> 12 hour clock with am or pm
     hour, min, secs = *time.split(":")
     hour = hour.to_i
     if secs.to_i > 29

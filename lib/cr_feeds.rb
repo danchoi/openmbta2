@@ -46,6 +46,7 @@ module CrFeeds
 end
 
 if __FILE__ == $0
+  puts "Updating rt_cr_predictions at #{Time.now}"
   DB.run("delete from rt_cr_predictions")
   1.upto(12) do |i|
     CrFeeds.get_predictions i

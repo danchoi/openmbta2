@@ -746,4 +746,9 @@ select ST_Text(geog::geometry) from polylines where shape_id = '660002';
 
 Ruby can parse this and pass it on to the iOS client.
 
+------------------------------------------------------------------------
+Thu Jun 16 12:23:32 EDT 2011
+
+
+select route, trip, destination, stop, scheduled, flag, timestamp, lateness from rt_cr_predictions where flag != 'sch';
 
