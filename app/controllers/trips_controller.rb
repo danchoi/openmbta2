@@ -21,7 +21,7 @@ class TripsController < ApplicationController
              elsif params[:transport_type] =~ /subway/i && RealtimeSubway.available?(route, direction) 
                realtime = RealtimeSubway.new(route, direction)  # use direction label
                MergeRealtime.merge(result, realtime, :subway) 
-             elsif params[:transport_type] =~ /rail/
+             elsif params[:transport_type] =~ /rail/i
                MergeRealtimeCommuterRail.merge(result)
              else 
                result 
