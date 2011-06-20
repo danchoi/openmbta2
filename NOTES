@@ -750,5 +750,5 @@ Ruby can parse this and pass it on to the iOS client.
 Thu Jun 16 12:23:32 EDT 2011
 
 
-select route, trip, destination, stop, scheduled, flag, timestamp, lateness from rt_cr_predictions where flag != 'sch';
+create view view_cr_pred as select route, trip, destination, stop, scheduled, flag, timestamp, lateness from rt_cr_predictions where flag != 'sch';
 
