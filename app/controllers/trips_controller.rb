@@ -26,6 +26,7 @@ class TripsController < ApplicationController
              else 
                result 
              end
+      resp.merge!(:ads => "iAds")
       # This may cause mismatches for bus routes like "Green Line", but OK for now
       alert = DB["select * from t_alerts where ? ~ split_part(title, ' ', 1) and pubdate > now() - interval '1 hour'  order by pubdate desc", route].first
       if alert
