@@ -752,3 +752,22 @@ Thu Jun 16 12:23:32 EDT 2011
 
 create view view_cr_pred as select route, trip, destination, stop, scheduled, flag, timestamp, lateness from rt_cr_predictions where flag != 'sch';
 
+
+------------------------------------------------------------------------
+Sat Jun 25 01:49:15 EDT 2011
+
+
+HOW TO LOAD A NEW SET OF DATA:
+
+Turn off Apache; turn off Cronjobs that access database; then run
+
+  db/recreate.sh
+
+Then turn on apache and cron jobs
+
+I should come up with something less manual!
+
+What about creating the new database, then switching the app over to the new database?
+
+
+
