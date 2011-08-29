@@ -49,6 +49,9 @@ psql mbta < db/functions.sql
 echo "adding realtime tables"
 psql mbta < db/realtime_tables.sql
 
+echo "preparing realtime tables"
+ruby -Ilib lib/prepare_realtime_tables.rb
+
 # postgis installation will vary for each user
 
 echo "Optional: Please download PostGIS and install into the mbta database."
