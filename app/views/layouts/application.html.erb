@@ -5,6 +5,8 @@
     <% %w{ reset 960 text site }.each do |stylesheet| %>
       <%= stylesheet_link_tag "#{stylesheet}.css" %>
     <% end %>
+    <script type="text/javascript" src="http://apis.google.com/js/plusone.js"></script>
+    
     <%= csrf_meta_tag %>
   </head>
   <body>
@@ -38,11 +40,26 @@
             </ul>
           </div>
           <div class="sidebar">
+            <h4>Share</h4>
+
+            <p>
+            <g:plusone></g:plusone>
+            <iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fopenmbta.org&amp;layout=button_count&amp;show_faces=false&amp;width=50&amp;action=like&amp;colorscheme=light" scrolling="no" frameborder="0" allowTransparency="true" style="border:none; overflow:hidden; width:120px; height:25px; margin-top:6px;"></iframe>
+
+
+            <a href="http://twitter.com/share"
+              class="twitter-share-button"
+              data-url="http://openmbta.org"
+              data-text="openmbta" data-count="horizontal">Tweet</a><script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+            </p>
+          </div>
+
+          <div class="sidebar">
+            <h4>Developer</h4>
 
             <p>
             OpenMBTA is an open-source project of 
             <%= link_to "Kaja Software", "http://kajasoftware.com/" %>
-            
             </p>
 
             <%= link_to image_tag("http://www.kajasoftware.com/storage/kaja_vines_logo_sm.png"), "http://kajasoftware.com" %>
