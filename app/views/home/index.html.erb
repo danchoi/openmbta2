@@ -1,5 +1,32 @@
+<h1>OpenMBTA</h1>
 
-<h2>OpenMBTA for the iPad</h2>
+<p>
+
+OpenMBTA is a free, open-source platform for delivering  public transit schedules and real-time data
+to commuters in the Boston metro area.
+
+</p>
+
+
+<hr/>
+<a name="android"></a>
+
+<h3>OpenMBTA for Android</h3>
+
+<p>
+You can get OpenMBTA for Android for free 
+<%= link_to "by clicking here", "https://market.android.com/details?id=com.kaja.openmbta&feature=search_result"
+ %>. 
+</p>
+
+
+<%= image_tag "android-screens/openMBTA_ss1.jpg", :class => 'screenshot' %>
+<%= image_tag "android-screens/openMBTA_ss2.jpg", :class => 'screenshot' %>
+
+<hr/>
+<a name="ipad"></a>
+
+<h3>OpenMBTA for the iPad</h3>
 
 <p>
  You can get OpenMBTA for the Apple iPad from the iTunes App Store for free <%= link_to "by
@@ -10,8 +37,9 @@ clicking here", "http://ax.itunes.apple.com/us/app/openmbta-for-ipad/id395963566
 
 
 <hr/>
+<a name="iphone"></a>
 
-<h2>OpenMBTA for the iPhone</h2>
+<h3>OpenMBTA for the iPhone</h3>
 <p>
  You can get the OpenMBTA iPhone app from the iTunes App Store for free <%= link_to "by
 clicking here", "http://ax.itunes.apple.com/us/app/openmbta/id336082252?mt=8#ls=1" %>. 
@@ -34,7 +62,13 @@ us know on the <%= link_to "Support & Feedback Page", "/support" %>.  </p>
 
 <a name="how-to"></a>
 
-<h2>How to use the iPhone app</h2>
+<h3>How to use the app</h3>
+
+<p> 
+These instructions are primarily for the iPhone app, but should carry over
+easily to the iPad and Android apps.
+</p>
+
 
 <p>Let's just run through a basic use case. Say you're somewhere in
 Cambridgeport, and you want to know where the nearest stop for the Number 1 Bus
@@ -89,7 +123,7 @@ Finally, check out the T-Alerts and the Twitter #mbta feed screens.
 <hr/>
 
 <a name='mobile-web'></a>
-<h2>OpenMBTA for Mobile Browsers</h2>
+<h3>OpenMBTA for Mobile Browsers</h3>
 
 <p>
 A beta version of OpenMBTA for mobile web browsers is now available.
@@ -118,16 +152,32 @@ Visit this URL on your mobile browser to use it:
 adapt the source code for OpenMBTA to produce free iPhone apps for their own
 public transit systems are especially welcome to use the code base.</p>
 
-<p>The code for the project is available on GitHub at
-<%= link_to "http://github.com/danchoi/openmbta", "http://github.com/danchoi/openmbta" %>.
+<p>Source code:</p>
+
+<ul>
+  <li>
+    iOS client: <%= link_to "http://github.com/danchoi/openmbta", "http://github.com/danchoi/openmbta" %>.
+  </li>
+
+  <li>
+    Android client:
+    <%= link_to "https://github.com/hyoun98/openmbta-android", "https://github.com/hyoun98/openmbta-android" %>.
+  </li>
+
+  <li>
+    Back-end server: <%= link_to "http://github.com/danchoi/openmbta2", "http://github.com/danchoi/openmbta2" %>.
+  </li>
+
 </p>
 
 <p>A Google Group has been set up for OpenMBTA project development:
 <%= link_to "OpenMBTA Google Group", "http://groups.google.com/group/openmbta" %>.
 </p>
 
-<p>The iPhone client is written in Objective-C. The data backend is written in Ruby, using
-Ruby on Rails.</p>
+<p>The iPhone client is written in Objective-C. 
+The Android client is written in Java. 
+The data backend is written in Ruby, using
+<%= link_to 'Ruby on Rails', 'http://rubyonrails.org/' %>, and uses <%= link_to "the PostgreSQL database", "http://www.postgresql.org/" %>.</p>
 
 <hr/>
 <a name="next-release"></a>
@@ -140,7 +190,6 @@ suggestions on the <%= link_to 'Support & Feedback Page', '/support' %>.</p>
 <hr/>
 <a name='credits'></a>
 <%= render :partial => 'credits' %>
-
 
 <br/>
 <br/>

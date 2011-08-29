@@ -9,23 +9,25 @@
   </head>
   <body>
     <div class="container_12">
-      <div class="grid_7 prefix_1" id="main">
+      <div class="grid_9 " id="main">
         <% if flash[:notice] %>
           <div class='flash'>
             <%= flash[:notice] %>
-
           </div>
         <% end %>
         <%= yield %>
       </div>
-      <div class="grid_3 suffix_1">
+      <div class="grid_3 ">
         
         <div class="grid_3">
           <div class="sidebar">
             <h4>Navigation</h4>
             <ul>
               <li><%= link_to "Home", "/" %></li>
-              <li><%= link_to "How to use the iPhone app", :controller => "home", :anchor => "how-to" %></li>
+              <li><%= link_to "For Android", :controller => "home", :anchor => "android" %></li>
+              <li><%= link_to "For iPad", :controller => "home", :anchor => "ipad" %></li>
+              <li><%= link_to "For iPhone", :controller => "home", :anchor => "iphone" %></li>
+              <li><%= link_to "How To Use", :controller => "home", :anchor => "how-to" %></li>
               <li><%= link_to "Mobile Web Version", :controller => "home", :anchor => "mobile-web" %></li>
               <li><%= link_to "FAQ", :controller => "support" %></li>
               <li><%= link_to "Support & Feedback", :controller => "support" %></li>
@@ -35,6 +37,19 @@
               <li><%= link_to "Google Group for OpenMBTA", "http://groups.google.com/group/openmbta" %></li>
               <li><%= link_to "Credits", :controller => "home", :anchor => "credits" %></li>
             </ul>
+          </div>
+          <div class="sidebar">
+
+            <p>
+            OpenMBTA is an open-source project of 
+            <%= link_to "Kaja Software", "http://kajasoftware.com/" %>
+            
+            </p>
+
+            <%= link_to image_tag("http://www.kajasoftware.com/storage/kaja_vines_logo_sm.png"), "http://kajasoftware.com" %>
+
+          
+
           </div>
         </div>
       </div>
