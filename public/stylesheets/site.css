@@ -15,11 +15,11 @@ p {
 }
 img.screenshot {
   margin-bottom: 20px;
-  width: 260px; 
+  width: 340px; 
 }
 img.ipad-screenshot {
   margin-bottom: 20px;
-  width: 500px; 
+  width: 680px; 
 }
 .sidebar {
   width: 100%;
@@ -34,7 +34,10 @@ img.ipad-screenshot {
 }
 .sidebar ul li {
   margin-left: 0;
-  font-weight: bold;
+  margin-bottom: 0.2em;
+}
+.sidebar img {
+  width: 220px;
 }
 table.pin td {
   vertical-align: top;

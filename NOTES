@@ -752,3 +752,45 @@ Thu Jun 16 12:23:32 EDT 2011
 
 create view view_cr_pred as select route, trip, destination, stop, scheduled, flag, timestamp, lateness from rt_cr_predictions where flag != 'sch';
 
+
+------------------------------------------------------------------------
+Sat Jun 25 01:49:15 EDT 2011
+
+
+HOW TO LOAD A NEW SET OF DATA:
+
+Turn off Apache; turn off Cronjobs that access database; then run
+
+  db/recreate.sh
+
+Then turn on apache and cron jobs
+
+I should come up with something less manual!
+
+What about creating the new database, then switching the app over to the new database?
+
+
+
+<20110718074959.25145.23381@celery-2.disqus.net> 7k  
+- text/plain; charset=utf-8 
+- text/html; charset=utf-8 
+----------------------------------------------
+from: Disqus <notifications-XK2EK48RXE@disqus.net>
+date: Mon, Jul 18 07:49 AM +00:00 2011
+to: dhchoi@gmail.com
+subject: [openmbta] Re: OpenMBTA iPhone App
+
+======
+
+Ryanpeterson87 <ryanpeterson87@yahoo.com> (unregistered) wrote:
+
+As this app is very useful fromy iPhone i don't have that many issues with it, however the one issue that I do have is a large one. Not being a native bostonian I sometimes find it difficult to determine which subway line or bus route will take me to say bunker hill from Brookline. It is a little easier when using the subway lines because there aren't as many to choose from. I believe that it would be of great help myself and others like me to be able to click on stops on a map without having to choose method previously or have a separate category that breaks down routes by specific area i.e. All transportation methods in Brookline or Charlestown etc.
+
+IP address: 24.60.255.186
+Link to comment: http://disq.us/2nd5cl
+
+-----
+Options: You can moderate through email. Respond in the body with "Delete". Respond in the body to post a reply comment.
+
+Or use the moderate panel: http://openmbta.disqus.com/admin/moderate/
+To turn off notifications, go to: http://disqus.com/account/
