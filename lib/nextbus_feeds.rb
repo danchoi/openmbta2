@@ -12,7 +12,9 @@ module NextbusFeeds
   class << self
     def populate_route_list
       url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=mbta'
-      Nokogiri::XML.parse(open(url)).search("route").each do |r|
+      puts `curl -I '#{url}'`
+      xml = `curl -sL '#{url}'`
+      Nokogiri::XML.parse(xml).search("route").each do |r|
         params = {
           tag: r[:tag],
           title: r[:title]
@@ -29,7 +31,8 @@ module NextbusFeeds
 
     def get_route_config(route_tag)
       url = "http://webservices.nextbus.com/service/publicXMLFeed?command=routeConfig&a=mbta&r=#{route_tag}"
-      xml = Nokogiri::XML.parse(open(url))
+      raw = `curl -sL '#{url}'`
+      xml = Nokogiri::XML.parse raw
       DB["delete from nextbus_route_configs where routetag = ?", route_tag]
       xml.search("route").each do |route|
         route[:tag]

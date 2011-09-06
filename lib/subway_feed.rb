@@ -1,12 +1,16 @@
 require 'database'
 require 'nokogiri'
-require 'open-uri'
 require 'csv'
 require 'timeout'
 
 module SubwayFeed
 
   class << self
+
+    def open(url)
+      `curl -Ls '#{url}'`
+    end
+
     def populate_keys
       url = 'http://developer.mbta.com/RT_Archive/RealTimeHeavyRailKeys.csv'
       handle = open(url)
