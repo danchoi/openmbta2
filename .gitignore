@@ -6,3 +6,4 @@ log/*.log
 tmp/
 
 t_alerts/curl.sh
+mbtadump.sql

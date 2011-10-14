@@ -56,3 +56,22 @@ table.pin td {
   margin-bottom: 20px;
   font-style: italic;
 }
+
+pre {
+  font-size: smaller;
+}
+code {
+  background-color: #EDEDED;
+}
+table.downloads { width: 100%; }
+table.downloads thead { 
+  border-bottom: 1px solid #ccc; 
+}
+table.downloads th,
+table.downloads td { 
+  padding: 5px 0 ;
+}
+table.downloads th,
+table.downloads td {
+  text-align: left;
+}
