@@ -794,3 +794,22 @@ Options: You can moderate through email. Respond in the body with "Delete". Resp
 
 Or use the moderate panel: http://openmbta.disqus.com/admin/moderate/
 To turn off notifications, go to: http://disqus.com/account/
+
+
+
+------------------------------------------------------------------------
+HTML map
+
+
+We can join the two tables; realtime bus plus trip ids
+
+mbta=# select triptag, trip_id from view_bus_predictions inner join trips on (trip_id = triptag);
+
+mbta=# select stop_name, trip_headsign, arrival_time, triptag, trip_id from view_bus_predictions inner join trips on (trip_id = triptag);
+
+12800 realtime bus predictions result from this. Not historical information
+
+  Can calculate whether bus is ahead of or behind schedule.
+
+
+
