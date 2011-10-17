@@ -812,4 +812,75 @@ mbta=# select stop_name, trip_headsign, arrival_time, triptag, trip_id from view
   Can calculate whether bus is ahead of or behind schedule.
 
 
+create view bus_realtime_compact as 
+SELECT trips.route_id, view_bus_predictions.stop_name,
+ trips.trip_headsign, view_bus_predictions.arrival_time,
+ view_bus_predictions.triptag, trips.trip_id
+    FROM view_bus_predictions
+       JOIN trips ON trips.trip_id::text =
+       view_bus_predictions.triptag::text
+         ORDER BY trips.route_id;
+
+
+Try to plot a line using shapes;
+
+Trips has a shape_id
+
+route_id 01 (Bus 1)
+
+one trip_id is 15868005
+
+> select * from shapes where shape_id = (select shape_id from trips where trip_id = '15868005') order by shape_pt_sequence asc;
+
+Sample output:
+
+ shape_id | shape_pt_lat  |  shape_pt_lon  | shape_pt_sequence | shape_dist_traveled
+----------+---------------+----------------+-------------------+---------------------
+ 010017   |  42.329848413 | -71.0838758549 |             10001 |
+ 010017   | 42.3297880369 | -71.0832682623 |             10002 |
+ 010017   | 42.3300890857 | -71.0831982323 |             10003 |
+ 010017   | 42.3302964049 | -71.0831609938 |             10004 |
+ 010017   | 42.3304927064 | -71.0831123629 |             10005 |
+ 010017   | 42.3306434636 |  -71.083065881 |             10006 |
+ 010017   | 42.3308174283 | -71.0829870708 |             10007 |
+ 010017   | 42.3309835788 | -71.0827966229 |             10008 |
+ 010017   | 42.3309835788 | -71.0827966229 |             20001 |
+ 010017   | 42.3310546312 | -71.0827155314 |             20002 |
+ 010017   | 42.3313706037 | -71.0823724624 |             20003 |
+ 010017   | 42.3317515377 | -71.0819339134 |             20004 |
+ 010017   | 42.3319398162 | -71.0817166855 |             20005 |
+
+What if we just have three trips per headsign, showing realtime.
+
+Or write a function that will return a JSON array of lat, lng sufficient to draw a polyline
+for a trip on a google map;
+
+Also another function to determine whether a trip has the same shape <- this is valuable.
+
+
+------------------------------------------------------------------------
+postgis installation
+
+sudo apt-get install postgresql-8.4-postgis
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis_comments.sql
+
+then load db/linestrings.sql
+
+------------------------------------------------------------------------
+postgis installation guide:
+  http://blog.smartlogicsolutions.com/2010/03/04/installing-postgis-1-5-0-on-postgresql-8-4-on-ubuntu-9-10/
+
+------------------------------------------------------------------------
+
+example queries
+
+-- select shape_id, ST_NumPoints(geom)  from polylines;
+
+-- select shape_id, ST_Length(geom) from polylines;
+-- select shape_id, ST_Summary(geom) from polylines;
+-- select ST_AsGeoJSON(ST_Transform(geom, 4263)) from polylines limit 1;
+
+select ST_AsGeoJSON(geog) from polylines where shape_id = (select shape_id from trips where trip_id = '15868005');
 
