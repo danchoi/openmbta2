@@ -52,9 +52,7 @@ coalesce(b.trips_left, 0), b.headsign from
 (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
 from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id)
 group by r.route_type, route, trips.direction_id) a
-left outer join
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
-  trips.direction_id,
+left outer join (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id,
   count(*) as trips_left,
   array_to_string(array_agg(trip_headsign), ';') as headsign
   from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
@@ -64,6 +62,25 @@ left outer join
   order by route_type, route, direction_id;
 $$ language sql;
 
+
+-- this one adds trip ids to the trip headsigns 
+CREATE OR REPLACE FUNCTION available_routes2(timestamp with time zone) RETURNS setof record AS $$
+select a.route_type, a.route, a.direction_id, 
+coalesce(b.trips_left, 0), b.headsign from 
+(select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
+from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id)
+group by r.route_type, route, trips.direction_id) a
+left outer join
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
+  trips.direction_id,
+  count(*) as trips_left,
+  array_to_string(array_agg(trip_headsign || ' ' || trip_id), ';') as headsign
+  from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
+  where trips.finished_at > adjusted_time($1)
+  group by r.route_type, route, trips.direction_id) b
+  on (a.route_type = b.route_type and a.route = b.route and a.direction_id = b.direction_id)
+  order by route_type, route, direction_id;
+$$ language sql;
 
 
 
@@ -81,5 +98,5 @@ order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
 
-create view view_available_routes as select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar)
+create or replace view view_available_routes as select * from available_routes2(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar)
 
