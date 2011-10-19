@@ -74,7 +74,7 @@ left outer join
   (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
   trips.direction_id,
   count(*) as trips_left,
-  array_to_string(array_agg(trip_headsign || ' ' || trip_id), ';') as headsign
+  array_to_string(array_agg(trip_headsign || ',' || trip_id), ';') as headsign
   from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
   where trips.finished_at > adjusted_time($1)
   group by r.route_type, route, trips.direction_id) b
@@ -82,7 +82,23 @@ left outer join
   order by route_type, route, direction_id;
 $$ language sql;
 
-
+-- available_routes3() : no headsigns or directions
+CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
+select a.route_type, a.route, coalesce(b.trips_left, 0) from 
+  -- a
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
+    inner join routes r using (route_id) group by r.route_type, route) a
+left outer join
+  -- b
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
+    count(*) as trips_left
+    from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
+    where trips.finished_at > adjusted_time($1)
+    group by r.route_type, route) b
+  -- back to main
+  on (a.route_type = b.route_type and a.route = b.route)
+  order by route_type, route;
+$$ language sql;
 
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
@@ -97,6 +113,5 @@ select * from stop_times st where trip_id in
 order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
-
-create or replace view view_available_routes as select * from available_routes2(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar)
+create or replace view view_available_routes as select * from available_routes3(now()) as (route_type smallint, route varchar, trips_left bigint);
 
