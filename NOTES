@@ -884,3 +884,23 @@ example queries
 
 select ST_AsGeoJSON(geog) from polylines where shape_id = (select shape_id from trips where trip_id = '15868005');
 
+
+
+------------------------------------------------------------------------
+Tue Oct 18 21:52:12 EDT 2011
+
+THis query is good and reasonably fast:
+
+select * from available_routes(now()) as (route_type smallint, route
+varchar, direction_id smallint, trips_left bigint, headsign varchar);
+
+create view select * from available_routes(now()) as (route_type smallint, route
+varchar, direction_id smallint, trips_left bigint, headsign varchar);
+
+ruby -Ilib lib/available_routes.rb
+
+See doc/view_available_routes.txt for output.
+
+
+
+
