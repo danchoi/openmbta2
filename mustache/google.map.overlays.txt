@@ -1,0 +1,2243 @@
+   Link: [1]Google Code (search)
+   [2]My favorites ▼ | [3]English ▼ | [4]Sign in
+   [5]Google Code
+   [6]_____________________
+   [7][ Search ]
+   e.g. "adwords" or "open source"
+
+                         Google Maps JavaScript API V3
+
+     * [8]Home
+     * [9]Docs
+     * [10]FAQ
+     * [11]Articles
+     * [12]Blog
+     * [13]Forum
+     * [14]Terms
+     *  
+
+     * [15]Maps API Family
+     * [16]Index Your Maps Content
+
+     * Maps Javascript API V3
+
+          * [17]Home Page
+
+               * [18]Basics
+               * [19]Tutorial
+               * [20]Events
+               * [21]Controls
+               * [22]Styling
+               * [23]Overlays
+               * [24]Services
+               * [25]Map Types
+
+          * [26]API Reference
+
+               * [27]3.6
+               * [28]3.5
+               * [29]3.4
+
+          * Code Samples:
+
+               * [30]Samples
+               * [31]Demo Gallery
+
+          * Libraries:
+
+               * [32]Geometry Library
+               * [33]AdSense Library
+               * [34]Places Library^New!
+
+          * More Resources:
+
+               * [35]Articles
+               * [36]Known Issues
+               * [37]Changelog
+               * [38]Utility Library
+
+     * Maps Javascript API V2
+
+       (Deprecated API)
+
+          * [39]Home Page
+          * [40]Documentation
+
+     * Maps API for Flash
+
+       (Deprecated API)
+
+          * [41]Home Page
+          * [42]Documentation
+
+     * Maps Data API
+
+       (Deprecated API)
+
+          * [43]Home Page
+          * [44]Documentation
+
+     * [45]Maps API Web Services
+
+          * [46]Directions API
+          * [47]Distance Matrix API
+          * [48]Elevation API
+          * [49]Geocoding API
+          * [50]Places APl
+
+     * Maps Image APIs
+
+          * [51]Static Maps
+          * [52]Street View
+
+     * Earth API
+
+          * [53]Home Page
+          * [54]Documentation
+
+     * Local Search API
+
+       (Deprecated API)
+
+          * [55]Home Page
+          * [56]Documentation
+
+   [57]Google Maps API Premier
+
+   Same great maps plus a SLA, support, and control over ads
+
+                     Google Maps Javascript API V3 Overlays
+
+   Note: The Google Maps Javascript API Version 3 documented within these
+   pages is now the official Javascript API. Version 2 of this API has been
+   officially deprecated as per our deprecation policy. We encourage you to
+   migrate your code to this newly updated and enhanced version!
+
+    1. [58]Overlays Overview
+
+         1. [59]Adding Overlays
+         2. [60]Removing Overlays
+
+    2. [61]Markers
+
+         1. [62]Marker Animations
+
+    3. [63]Icons
+
+         1. [64]Simple Icons
+         2. [65]Complex Icons
+
+    4. [66]Polylines
+
+         1. [67]Polyline Options
+         2. [68]Polyline Arrays
+
+    5. [69]Polygons
+
+         1. [70]Polygon Options
+         2. [71]Polygon Auto-Completion
+         3. [72]Polygon Arrays
+
+    6. [73]Circles and Rectangles
+
+         1. [74]Circles
+         2. [75]Rectangles
+
+    7. [76]Info Windows
+    8. [77]Ground Overlays
+    9. [78]Layers Overview
+   10. [79]KML and GeoRSS Layers
+   11. [80]Fusion Table Layers (Experimental)
+
+         1. [81]Fusion Table Setup
+         2. [82]Constructing a FusionTables Layer
+         3. [83]Fusion Table Queries
+         4. [84]Fusion Table Styles
+         5. [85]Fusion Table Heatmaps
+
+   12. [86]The Traffic Layer
+   13. [87]The Bicycle Layer
+   14. [88]The Panoramio Layer Library
+
+         1. [89]Using the PanoramioLayer Object
+         2. [90]Restricting Photos by Tag or User ID
+         3. [91]Using the Panoramio Widget API
+
+   15. [92]Custom Overlays
+
+         1. [93]Subclassing an Overlay
+         2. [94]Initializing a Custom Overlay
+         3. [95]Drawing a Custom Overlay
+         4. [96]Removing a Custom Overlay
+         5. [97]Hiding and Showing a Custom Overlay
+
+                               Overlays Overview
+
+       Overlays are objects on the map that are tied to latitude/longitude
+       coordinates, so they move when you drag or zoom the map. Overlays
+       reflect objects that you "add" to the map to designate points, lines,
+       areas, or collections of objects.
+
+       The Maps API has several types of overlays:
+
+          * Single locations on the map are displayed using markers. Markers
+            may sometimes display custom icon images, in which case they are
+            usually referred to as "icons." Markers and icons are objects of
+            type Marker. (For more information, see [98]Markers and [99]Icons
+            below.)
+          * Lines on the map are displayed using polylines (representing an
+            ordered sequence of locations). Lines are objects of type
+            Polyline. (For more information, see [100]Polylines.)
+          * Areas of arbitrary shape on the map are displayed using polygons,
+            which are similar to polylines. Like polylines, polygons are an
+            ordered sequence of locations; unlike polylines, polygons define
+            a region which they enclose. (For more information, see
+            [101]Polygons below.)
+          * Map layers may be displayed using overlay map types. You can
+            create your own set of tiles by creating custom map types which
+            either replace base map tile sets, or display on top of existing
+            base map tile sets as overlays. (For more information, see
+            [102]Custom Map Types.
+          * The info window is also a special kind of overlay for displaying
+            content (usually text or images) within a popup balloon on top of
+            a map at a given location. (For more information, see [103]Info
+            Windows.)
+          * You may also implement your own custom overlays. These custom
+            overlays implement the OverlayView interface. (For more
+            information, see [104]Custom Overlays.)
+
+Adding Overlays
+
+       Overlays are often added to the map upon their construction; all
+       overlays define an Options object for use in construction that allows
+       you to designate the map on which they should appear. You may also add
+       an overlay to the map directly by using the overlay's setMap() method,
+       passing it the map on which to add the overlay.
+
+   var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+   var myOptions = {
+     zoom: 4,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP,
+   }
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+  var marker = new google.maps.Marker({
+       position: myLatlng,
+       title:"Hello World!"
+   });
+
+   // To add the marker to the map, call setMap();
+   marker.setMap(map);
+
+Removing Overlays
+
+       To remove an overlay from a map, call the overlay's setMap() method,
+       passing null. Note that calling this method does not delete the
+       overlay; it simply removes the overlay from the map. If instead you
+       wish to delete the overlay, you should remove it from the map, and
+       then set the overlay itself to null.
+
+       If you wish to manage a set of overlays, you should create an array to
+       hold the overlays. Using this array, you can then call setMap() on
+       each overlay in the array when you need to remove them. (Note that
+       unlike in V2, no clearOverlays() method exists; you are responsible
+       for keeping track of your overlays and removing them from the map when
+       not needed.) You can delete the overlays by removing them from the map
+       and then setting the array's length to 0, which removes all references
+       to the overlays.
+
+       The following example places markers on a map when clicked on the map,
+       and places them within an array. The overlays can then be later
+       cleared, shown, or deleted:
+
+ var map;
+ var markersArray = [];
+
+ function initialize() {
+   var haightAshbury = new google.maps.LatLng(37.7699298, -122.4469157);
+   var mapOptions = {
+     zoom: 12,
+     center: haightAshbury,
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+   map =  new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+   google.maps.event.addListener(map, 'click', function(event) {
+     addMarker(event.latLng);
+   });
+ }
+
+ function addMarker(location) {
+   marker = new google.maps.Marker({
+     position: location,
+     map: map
+   });
+   markersArray.push(marker);
+ }
+
+ // Removes the overlays from the map, but keeps them in the array
+ function clearOverlays() {
+   if (markersArray) {
+     for (i in markersArray) {
+       markersArray[i].setMap(null);
+     }
+   }
+ }
+
+ // Shows any overlays currently in the array
+ function showOverlays() {
+   if (markersArray) {
+     for (i in markersArray) {
+       markersArray[i].setMap(map);
+     }
+   }
+ }
+
+ // Deletes all markers in the array by removing references to them
+ function deleteOverlays() {
+   if (markersArray) {
+     for (i in markersArray) {
+       markersArray[i].setMap(null);
+     }
+     markersArray.length = 0;
+   }
+ }
+
+       [105]View example (overlay-remove.html)
+
+                                    Markers
+
+       Markers identify locations on the map. By default, they use a standard
+       icon, though you can set a custom icon within the marker's constructor
+       or by calling setIcon() on the marker. The google.maps.Marker
+       constructor takes a single Marker options object literal specifying
+       the initial properties of the marker. The following fields are
+       particularly important and commonly set when constructing your marker:
+
+          * position (required) specifies a LatLng identifying the initial
+            location of the marker.
+          * map (optional) specifies the Map object on which to place the
+            marker.
+
+       Note that within the Marker constructor, you should specify the map on
+       which to add the marker. If you do not specify this argument, the
+       marker is created but is not attached (or displayed) on the map. You
+       may add the marker later by calling the marker's setMap() method. To
+       remove a marker, call the setMap() method passing null as the
+       argument.
+
+       Markers are designed to be interactive. By default, they receive
+       'click' events, for example, and are often used within event listeners
+       to bring up info windows.
+
+       The following example adds a simple marker to a map at Uluru, in the
+       center of Australia:
+
+   var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+   var myOptions = {
+     zoom: 4,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   }
+   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+   var marker = new google.maps.Marker({
+       position: myLatlng,
+       map: map,
+       title:"Hello World!"
+   });
+
+       This Marker title will show up as a tooltip.
+
+       If you do not wish to pass any Marker options in the marker's
+       constructor, instead pass an empty object {} in the last argument of
+       the constructor.
+
+       [106]View example (marker-simple.html)
+
+Animations
+
+       You may also animate markers so that they exhibit dynamic movement in
+       a variety of different circumstances. The way a marker is animated is
+       specified within the marker's animation property, of type
+       google.maps.Animation. The following Animation values are currently
+       supported:
+
+          * DROP indicates that the marker should drop from the top of the
+            map to its final location when first placed on the map. Animation
+            will cease once the marker comes to rest and animation will
+            revert to null. This type of animation is usually specified
+            during creation of the Marker.
+          * BOUNCE indicates that the marker should "bounce" in place. A
+            bouncing marker will continue bouncing until its animation
+            property is explicitly set to null.
+
+       You may initiate an animation on an existing marker by calling
+       setAnimation() on the Marker object.
+
+       The following example creates a marker in Stockholm, Sweden using a
+       DROP animation. Clicking on the marker toggles the marker between a
+       BOUNCE animation or no animation:
+
+ var stockholm = new google.maps.LatLng(59.32522, 18.07002);
+ var parliament = new google.maps.LatLng(59.327383, 18.06747);
+ var marker;
+ var map;
+
+ function initialize() {
+   var mapOptions = {
+     zoom: 13,
+     mapTypeId: google.maps.MapTypeId.ROADMAP,
+     center: stockholm
+   };
+
+   map = new google.maps.Map(document.getElementById("map_canvas"),
+       mapOptions);
+
+   marker = new google.maps.Marker({
+     map:map,
+     draggable:true,
+     animation: google.maps.Animation.DROP,
+     position: parliament
+   });
+   google.maps.event.addListener(marker, 'click', toggleBounce);
+ }
+
+ function toggleBounce() {
+
+   if (marker.getAnimation() != null) {
+     marker.setAnimation(null);
+   } else {
+     marker.setAnimation(google.maps.Animation.BOUNCE);
+   }
+ }
+
+       [107]View example (marker-animations.html)
+
+       Note: if you have many markers, you might not want to drop them all at
+       once on the map. You can make use of setTimeout() to space your
+       markers' animations apart using a pattern like that shown below:
+
+ function drop() {
+   for (var i =0; i < markerArray.length; i++) {
+     setTimeout(function() {
+       addMarkerMethod();
+     }, i * 200);
+   }
+ }
+
+       [108]View example (marker-animations-iteration.html)
+
+                                     Icons
+
+       Markers may define an icon to show in place of the default icon.
+       Defining an icon involves setting a number of properties that define
+       the visual behavior of the marker.
+
+Simple Icons
+
+       In the most basic case, an icon can simply indicate an image to use
+       instead of the default Google Maps pushpin icon by setting the
+       marker's icon property to the URL of an image. The Google Maps API
+       will size the icon automatically in this case.
+
+       In the example below, we create an icon to signify the position of
+       Bondi Beach in Sydney, Australia:
+
+ function initialize() {
+   var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+   var myOptions = {
+     zoom: 4,
+     center: myLatlng,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   }
+   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+   var image = 'beachflag.png';
+   var myLatLng = new google.maps.LatLng(-33.890542, 151.274856);
+   var beachMarker = new google.maps.Marker({
+       position: myLatLng,
+       map: map,
+       icon: image
+   });
+ }
+
+       [109]View example (icon-simple.html)
+
+Complex Icons
+
+       More complex icons will want to specify complex shapes (which indicate
+       regions that are clickable), add shadow images, and specify the "stack
+       order" of how they should display relative to other overlays. Icons
+       specifed in this manner should set their icon and shadow properties to
+       an object of type MarkerImage.
+
+       Shadow images should generally be created at a 45 degree angle (upward
+       and to the right) from the main image, and the bottom left corner of
+       the shadow image should align with the bottom-left corner of the icon
+       image. Shadow images should be 24-bit PNG images with alpha
+       transparency so that image boundaries appear correctly on the map.
+
+       MarkerImage objects not only define an image, but also define the size
+       of the icon, the origin of the icon (if the image you want is part of
+       a larger image in a sprite, for example), and the anchor where the
+       icon's hotspot should be located (which is based on the origin).
+
+       The following example creates complex markers to signify beaches near
+       Sydney, NSW, Australia. Note that the anchor is set to (0,32) to
+       correspond to the base of the flagpole.
+
+ function initialize() {
+   var myOptions = {
+     zoom: 10,
+     center: new google.maps.LatLng(-33.9, 151.2),
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   }
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+                                 myOptions);
+
+   setMarkers(map, beaches);
+ }
+
+ /**
+  * Data for the markers consisting of a name, a LatLng and a zIndex for
+  * the order in which these markers should display on top of each
+  * other.
+  */
+ var beaches = [
+   ['Bondi Beach', -33.890542, 151.274856, 4],
+   ['Coogee Beach', -33.923036, 151.259052, 5],
+   ['Cronulla Beach', -34.028249, 151.157507, 3],
+   ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+   ['Maroubra Beach', -33.950198, 151.259302, 1]
+ ];
+
+ function setMarkers(map, locations) {
+   // Add markers to the map
+
+   // Marker sizes are expressed as a Size of X,Y
+   // where the origin of the image (0,0) is located
+   // in the top left of the image.
+
+   // Origins, anchor positions and coordinates of the marker
+   // increase in the X direction to the right and in
+   // the Y direction down.
+   var image = new google.maps.MarkerImage('images/beachflag.png',
+       // This marker is 20 pixels wide by 32 pixels tall.
+       new google.maps.Size(20, 32),
+       // The origin for this image is 0,0.
+       new google.maps.Point(0,0),
+       // The anchor for this image is the base of the flagpole at 0,32.
+       new google.maps.Point(0, 32));
+   var shadow = new google.maps.MarkerImage('images/beachflag_shadow.png',
+       // The shadow image is larger in the horizontal dimension
+       // while the position and offset are the same as for the main image.
+       new google.maps.Size(37, 32),
+       new google.maps.Point(0,0),
+       new google.maps.Point(0, 32));
+       // Shapes define the clickable region of the icon.
+       // The type defines an HTML <area> element 'poly' which
+       // traces out a polygon as a series of X,Y points. The final
+       // coordinate closes the poly by connecting to the first
+       // coordinate.
+   var shape = {
+       coord: [1, 1, 1, 20, 18, 20, 18 , 1],
+       type: 'poly'
+   };
+   for (var i = 0; i < locations.length; i++) {
+     var beach = locations[i];
+     var myLatLng = new google.maps.LatLng(beach[1], beach[2]);
+     var marker = new google.maps.Marker({
+         position: myLatLng,
+         map: map,
+         shadow: shadow,
+         icon: image,
+         shape: shape,
+         title: beach[0],
+         zIndex: beach[3]
+     });
+   }
+ }
+
+       [110]View example (icon-complex.html)
+
+                                   Polylines
+
+       The Polyline class defines a linear overlay of connected line segments
+       on the map. A Polyline object consists of an array of LatLng
+       locations, and creates a series of line segments that connect those
+       locations in an ordered sequence.
+
+Polyline Options
+
+       The Polyline constructor takes a set of Polyline options specifying
+       the LatLng coordinates of the line and a set of styles to adjust the
+       polyline's visual behavior.
+
+       Polylines are drawn as a series of straight segments on the map. You
+       can specify custom colors, weights, and opacities for the stroke of
+       the line within a Polyline options object used when constructing your
+       line, or change those properties after construction. A polyline
+       supports the following stroke styles:
+
+          * strokeColor specifies a hexadecimal HTML color of the format
+            "#FFFFFF". The Polyline class does not support named colors.
+          * strokeOpacity specifies a numerical fractional value between 0.0
+            and 1.0 (default) of the opacity of the line's color.
+          * strokeWeight specifies the weight of the line's stroke in pixels.
+
+       The following code snippet creates a 2-pixel-wide red polyline
+       connecting the path of William Kingsford Smith's first trans-Pacific
+       flight between Oakland, CA and Brisbane, Australia:
+
+
+ function initialize() {
+   var myLatLng = new google.maps.LatLng(0, -180);
+   var myOptions = {
+     zoom: 3,
+     center: myLatLng,
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+   var flightPlanCoordinates = [
+     new google.maps.LatLng(37.772323, -122.214897),
+     new google.maps.LatLng(21.291982, -157.821856),
+     new google.maps.LatLng(-18.142599, 178.431),
+     new google.maps.LatLng(-27.46758, 153.027892)
+   ];
+   var flightPath = new google.maps.Polyline({
+     path: flightPlanCoordinates,
+     strokeColor: "#FF0000",
+     strokeOpacity: 1.0,
+     strokeWeight: 2
+   });
+
+   flightPath.setMap(map);
+ }
+
+
+       [111]View example (polyline-simple.html)
+
+Polyline Arrays
+
+       A polyline specifies a series of coordinates as an array of LatLng
+       objects. To retrieve these coordinates, call the Polyline's getPath(),
+       which will return an array of type MVCArray. As such, you can
+       manipulate and inspect the array using the following operations:
+
+          * getAt() returns the LatLng at a given zero-based index value.
+          * insertAt() inserts a passed LatLng at a given zero-based index
+            value. Note that any existing coordinates at that index value are
+            moved forward.
+          * removeAt() removes a LatLng at a given zero-based index value.
+
+       Note: you cannot simply retrieve the ith element of an array by using
+       the syntax mvcArray[i]; you must use mvcArray.getAt(i).
+
+       The following code creates an interactive map which constructs a
+       polyline based on user clicks. Note that the polyline only appears
+       once its path property contains two LatLng coordinates.
+
+
+ var poly;
+ var map;
+
+ function initialize() {
+   var chicago = new google.maps.LatLng(41.879535, -87.624333);
+   var myOptions = {
+     zoom: 7,
+     center: chicago,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+
+   map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
+   var polyOptions = {
+     strokeColor: '#000000',
+     strokeOpacity: 1.0,
+     strokeWeight: 3
+   }
+   poly = new google.maps.Polyline(polyOptions);
+   poly.setMap(map);
+
+   // Add a listener for the click event
+   google.maps.event.addListener(map, 'click', addLatLng);
+ }
+
+ /**
+  * Handles click events on a map, and adds a new point to the Polyline.
+  * @param {MouseEvent} mouseEvent
+  */
+ function addLatLng(event) {
+
+   var path = poly.getPath();
+
+   // Because path is an MVCArray, we can simply append a new coordinate
+   // and it will automatically appear
+   path.push(event.latLng);
+
+   // Add a new marker at the new plotted point on the polyline.
+   var marker = new google.maps.Marker({
+     position: event.latLng,
+     title: '#' + path.getLength(),
+     map: map
+   });
+ }
+
+
+       [112]View example (polyline-complex.html)
+
+                                    Polygons
+
+       Polygon objects are similar to Polyline objects in that they consist
+       of a series of coordinates in an ordered sequence. However, instead of
+       being open-ended, polygons are designed to define regions within a
+       closed loop. Similar to polylines, they allow you to define a stroke,
+       which affects the outline of the polygon; unlike polylines, they also
+       allow you to define a fill region inside the polygon.
+
+       Additionally, Polygons may potentially exhibit complex shapes,
+       including discontinuities (multiple polygons defined as one polygon),
+       "donuts" (where polygonal areas appear inside the polygon as
+       "islands") and intersections of one or more polygons. For this reason,
+       a single polygon may specify multiple paths.
+
+Polygon Options
+
+       As with polylines, you can define custom colors, weights, and
+       opacities for the edge of the polygon (the "stroke") and custom colors
+       and opacities for the area within the enclosed region (the "fill").
+       Colors should be indicated in hexadecimal numeric HTML style.
+
+       Because a polygonal area may include several separate paths, the
+       Polygon object's paths property specifies an "array of arrays," (each
+       of type MVCArray) where each array defines a separate sequence of
+       ordered LatLng coordinates.
+
+       However, for simple polygons consisting of only one path, you may
+       construct a Polygon using a single array of LatLng coordinates as a
+       convenience. The Google Maps API will convert this simple array into
+       an "array of arrays" upon construction when storing it within the
+       Polygon's paths property. As well, the API provides a simple getPath()
+       methods for simple polygons consisting of one path.
+
+       Note: if you construct a polygon in this manner, you will still need
+       to retrieve values from the polygon by manipulating the path as an
+       MVCArray.
+
+       The following code snippet creates a polygon representing the Bermuda
+       Triangle:
+
+
+ function initialize() {
+   var myLatLng = new google.maps.LatLng(24.886436490787712, -70.2685546875);
+   var myOptions = {
+     zoom: 5,
+     center: myLatLng,
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+
+   var bermudaTriangle;
+
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+
+   var triangleCoords = [
+     new google.maps.LatLng(25.774252, -80.190262),
+     new google.maps.LatLng(18.466465, -66.118292),
+     new google.maps.LatLng(32.321384, -64.75737),
+     new google.maps.LatLng(25.774252, -80.190262)
+   ];
+
+   // Construct the polygon
+   // Note that we don't specify an array or arrays, but instead just
+   // a simple array of LatLngs in the paths property
+   bermudaTriangle = new google.maps.Polygon({
+     paths: triangleCoords,
+     strokeColor: "#FF0000",
+     strokeOpacity: 0.8,
+     strokeWeight: 2,
+     fillColor: "#FF0000",
+     fillOpacity: 0.35
+   });
+
+   bermudaTriangle.setMap(map);
+ }
+
+
+       [113]View example (polygon-simple.html)
+
+Polygon Auto-Completion
+
+       The Polygon in the example above consists of four coordinates, but
+       notice that the first and last coordinate are the same location, which
+       defines the loop. In practice, however, since polygons define closed
+       areas, you don't need to define this last coordinate. The Maps API
+       will automatically "close" any polygons by drawing a stroke connecting
+       the last coordinate back to the first coordinate for any given paths.
+
+       The following example is identical to the first example except that
+       the last coordinate is omitted.
+
+       [114]View example (polygon-autoclose.html)
+
+Polygon Arrays
+
+       A polygon specifies its series of coordinates as an array of arrays,
+       where each array is of type MVCArray. Each "leaf" array is an array of
+       LatLng coordinates specifying a single path. To retrieve these
+       coordinates, call the Polygon's getPaths() method. Since the array is
+       an MVCArray you will need to manipulate and inspect it using the
+       following operations:
+
+          * getAt() returns the LatLng at a given zero-based index value.
+          * insertAt() inserts a passed LatLng at a given zero-based index
+            value. Note that any existing coordinates at that index value are
+            moved forward.
+          * removeAt() removes a LatLng at a given zero-based index value.
+
+       Note: you cannot simply retrieve the ith element of an array by using
+       the syntax mvcArray[i]; you must use mvcArray.getAt(i).
+
+       The following code handles click events on the polygon by displaying
+       information on the polygon's coordinates:
+
+
+ var map;
+ var infoWindow;
+
+ function initialize() {
+   var myLatLng = new google.maps.LatLng(24.886436490787712, -70.2685546875);
+   var myOptions = {
+     zoom: 5,
+     center: myLatLng,
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+
+   var bermudaTriangle;
+
+   map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+
+   var triangleCoords = [
+     new google.maps.LatLng(25.774252, -80.190262),
+     new google.maps.LatLng(18.466465, -66.118292),
+     new google.maps.LatLng(32.321384, -64.75737)
+   ];
+
+   bermudaTriangle = new google.maps.Polygon({
+     paths: triangleCoords,
+     strokeColor: "#FF0000",
+     strokeOpacity: 0.8,
+     strokeWeight: 3,
+     fillColor: "#FF0000",
+     fillOpacity: 0.35
+   });
+
+   bermudaTriangle.setMap(map);
+
+   // Add a listener for the click event
+   google.maps.event.addListener(bermudaTriangle, 'click', showArrays);
+
+   infowindow = new google.maps.InfoWindow();
+ }
+
+ function showArrays(event) {
+
+   // Since this Polygon only has one path, we can call getPath()
+   // to return the MVCArray of LatLngs
+   var vertices = this.getPath();
+
+   var contentString = "<b>Bermuda Triangle Polygon</b><br />";
+   contentString += "Clicked Location: <br />" + event.latLng.lat() + "," + event.latLng.lng() + "<br />";
+
+   // Iterate over the vertices.
+   for (var i =0; i < vertices.length; i++) {
+     var xy = vertices.getAt(i);
+     contentString += "<br />" + "Coordinate: " + i + "<br />" + xy.lat() +"," + xy.lng();
+   }
+
+   // Replace our Info Window's content and position
+   infowindow.setContent(contentString);
+   infowindow.setPosition(event.latLng);
+
+   infowindow.open(map);
+ }
+
+
+       [115]View example (polygon-arrays.html)
+
+                             Circles and Rectangles
+
+       In addition to a generic Polygon class, the Javascript Maps API also
+       includes specific classes for Circle and Rectangle to simplify their
+       construction.
+
+Circles
+
+       A Circle is similar to a Polygon in that you can define custom colors,
+       weights, and opacities for the edge of the circle (the "stroke") and
+       custom colors and opacities for the area within the enclosed region
+       (the "fill"). Colors should be indicated in hexadecimal numeric HTML
+       style.
+
+       Unlike a Polygon, you do not define paths for a Circle; instead, a
+       circle has two additional properties which define its shape:
+
+          * center specifies the google.maps.LatLng of the center of this
+            circle.
+          * radius specifies the radius of the circle, in meters.
+
+       The following code snippet creates circles representing populations in
+       the United States:
+
+
+ // Create an object containing LatLng, population.
+ var citymap = {};
+ citymap['chicago'] = {
+   center: new google.maps.LatLng(41.878113, -87.629798),
+   population: 2842518
+ };
+ citymap['newyork'] = {
+   center: new google.maps.LatLng(40.714352, -74.005973),
+   population: 8143197
+ };
+ citymap['losangeles'] = {
+   center: new google.maps.LatLng(34.052234, -118.243684),
+   population: 3844829
+ }
+ var cityCircle;
+
+ function initialize() {
+   var mapOptions = {
+     zoom: 4,
+     center: new google.maps.LatLng(37.09024, -95.712891),
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       mapOptions);
+
+   for (var city in citymap) {
+     // Construct the circle for each value in citymap. We scale population by 20.
+     var populationOptions = {
+       strokeColor: "#FF0000",
+       strokeOpacity: 0.8,
+       strokeWeight: 2,
+       fillColor: "#FF0000",
+       fillOpacity: 0.35,
+       map: map,
+       center: citymap[city].center,
+       radius: citymap[city].population / 20
+     };
+     cityCircle = new google.maps.Circle(populationOptions);
+   }
+ }
+
+
+       [116]View example (circle-simple.html)
+
+Rectangles
+
+       A Rectangle is similar to a Polygon in that you can define custom
+       colors, weights, and opacities for the edge of the rectangle (the
+       "stroke") and custom colors and opacities for the area within the
+       enclosed region (the "fill"). Colors should be indicated in
+       hexadecimal numeric HTML style.
+
+       Unlike a Polygon, you do not define paths for a Rectangle; instead, a
+       rectangle has one additional property which defines its shape:
+
+          * bounds specifies the google.maps.LatLngBounds of this rectangle.
+
+       The following example creates a rectangle based on the previous
+       viewport on any 'zoom_changed' event:
+
+
+ function initialize() {
+
+   var coachella = new google.maps.LatLng(33.6803003, -116.173894);
+   var rectangle;
+
+   var myOptions = {
+     zoom: 11,
+     center: coachella,
+     mapTypeId: google.maps.MapTypeId.TERRAIN
+   };
+
+   var map = new google.maps.Map(document.getElementById("map_canvas"),
+       myOptions);
+
+   rectangle = new google.maps.Rectangle();
+
+   google.maps.event.addListener(map, 'zoom_changed', function() {
+
+     // Get the current bounds, which reflect the bounds before the zoom.
+     var rectOptions = {
+       strokeColor: "#FF0000",
+       strokeOpacity: 0.8,
+       strokeWeight: 2,
+       fillColor: "#FF0000",
+       fillOpacity: 0.35,
+       map: map,
+       bounds: map.getBounds()
+     };
+     rectangle.setOptions(rectOptions);
+   });
+ }
+
+       [117]View example (rectangle-simple.html)
+
+                                Ground Overlays
+
+       Polygons are useful overlays to represent arbitrarily-sized areas, but
+       they cannot display images. If you have an image that you wish to
+       place on a map, you can use a GroundOverlay object. The constructor
+       for a GroundOverlay specifies a URL of an image and the LatLngBounds
+       of the image as parameters. The image will be rendered on the map,
+       constrained to the given bounds, and conformed using the map's
+       projection.
+
+       The following example places an antique map of Newark, NJ on the map
+       as an overlay:
+
+ var newark = new google.maps.LatLng(40.740, -74.18);
+ var imageBounds = new google.maps.LatLngBounds(
+     new google.maps.LatLng(40.716216,-74.213393),
+     new google.maps.LatLng(40.765641,-74.139235));
+
+ var myOptions = {
+   zoom: 13,
+   center: newark,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var oldmap = new google.maps.GroundOverlay(
+     "http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg",
+     imageBounds);
+ oldmap.setMap(map);
+
+       [118]View example (groundoverlay-simple.html)
+
+                                  Info Windows
+
+       InfoWindows displays content in a floating window above the map. The
+       info window looks a little like a comic-book word balloon; it has a
+       content area and a tapered stem, where the tip of the stem is at a
+       specified location on the map. You can see the info window in action
+       by clicking business markers on Google Maps.
+
+       The InfoWindow constructor takes an InfoWindow options object, which
+       specifies a set of initial parameters for display of the info window.
+       Upon creation, an info window is not added to the map. To make the
+       info window visible, you need to call the open() method on the
+       InfoWindow, passing it the Map on which to open, and optionally, the
+       Marker with which to anchor it. (If no marker is provided, the info
+       window will open at its position property.)
+
+       The InfoWindow options object is an object literal containing the
+       following fields:
+
+          * content contains either a string of text or DOM node to display
+            within the info window when it is opened.
+          * pixelOffset contains an offset from the tip of the info window to
+            the location on which the info window is anchored. In practice,
+            you should not need to modify this field.
+          * position contains the LatLng at which this info window is
+            anchored. Note that opening an info window on a marker will
+            automatically update this value with a new position.
+          * maxWidth specifies the maximum width in pixels of the info
+            window. By default, an info window expands to fit its content,
+            and auto-wraps text if the info window expands to fill the map.
+            If you implement a maxWidth the info window will auto-wrap to
+            enforce the pixel width. Once it reaches the maximum width, the
+            info window may still expand vertically if screen real estate is
+            available.
+
+       The InfoWindow's content may contain either a string of text, a
+       snippet of HTML, or a DOM element itself. To set this content, either
+       pass it within the InfoWindow options constructor or call setContent()
+       on the InfoWindow explicitly. If you wish to explicitly size the
+       content, you may use <div>s to do so, and enable scrolling if you
+       wish. Note that if you do not enable scrolling and the content exceeds
+       the space available in an info window, the content may "spill" out of
+       the info window.
+
+       InfoWindows may be attached to either Marker objects (in which case
+       their position is based on the marker's location) or on the map itself
+       at a specified LatLng. If you only want one info window to display at
+       a time (as is the behavior on Google Maps), you need only create one
+       info window, which you can reassign to different locations or markers
+       upon map events (such as user clicks). Unlike behavior in V2 of the
+       Google Maps API, however, a map may now display multiple InfoWindow
+       objects if you so choose.
+
+       To change the info window's location you may either change its
+       position explicitly by calling setPosition() on the info window, or by
+       attaching it to a new marker using the InfoWindow.open() method. Note
+       that if you call open() without passing a marker, the InfoWindow will
+       use the position specified upon construction through the InfoWindow
+       options object.
+
+       The following code displays a marker within the center of Australia.
+       Clicking on that marker shows the info window.
+
+ var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+ var myOptions = {
+   zoom: 4,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var contentString = '<div id="content">'+
+     '<div id="siteNotice">'+
+     '</div>'+
+     '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
+     '<div id="bodyContent">'+
+     '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
+     'sandstone rock formation in the southern part of the '+
+     'Northern Territory, central Australia. It lies 335 km (208 mi) '+
+     'south west of the nearest large town, Alice Springs; 450 km '+
+     '(280 mi) by road. Kata Tjuta and Uluru are the two major '+
+     'features of the Uluru - Kata Tjuta National Park. Uluru is '+
+     'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
+     'Aboriginal people of the area. It has many springs, waterholes, '+
+     'rock caves and ancient paintings. Uluru is listed as a World '+
+     'Heritage Site.</p>'+
+     '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+     'http://en.wikipedia.org/w/index.php?title=Uluru</a> (last visited June 22, 2009).</p>'+
+     '</div>'+
+     '</div>';
+
+ var infowindow = new google.maps.InfoWindow({
+     content: contentString
+ });
+
+ var marker = new google.maps.Marker({
+     position: myLatlng,
+     map: map,
+     title:"Uluru (Ayers Rock)"
+ });
+
+ google.maps.event.addListener(marker, 'click', function() {
+   infowindow.open(map,marker);
+ });
+
+       [119]View example (infowindow-simple.html)
+
+       An example with the info window maxWidth set to 200 pixels appears
+       below:
+
+       [120]View example (infowindow-simple-max.html)
+
+                                Layers Overview
+
+       Layers are objects on the map that consist of one or more separate
+       items, but are manipulated as a single unit. Layers generally reflect
+       collections of objects that you add on top of the map to designate a
+       common association. The Maps API manages the presentation of objects
+       within layers by rendering their constituent items into one object
+       (typically a tile overlay) and displaying them as the map's viewport
+       changes. Layers may also alter the presentation layer of the map
+       itself, slightly altering the base tiles in a fashion consistent with
+       the layer. Note that most layers, by design, may not be accessed via
+       their individual objects, but may only be manipulated as a unit.
+
+       To add a layer to a map, you only need to call setMap(), passing it
+       the map object on which to display the layer. Similarly, to hide a
+       layer, call setMap(), passing null.
+
+       The Maps API has several types of layers:
+
+          * [121]KmlLayer objects render KML and GeoRSS elements into a Maps
+            API V3 tile overlay.
+          * [122]FusionTablesLayer objects render data contained in Google
+            [123]Fusion Tables.
+          * The [124]TrafficLayer object renders a layer depicting traffic
+            conditions and overlays representing traffic.
+          * The [125]BicyclingLayer object renders a layer of bike paths
+            and/or bicycle-specific overlays into a common layer. This layer
+            is returned by default within the DirectionsRenderer when
+            requesting directions of travel mode BICYCLING.
+
+       These layers are described below.
+
+                             KML and GeoRSS Layers
+
+       The Google Maps API supports the KML and GeoRSS data formats for
+       displaying geographic information. These data formats are displayed on
+       a map using a KmlLayer object, whose constructor takes the URL of a
+       publicly accessible KML or GeoRSS file.
+
+       The Maps API converts the provided geographic XML data into a KML
+       representation which is displayed on the map using a V3 tile overlay.
+       This KML looks (and somewhat behaves) like familiar V3 overlay
+       elements. KML <Placemark> and GeoRSS point elements are rendered as
+       markers, for example, <LineString> elements are rendered as polylines
+       and <Polygon> elements are rendered as polygons. Similarly,
+       <GroundOverlay> elements are rendered as rectangular images on the
+       map. Importantly, however, these objects are not Google Maps API
+       Markers, Polylines, Polygons or GroundOverlays; instead, they are
+       rendered into a single object on the map.
+
+       KmlLayer objects appear on a map once their map property has been set.
+       (You can remove them from the map by calling setMap() passing null.)
+       The KmlLayer object manages the rendering of these child elements by
+       automatically retrieving appropriate features for the map's given
+       bounds. As the bounds change, features in the current viewport are
+       automatically rendered.
+
+       Because the components within a KmlLayer are rendered on demand, the
+       layer allows you to easily manage the rendering of thousands of
+       markers, polylines, and polygons. Note that you can't access these
+       constituent objects directly, though they each provide click events
+       which return data on those individual objects.
+
+KML Layer Options
+
+       The KmlLayer() constructor optionally passes a number of
+       KmlLayerOptions:
+
+          * map specifies the Map on which to render the KmlLayer. You can
+            hide a KmlLayer by setting this value to null within the setMap()
+            method.
+          * preserveViewport specifies that the map should not be adjusted to
+            the bounds of the KmlLayer's contents when showing the layer. By
+            default, when displaying a KmlLayer, the map is zoomed and
+            positioned to show the entirety of the layer's contents
+          * suppressInfoWindows indicates that clickable features within the
+            KmlLayer should not trigger the display of InfoWindow objects.
+
+       Additionally, once the KmlLayer is rendered, it contains an immutable
+       metadata property containing the layer's name, description, snippet
+       and author within a KmlLayerMetadata object literal. You can inspect
+       this information using the getMetadata() method. Because rendering of
+       KmlLayer objects requires asynchronous communication to an external
+       server, you will want to listen for the metadata_changed event, which
+       will indicate that the property has been populated.
+
+       The following example constructs a KmlLayer from the given GeoRSS
+       feed:
+
+ var myLatlng = new google.maps.LatLng(49.496675,-102.65625);
+ var myOptions = {
+   zoom: 4,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var georssLayer = new google.maps.KmlLayer('http://api.flickr.com/services/feeds/geo/?g=322338@N20〈=en-us&format=feed-georss');
+ georssLayer.setMap(map);
+
+       [126]View GeoRSS example (layer-georss.html)
+
+       The following example constructs a KmlLayer from the given KML feed:
+
+ var myLatlng = new google.maps.LatLng(41.875696,-87.624207);
+ var myOptions = {
+   zoom: 11,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var ctaLayer = new google.maps.KmlLayer('http://gmaps-samples.googlecode.com/svn/trunk/ggeoxml/cta.kml');
+ ctaLayer.setMap(map);
+
+       [127]View KML example (layer-kml.html)
+
+KML Feature Details
+
+       Because KML may include a large number of features, you may not access
+       feature data from the KmlLayer object directly. Instead, as features
+       are displayed, they are rendered to look like clickable Maps API
+       overlays. Clicking on individual features, by default, brings up an
+       InfoWindow containing KML <title> and <description> information on the
+       given feature. Additionally, a click on a KML feature generates a
+       KmlMouseEvent, which passes the following information:
+
+          * position indicates the latitude/longitude coordinates at which to
+            anchor the InfoWindow for this KML feature. This position is
+            generally the clicked location for polygons, polylines, and
+            GroundOverlays, but the true origin for markers.
+          * pixelOffset indicates the offset from the above position to
+            anchor the InfoWindow "tail." For polygonal objects, this offset
+            is typically 0,0 but for markers includes the height of the
+            marker.
+          * featureData contains a JSON structure of KmlFeatureData.
+
+       A sample KmlFeatureData object is shown below:
+
+ {
+   author: {
+     email: "nobody@google.com",
+     name: "Mr Nobody",
+     uri: "http://example.com"
+   },
+   description: "description",
+   id: "id",
+   infoWindowHtml: "html",
+   name: "name",
+   snippet: "snippet"
+ }
+
+       The following example displays KML feature <Description> text within a
+       side <div> when the feature is clicked:
+
+ var myLatlng = new google.maps.LatLng(40.65, -73.95);
+ var myOptions = {
+   zoom: 12,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var nyLayer = new google.maps.KmlLayer('http://www.searcharoo.net/SearchKml/newyork.kml',
+     {suppressInfoWindows: true});
+ nyLayer.setMap(map);
+ google.maps.event.addListener(nyLayer, 'click', function(kmlEvent) {
+   var text = kmlEvent.featureData.description;
+   showInDiv(text);
+ });
+
+ function showInDiv(text) {
+   var sidediv = document.getElementById('contentWindow');
+   sidediv.innerHTML = text;
+ }
+
+       [128]View KML example (layer-kml-features.html)
+
+                    Fusion Table Layers ( [129]Experimental)
+
+       The Google Maps API allows you to render data contained in Google
+       [130]Fusion Tables as a layer on a map using the FusionTablesLayer
+       object. A Google Fusion Table is a database table where each row
+       contains data about a particular feature; for geographic data, each
+       row within a Google Fusion Table additionally contains location data,
+       holding a feature's positional information. The FusionTablesLayer
+       provides an interface to Fusion Tables and supports automatic
+       rendering of this location data, providing clickable overlays that
+       display a feature's additional data.
+
+       A sample Fusion Table, showing geographic data, is shown below:
+
+Limits
+
+       Up to five Fusion Tables layers can be added to a map.
+
+Fusion Table Setup
+
+       Fusion Tables are tables of data that provide built-in geographic data
+       support. Full documentation for Fusion Tables is located in the
+       [131]Fusion Tables Developer's Guide. For a Fusion Tables layer to
+       display data within the API on a Google map, the table must satisfy
+       the following criteria:
+
+          * The table must be [132]shared as Public or as Unlisted. Google
+            Maps API Premier users can also access Private tables, by using
+            the [133]Protected Maps Layers feature.
+          * The table must have one or more columns exposed as a Location. In
+            the [134]Fusion Tables web interface, select Edit > Modify
+            Columns and select the desired column(s).
+
+       The Location column must follow the formatting requirements below.
+
+          * Latitude/longitude coordinates can be entered in a single column,
+            comma separated (latitude,longitude), or can be split across two
+            columns (one column for latitude, and one for longitude).
+          * Addresses must first be geocoded. In the Fusion Tables web
+            interface, select File > Geocode.
+          * KML geometric data such as points, lines, and polygons are
+            supported.
+
+Constructing a FusionTables Layer
+
+       The FusionTablesLayer constructor creates a layer from a public Fusion
+       table using the table's unique ID. This ID can be found by selecting
+       File > About in the Fusion Tables UI.
+
+       To add a Fusion Tables layer to your map, create the layer, passing
+       the correct ID as part of the query parameter, and set the layer's map
+       to your Map object, as with any other overlay.
+
+       The following example shows homicides within Chicago in 2009 using a
+       public Fusion Table:
+
+ var chicago = new google.maps.LatLng(41.850033, -87.6500523);
+
+ map = new google.maps.Map(document.getElementById('map_canvas'), {
+   center: chicago,
+   zoom: 12,
+   mapTypeId: 'roadmap'
+ });
+
+ var layer = new google.maps.FusionTablesLayer({
+   query: {
+     select: 'Geocodable address',
+     from: '139529'
+   },
+ });
+ layer.setMap(map);
+
+       [135]View Fusion table example (layer-fusiontables-simple.html)
+
+Fusion Table Queries
+
+       Fusion Tables also allow you to apply powerful queries which can
+       constrain a result set to a specified criteria. Queries are specified
+       using a FusionTablesLayerOptions query parameter:
+
+ query: {
+   select: locationColumn,
+   from: fusionTableID,
+   where: constraintClause
+ }
+
+       where the locationColumn is an existing geocoded column of type
+       Location.
+
+       Supported search operators are listed in the [136]Fusion Tables
+       documentation.
+
+       The following example displays locations along the CTA's Red Line that
+       had weekday ridership above 5000:
+
+ var chicago = new google.maps.LatLng(41.948766, -87.691497);
+
+ map = new google.maps.Map(document.getElementById('map_canvas'), {
+   center: chicago,
+   zoom: 12,
+   mapTypeId: 'roadmap'
+ });
+
+ var layer = new google.maps.FusionTablesLayer({
+   query: {
+     select: 'address',
+     from: '198945',
+     where: 'ridership > 5000'
+   }
+ });
+ layer.setMap(map);
+
+       [137]View Fusion table example (layer-fusiontables-query.html)
+
+Fusion Table Styles
+
+       The Fusion Tables layer constructor also accepts a
+       FusionTablesLayerOptions styles parameter, to apply color, stroke
+       weight, and opacity to lines and polygons. Marker icons can also be
+       specified from the supported [138]Map marker or Icon names.
+
+       Styles can only be applied to a single Fusion Tables layer per map.
+       You may apply up to five styles to that layer.
+
+       The styles parameter uses the following syntax:
+
+ styles: [{
+   where: 'column_name condition',
+   markerOptions: {
+     iconName: "[139]supported_icon_name"
+   },
+   polygonOptions: {
+     fillColor: "#rrggbb",
+     strokeColor: "#rrggbb",
+     strokeWeight: "int"
+   },
+   polylineOptions: {
+     strokeColor: "#rrggbb",
+     strokeWeight: "int"  }
+ }, {
+   where: ...
+   ...
+ }]
+
+       Styles are applied on top of any styling which has been specified in
+       the Fusion Tables web interface. Styles provided to the layer
+       constructor are then applied in the order in which they're listed,
+       with any features matching multiple rules taking the last matching
+       style.
+
+       To create a default style to apply to all features, create a style
+       with no where clause:
+
+ styles: [{
+   markerOptions: {
+     iconName: "large_green"
+   }
+ }]
+
+       The following example shows:
+
+          * A default style that colors all polygons green, with a 0.3
+            opacity level.
+          * All polygons whose 'birds' column exceeds 300 are colored blue.
+            They retain the opacity level set by the default style.
+          * All polygons whose 'population' column exceeds 5 have their
+            opacity level set at 1.0. They retain their fillColor values.
+
+ var australia = new google.maps.LatLng(-25, 133);
+
+ map = new google.maps.Map(document.getElementById('map_canvas'), {
+   center: australia,
+   zoom: 4,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ });
+
+ layer = new google.maps.FusionTablesLayer({
+   query: {
+     select: 'geometry',
+     from: '815230'
+   },
+   styles: [{
+     polygonOptions: {
+       fillColor: "#00FF00",
+       fillOpacity: 0.3
+     }
+   }, {
+     where: "birds > 300",
+     polygonOptions: {
+       fillColor: "#0000FF"
+     }
+   }, {
+     where: "population > 5",
+     polygonOptions: {
+       fillOpacity: 1.0
+     }
+   }]
+ });
+ layer.setMap(map);
+
+       [140]View Fusion table example (layer-fusiontables-styling.html)
+
+Fusion Table Heatmaps
+
+       Fusion Tables also provide limited support for heat maps, where the
+       density of matched locations is depicted using a palette of colors.
+       Current heatmaps use a red (dense) to green (sparse) gradient to
+       indicate the relative prevalence of associated locations. You enable a
+       heatmap by setting the layer's FusionTablesLayerOptions heatmap
+       parameter to enabled: true.
+
+       The following example shows designated beaches on the coast of Brazil
+       using a heat map:
+
+ var brazil = new google.maps.LatLng(-18.771115, -42.758789);
+
+ map = new google.maps.Map(document.getElementById('map_canvas'), {
+   center: brazil,
+   zoom: 5,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ });
+
+ layer = new google.maps.FusionTablesLayer({
+   query: {
+     select: 'LATITUDE',
+     from: '136705'
+   },
+   heatmap: {
+     enabled: true
+   }
+ });
+ layer.setMap(map);
+
+       [141]View Fusion table example (layer-fusiontables-heatmap.html)
+
+                               The Traffic Layer
+
+       The Google Maps API allows you to add real-time traffic information
+       (where supported) to your maps using the TrafficLayer object. Traffic
+       information is provided for the time at which the request is made.
+       Consult [142]this spreadsheet to determine traffic coverage support.
+
+ var myLatlng = new google.maps.LatLng(34.04924594193164, -118.24104309082031);
+ var myOptions = {
+   zoom: 13,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var trafficLayer = new google.maps.TrafficLayer();
+ trafficLayer.setMap(map);
+
+       [143]View Traffic example (layer-traffic.html)
+
+                              The Bicycling Layer
+
+       The Google Maps API allows you to add bicycle information to your maps
+       using the BicyclingLayer object. The BicyclingLayer renders a layer of
+       bike paths, suggested bike routes and other overlays specific to
+       bicycling usage on top of the given map. Additionally, the layer
+       alters the style of the base map itself to emphasize streets
+       supporting bicycle routes and de-emphasize streets inappropriate for
+       bicycles.
+
+       The following examples shows the Bicycle layer enabled on a map of
+       Cambridge, MA:
+
+ var myLatlng = new google.maps.LatLng(42.3726399, -71.1096528);
+ var myOptions = {
+   zoom: 14,
+   center: myLatlng,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ }
+
+ var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+ var bikeLayer = new google.maps.BicyclingLayer();
+ bikeLayer.setMap(map);
+
+       Dark green routes indicated dedicated bicycle routes. Light green
+       routes indicate streets with dedicated "bike lanes." Dashed routes
+       indicate streets or paths otherwise recommended for bicycle usage.
+
+       [144]View example (layer-bicycling.html)
+
+                         The Panoramio Layer (Library)
+
+       The concepts within this document refer to features only available
+       within the google.maps.panoramio library. This library is not loaded
+       by default when you load the Maps Javascript API but must be
+       explicitly specified through use of a libraries bootstrap parameter.
+
+       See [145]Libraries in the V3 Maps API for more information.
+
+Using the PanoramioLayer Object
+
+       You may add photos from [146]Panoramio as a layer to your maps using
+       the PanoramioLayer object. The PanoramioLayer renders a layer of
+       geotagged photo icons from Panoramio on the map as a series of large
+       and small photo icons.
+
+       To add a PanoramioLayer to your map, simply create the object and set
+       its map property:
+
+ var panoramioLayer = new google.maps.panoramio.PanoramioLayer();
+ panoramioLayer.setMap(map);
+
+       By default, clicking on a photo icon within a Panoramio layer brings
+       up an info window with a larger photo and more information. You may
+       remove this default behavior by setting the layer's
+       suppressInfoWindows property to true. You may inspect the metadata
+       associated with an individual Panoramio photo by handling the 'click'
+       event on the PanoramioLayer and inspecting the PanoramioMouseEvent for
+       its featureDetails property. Note that if you implement your own click
+       handler and do not display the default info window, your use of
+       Panoramio photos must comply with the [147]Panoramio API Terms of
+       Service, including any branding and attribution requirements.
+
+       The following example shows a Panoramio layer for Seattle, WA.
+       Clicking on a photo appends a list of links to Panoramio photo pages
+       in a right-hand panel:
+
+ var fremont = new google.maps.LatLng(47.651743, -122.349243);
+ var myOptions = {
+   zoom: 16,
+   center: fremont,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ };
+
+ var map = new google.maps.Map(
+     document.getElementById("map_canvas"),
+     myOptions);
+
+ var panoramioLayer = new google.maps.panoramio.PanoramioLayer();
+
+ panoramioLayer.setMap(map);
+
+ google.maps.event.addListener(panoramioLayer, 'click', function(event) {
+   var photoDiv = document.getElementById('photoPanel');
+   var attribution = document.createTextNode(event.featureDetails.title + ": " + event.featureDetails.author);
+   var br = document.createElement("br");
+   var link = document.createElement("a");
+   link.setAttribute("href", event.featureDetails.url);
+   link.appendChild(attribution);
+   photoDiv.appendChild(br);
+   photoDiv.appendChild(link);
+ });
+
+       [148]View example (layer-panoramio.html)
+
+Restricting Photos by Tag or User ID
+
+       You may restrict the set of photos to display on a PanoramioLayer to
+       those matching a certain textual tag, or those matching a particular
+       user.
+
+       To restrict photos to those of a particular tag, call setTag() on the
+       PanoramioLayer object. The layer will update to only show photos
+       matching that tag within the map's viewport. To restrict photos to
+       those of a particular user, call setUserId() on the PanoramioLayer
+       object.
+
+       The following example displays a map of New York harbor with no tag
+       filtering. Entering text in the input field applies a filter using the
+       setTag() method:
+
+       [verbatim]
+
+ var panoramioLayer;
+ function initialize() {
+   var nyHarbor = new google.maps.LatLng(40.693134, -74.031028);
+   var myOptions = {
+     zoom: 15,
+     center: nyHarbor,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+   };
+
+   var map = new google.maps.Map(
+       document.getElementById("map_canvas"),
+       myOptions);
+
+   panoramioLayer = new google.maps.panoramio.PanoramioLayer();
+
+   panoramioLayer.setMap(map);
+ }
+
+ function getTaggedPhotos() {
+   var tagFilter = document.getElementById('tag').value;
+   panoramioLayer.setTag(tagFilter);
+ }
+
+       [149]View example (layer-panoramio-tags.html)
+
+Using the Panoramio Widget API
+
+       You may also use the [150]Panoramio Widget API to display images
+       within a PanoramioWidget object. To use the Panoramio API, you will
+       need to load the Javascript symbols for that API separately from the
+       Javascript API via a script tag:
+
+ <script type="text/javascript" src="http://www.panoramio.com/wapi/wapi.js?v=1">
+ </script>
+
+       The Panoramio PhotoWidget has a default size of 400 x 300 pixels. If
+       you wish to display a PhotoWidget within an info window, you may
+       either use this default size, or set one explicitly within the
+       PhotoWidget's constructor. Note that the PhotoWidget will not size
+       itself automatically based on its container (the info window in this
+       case). Instead, you will need to explicitly set the widget's width and
+       height.
+
+       The following example uses the Panoramio Widget API to populate an
+       info window with a Panoramio image. Note that the widget could be
+       easily configured to display more than one image.
+
+ // This example requires loading the Panoramio Widget API
+ // via http://www.panoramio.com/wapi/wapi.js?v=1
+
+ // The photoDiv defines the DIV within the info window for
+ // displaying the Panoramio photo within its PhotoWidget.
+ // We use the info window's maximum size of 640 px.
+ var photoDiv =  document.createElement("div");
+ photoDiv.style.width = '640px';
+ photoDiv.style.height = '500px';
+
+ // The PhotoWidget width and height are expressed as number values,
+ // not string values so we need to turn them into floats.
+ var photoWidgetOptions = {
+   'width': parseFloat(photoDiv.style.width),
+   'height': parseFloat(photoDiv.style.height)
+ };
+
+ // We construct a PhotoWidget here with a blank (null) request as we
+ // don't yet have a photo to populate it.
+ var photoWidget = new panoramio.PhotoWidget(photoDiv, null, photoWidgetOptions);
+
+ var monoLake = new google.maps.LatLng(37.973432, -119.093170);
+ var myOptions = {
+   zoom: 11,
+   center: monoLake,
+   mapTypeId: google.maps.MapTypeId.ROADMAP
+ };
+
+ var map = new google.maps.Map(
+     document.getElementById("map_canvas"),
+     myOptions);
+
+ var photoWindow = new google.maps.InfoWindow();
+ var panoramioOptions = {
+   suppressInfoWindows: true
+ }
+ var panoramioLayer = new google.maps.panoramio.PanoramioLayer(panoramioOptions);
+
+ panoramioLayer.setMap(map);
+
+ google.maps.event.addListener(panoramioLayer, 'click', function(event) {
+
+   var photoRequestOptions = {
+     ids: [{'photoId': event.featureDetails.photoId,
+            'userId': event.featureDetails.userId}]
+   }
+   photoWidget.setRequest(photoRequestOptions);
+   photoWidget.setPosition(0);
+
+   photoWindow.setPosition(event.latLng);
+   photoWindow.open(map);
+   photoWindow.setContent(photoDiv);
+ });
+
+       [151]View example (layer-panoramio-widget.html)
+
+       Consult the [152]Panoramio Javascript API documentation for full
+       information on using this API.
+
+                                Custom Overlays
+
+       The Google Maps API V3 provides an OverlayView class for creating your
+       own custom overlays. The OverlayView is a base class providing several
+       methods you must implement when creating your overlays. The class also
+       provides a few methods that make it possible to translate between
+       screen coordinates and locations on the map.
+
+       To create a custom overlay:
+
+          * Set the custom object's prototype to a new instance of
+            google.maps.OverlayView(). This will effectively "subclass" the
+            overlay class.
+          * Create a constructor for your custom overlay, and set any
+            initialization parameters to custom properties within that
+            constructor.
+          * Implement an onAdd() method within your prototype, and attach the
+            overlay to the map. OverlayView.onAdd() will be called when the
+            map is ready for the overlay to be attached..
+          * Implement a draw() method within your prototype, and handle the
+            visual display of your object. OverlayView.draw() will be called
+            when the object is first displayed as well.
+          * You should also implement an onRemove() method to clean up any
+            elements you added within the overlay.
+
+       We'll step through this explanation below.
+
+SubClassing an Overlay
+
+       We'll use OverlayView to create a simple image overlay (similar to the
+       GGroundOverlay within the V2 API). We'll create a USGSOverlay object
+       which contains a USGS image of the area in question and the bounds of
+       the image.
+
+ var overlay;
+
+ function initialize() {
+   var myLatLng = new google.maps.LatLng(62.323907, -150.109291);
+   var myOptions = {
+     zoom: 11,
+     center: myLatLng,
+     mapTypeId: google.maps.MapTypeId.SATELLITE
+   };
+
+   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+   var swBound = new google.maps.LatLng(62.281819, -150.287132);
+   var neBound = new google.maps.LatLng(62.400471, -150.005608);
+   var bounds = new google.maps.LatLngBounds(swBound, neBound);
+
+   // Photograph courtesy of the U.S. Geological Survey
+   var srcImage = 'images/talkeetna.png';
+   overlay = new USGSOverlay(bounds, srcImage, map);
+ }
+
+       Next, we'll create a constructor for this class, and initialize the
+       passed parameters as properties of the new object. We will also need
+       to explicitly subclass the USGSOverlay from OverlayView. We do this by
+       setting the new class' prototype to an instance of the parent class.
+       (We set the prototype here to an instance, rather than the parent
+       class itself, because we do not wish to modify the parent class.)
+
+ function USGSOverlay(bounds, image, map) {
+
+   // Now initialize all properties.
+   this.bounds_ = bounds;
+   this.image_ = image;
+   this.map_ = map;
+
+   // We define a property to hold the image's
+   // div. We'll actually create this div
+   // upon receipt of the add() method so we'll
+   // leave it null for now.
+   this.div_ = null;
+
+   // Explicitly call setMap() on this overlay
+   this.setMap(map);
+ }
+
+ USGSOverlay.prototype = new google.maps.OverlayView();
+
+       We can't yet attach this overlay to the map in the overlay's
+       constructor. In specific, we need to ensure that all of the map's
+       panes (which specify in what order objects are displayed on a map) are
+       available. Conveniently, the API provides a helper method indicating
+       this has occurred. We'll handle that method in the next section.
+
+Initializing an Overlay
+
+       When the overlay is first instantiated and ready to display, we'll
+       need to attach it to the map via the browser's DOM. The API indicates
+       that the overlay has been added to the map by invoking the overlay's
+       onAdd() method. We'll handle this method by creating a <div> to hold
+       our image, add an <img> element, attach it to the <div>, and then
+       finally attach the overlay to one of the map's panes, which are nodes
+       within the DOM tree.
+
+       The set of panes, of type MapPanes, specify the stacking order for
+       different layers on the map. The following panes are possible, and
+       enumerated in the order in which they are stacked from bottom to top:
+
+          * MapPanes.mapPane
+          * MapPanes.overlayLayer
+          * MapPanes.overlayShadow
+          * MapPanes.overlayImage
+          * MapPanes.floatShadow
+          * MapPanes.overlayMouseTarget
+          * MapPanes.floatPane
+
+       Because our image is a "ground overlay," we'll use the overlayLayer
+       map pane. Once we have that pane, we'll attach our object to it as a
+       child.
+
+ USGSOverlay.prototype.onAdd = function() {
+
+   // Note: an overlay's receipt of onAdd() indicates that
+   // the map's panes are now available for attaching
+   // the overlay to the map via the DOM.
+
+   // Create the DIV and set some basic attributes.
+   var div = document.createElement('DIV');
+   div.style.border = "none";
+   div.style.borderWidth = "0px";
+   div.style.position = "absolute";
+
+   // Create an IMG element and attach it to the DIV.
+   var img = document.createElement("img");
+   img.src = this.image_;
+   img.style.width = "100%";
+   img.style.height = "100%";
+   div.appendChild(img);
+
+   // Set the overlay's div_ property to this DIV
+   this.div_ = div;
+
+   // We add an overlay to a map via one of the map's panes.
+   // We'll add this overlay to the overlayImage pane.
+   var panes = this.getPanes();
+   panes.overlayLayer.appendChild(div);
+ }
+
+Drawing an Overlay
+
+       Note that we haven't actually invoked any special visual display
+       above. The API invokes a separate draw() method on the overlay
+       whenever it needs to draw the overlay on the map (including when first
+       added).
+
+       We'll therefore implement this draw() method, retrieve the overlay's
+       MapCanvasProjection using getProjection()and calculate the exact
+       coordinates at which to anchor the object's top right and bottom left
+       points, from which we'll resize the <div>; in turn this will resize
+       the image to match the bounds we specified in the overlay's
+       constructor.
+
+ USGSOverlay.prototype.draw = function() {
+
+   // Size and position the overlay. We use a southwest and northeast
+   // position of the overlay to peg it to the correct position and size.
+   // We need to retrieve the projection from this overlay to do this.
+   var overlayProjection = this.getProjection();
+
+   // Retrieve the southwest and northeast coordinates of this overlay
+   // in latlngs and convert them to pixels coordinates.
+   // We'll use these coordinates to resize the DIV.
+   var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+   var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+
+   // Resize the image's DIV to fit the indicated dimensions.
+   var div = this.div_;
+   div.style.left = sw.x + 'px';
+   div.style.top = ne.y + 'px';
+   div.style.width = (ne.x - sw.x) + 'px';
+   div.style.height = (sw.y - ne.y) + 'px';
+ }
+
+Removing an Overlay
+
+       We'll also add an onRemove() method to cleanly remove the overlay from
+       the map. This method will be called automatically from the API if we
+       ever set the overlay's map property to null.
+
+ USGSOverlay.prototype.onRemove = function() {
+   this.div_.parentNode.removeChild(this.div_);
+   this.div_ = null;
+ }
+
+       [153]View example (overlay-simple.html)
+
+Hiding and Showing an Overlay
+
+       If you wish to hide or show an overlay rather than simply create or
+       remove the overlay, you can implement your own hide() and show()
+       methods to adjust the overlay's visibility. Alternatively, you may
+       detach the overlay from the map's DOM, though this operation is
+       slightly more expensive. Note that if you then reattach the overlay to
+       the map's DOM, it will re-invoke the overlay's onAdd() method.
+
+       The following example adds hide() and show() methods to the overlay's
+       prototype which toggle the container <div>'s visibility. Additionally,
+       we add a toogleDOM() method, which attaches or detaches the overlay to
+       the map. Note that if we set the visibility to "hidden" and then
+       detach the map from the DOM via toggleDOM(), if we later reattach the
+       map, it will be visible again, since the containing <div> is recreated
+       in the overlay's onAdd() method.
+
+ // Note that the visibility property must be a string enclosed in quotes
+ USGSOverlay.prototype.hide = function() {
+   if (this.div_) {
+     this.div_.style.visibility = "hidden";
+   }
+ }
+
+ USGSOverlay.prototype.show = function() {
+   if (this.div_) {
+     this.div_.style.visibility = "visible";
+   }
+ }
+
+ USGSOverlay.prototype.toggle = function() {
+   if (this.div_) {
+     if (this.div_.style.visibility == "hidden") {
+       this.show();
+     } else {
+       this.hide();
+     }
+   }
+ }
+
+ USGSOverlay.prototype.toggleDOM = function() {
+   if (this.getMap()) {
+     this.setMap(null);
+   } else {
+     this.setMap(this.map_);
+   }
+ }
+
+ // Now we add an input button to initiate the toggle method
+ // on the specific overlay
+ <div id ="toolbar" width="100%; height:20px;" style="text-align:center">
+   <input type="button" value="Toggle Visibility" onclick="overlay.toggle();"></input>
+   <input type="button" value="Toggle DOM Attachment" onclick="overlay.toggleDOM();"></input>
+ </div>
+ <div id="map_canvas" style="width: 100%; height: 95%;"></div>
+
+       [154]View example (overlay-hideshow.html)
+
+                                  Styled Maps
+
+       The documentation for Styled Maps has moved to the [155]MapTypes
+       section of the API documentation set.
+
+                                Custom Map Types
+
+       The documentation for Custom Map Types and the Google Maps API
+       coordinate systems has moved to the [156]MapTypes section of the API
+       documentation set.
+
+                               Custom Projections
+
+       The documentation for Custom Projections has moved to the
+       [157]MapTypes section of the API documentation set.
+
+       ©2011 Google - [158]Code Home - [159]Site Terms of Service -
+       [160]Privacy Policy - [161]Site Directory
+
+       Google Code offered in: [162]English - [163]Español - [164]日本語 -
+       [165]한국어 - [166]Português - [167]Pусский - [168]中文(简体) - [169]
+       中文(繁體)
+
+References
+
+   Visible links
+   1. http://code.google.com/osd.xml
+   2. http://code.google.com/apis/maps/documentation/javascript/overlays.html#
+   3. http://code.google.com/
+   4. https://www.google.com/accounts/Login?continue=http%3A%2F%2Fcode.google.com%2Fapis%2Fmaps%2Fdocumentation%2Fjavascript%2Foverlays.html&followup=http%3A%2F%2Fcode.google.com%2Fapis%2Fmaps%2Fdocumentation%2Fjavascript%2Foverlays.html
+   5. http://code.google.com/
+   8. Google Maps JavaScript API V3 home page
+	http://code.google.com/apis/maps/documentation/javascript/
+   9. Official Google Maps JavaScript API V3 documentation
+	http://code.google.com/apis/maps/documentation/javascript/basics.html
+  10. Answers to frequently asked questions about Google Maps JavaScript API V3
+	http://code.google.com/apis/maps/faq.html
+  11. Focused articles and tutorials for Google Maps JavaScript API V3 developers
+	http://code.google.com/apis/maps/documentation/javascript/articles.html
+  12. Official Google Maps JavaScript API V3 blog
+	http://googlegeodevelopers.blogspot.com/
+  13. Google Maps JavaScript API V3 developer forum
+	http://code.google.com/apis/maps/documentation/javascript/forum.html
+  14. Google Maps JavaScript API V3 terms of service
+	http://code.google.com/apis/maps/terms.html
+  15. http://code.google.com/apis/maps/
+  16. http://code.google.com/apis/kml/documentation/kmlSearch.html
+  17. http://code.google.com/apis/maps/documentation/javascript/
+  18. http://code.google.com/apis/maps/documentation/javascript/basics.html
+  19. http://code.google.com/apis/maps/documentation/javascript/tutorial.html
+  20. http://code.google.com/apis/maps/documentation/javascript/events.html
+  21. http://code.google.com/apis/maps/documentation/javascript/controls.html
+  22. http://code.google.com/apis/maps/documentation/javascript/styling.html
+  23. http://code.google.com/apis/maps/documentation/javascript/overlays.html
+  24. http://code.google.com/apis/maps/documentation/javascript/services.html
+  25. http://code.google.com/apis/maps/documentation/javascript/maptypes.html
+  26. http://code.google.com/apis/maps/documentation/javascript/reference.html
+  27. http://code.google.com/apis/maps/documentation/javascript/reference.html
+  28. http://code.google.com/apis/maps/documentation/javascript/3.5/reference.html
+  29. http://code.google.com/apis/maps/documentation/javascript/3.4/reference.html
+  30. http://code.google.com/apis/maps/documentation/javascript/examples/index.html
+  31. http://code.google.com/apis/maps/documentation/javascript/demogallery.html
+  32. http://code.google.com/apis/maps/documentation/javascript/geometry.html
+  33. http://code.google.com/apis/maps/documentation/javascript/advertising.html
+  34. http://code.google.com/apis/maps/documentation/javascript/places.html
+  35. http://code.google.com/apis/maps/documentation/javascript/articles.html
+  36. http://code.google.com/p/gmaps-api-issues/issues/list?can=2&q=apitype:Javascript3&colspec=ID+Type+Status+Introduced+Fixed+Summary+Internal+Stars&cells=tiles
+  37. http://code.google.com/p/gmaps-api-issues/wiki/JavascriptMapsAPIv3Changelog
+  38. http://code.google.com/p/google-maps-utility-library-v3/
+  39. http://code.google.com/apis/maps/documentation/javascript/v2/
+  40. http://code.google.com/apis/maps/documentation/javascript/v2/basics.html
+  41. http://code.google.com/apis/maps/documentation/flash/
+  42. http://code.google.com/apis/maps/documentation/flash/intro.html
+  43. http://code.google.com/apis/maps/documentation/mapsdata/
+  44. http://code.google.com/apis/maps/documentation/mapsdata/developers_guide_protocol.html
+  45. http://code.google.com/apis/maps/documentation/webservices/
+  46. http://code.google.com/apis/maps/documentation/directions/
+  47. http://code.google.com/apis/maps/documentation/distancematrix/
+  48. http://code.google.com/apis/maps/documentation/elevation/
+  49. http://code.google.com/apis/maps/documentation/geocoding/
+  50. http://code.google.com/apis/maps/documentation/places/
+  51. http://code.google.com/apis/maps/documentation/staticmaps/index.html
+  52. http://code.google.com/apis/maps/documentation/streetview/index.html
+  53. http://code.google.com/apis/earth/
+  54. http://code.google.com/apis/earth/documentation/
+  55. http://code.google.com/apis/maps/documentation/localsearch/index.html
+  56. http://code.google.com/apis/maps/documentation/localsearch/start.html
+  57. http://code.google.com/apis/maps/documentation/premier/
+  58. http://code.google.com/apis/maps/documentation/javascript/overlays.html#OverlaysOverview
+  59. http://code.google.com/apis/maps/documentation/javascript/overlays.html#AddingOverlays
+  60. http://code.google.com/apis/maps/documentation/javascript/overlays.html#RemovingOverlays
+  61. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Markers
+  62. http://code.google.com/apis/maps/documentation/javascript/overlays.html#MarkerAnimations
+  63. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Icons
+  64. http://code.google.com/apis/maps/documentation/javascript/overlays.html#SimpleIcons
+  65. http://code.google.com/apis/maps/documentation/javascript/overlays.html#ComplexIcons
+  66. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Polylines
+  67. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PolylineOptions
+  68. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PolylineArrays
+  69. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Polygons
+  70. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PolygonOptions
+  71. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PolygonAutoCompletion
+  72. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PolygonArrays
+  73. http://code.google.com/apis/maps/documentation/javascript/overlays.html#BasicShapes
+  74. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Circles
+  75. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Rectangles
+  76. http://code.google.com/apis/maps/documentation/javascript/overlays.html#InfoWindows
+  77. http://code.google.com/apis/maps/documentation/javascript/overlays.html#GroundOverlays
+  78. http://code.google.com/apis/maps/documentation/javascript/overlays.html#LayersOverview
+  79. http://code.google.com/apis/maps/documentation/javascript/overlays.html#KMLLayers
+  80. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTables
+  81. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTablesSetup
+  82. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTablesConstructor
+  83. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTablesQueries
+  84. http://code.google.com/apis/maps/documentation/javascript/overlays.html#fusion_table_styles
+  85. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTablesHeatmaps
+  86. http://code.google.com/apis/maps/documentation/javascript/overlays.html#TrafficLayer
+  87. http://code.google.com/apis/maps/documentation/javascript/overlays.html#BicyclingLayer
+  88. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PanoramioLibrary
+  89. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PanoramioLayer
+  90. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PanoramioTags
+  91. http://code.google.com/apis/maps/documentation/javascript/overlays.html#PanoramioWidgets
+  92. http://code.google.com/apis/maps/documentation/javascript/overlays.html#CustomOverlays
+  93. http://code.google.com/apis/maps/documentation/javascript/overlays.html#SubClassing
+  94. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Initializing
+  95. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Drawing
+  96. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Removing
+  97. http://code.google.com/apis/maps/documentation/javascript/overlays.html#HideShow
+  98. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Markers
+  99. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Icons
+ 100. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Polylines
+ 101. http://code.google.com/apis/maps/documentation/javascript/overlays.html#Polygons
+ 102. http://code.google.com/apis/maps/documentation/javascript/overlays.html#CustomMapTypes
+ 103. http://code.google.com/apis/maps/documentation/javascript/overlays.html#InfoWindows
+ 104. http://code.google.com/apis/maps/documentation/javascript/overlays.html#CustomOverlays
+ 105. http://code.google.com/apis/maps/documentation/javascript/examples/overlay-remove.html
+ 106. http://code.google.com/apis/maps/documentation/javascript/examples/marker-simple.html
+ 107. http://code.google.com/apis/maps/documentation/javascript/examples/marker-animations.html
+ 108. http://code.google.com/apis/maps/documentation/javascript/examples/marker-animations-iteration.html
+ 109. http://code.google.com/apis/maps/documentation/javascript/examples/icon-simple.html
+ 110. http://code.google.com/apis/maps/documentation/javascript/examples/icon-complex.html
+ 111. http://code.google.com/apis/maps/documentation/javascript/examples/polyline-simple.html
+ 112. http://code.google.com/apis/maps/documentation/javascript/examples/polyline-complex.html
+ 113. http://code.google.com/apis/maps/documentation/javascript/examples/polygon-simple.html
+ 114. http://code.google.com/apis/maps/documentation/javascript/examples/polygon-autoclose.html
+ 115. http://code.google.com/apis/maps/documentation/javascript/examples/polygon-arrays.html
+ 116. http://code.google.com/apis/maps/documentation/javascript/examples/circle-simple.html
+ 117. http://code.google.com/apis/maps/documentation/javascript/examples/rectangle-simple.html
+ 118. http://code.google.com/apis/maps/documentation/javascript/examples/groundoverlay-simple.html
+ 119. http://code.google.com/apis/maps/documentation/javascript/examples/infowindow-simple.html
+ 120. http://code.google.com/apis/maps/documentation/javascript/examples/infowindow-simple-max.html
+ 121. http://code.google.com/apis/maps/documentation/javascript/overlays.html#KMLLayers
+ 122. http://code.google.com/apis/maps/documentation/javascript/overlays.html#FusionTables
+ 123. http://code.google.com/apis/fusiontables/
+ 124. http://code.google.com/apis/maps/documentation/javascript/overlays.html#TrafficLayer
+ 125. http://code.google.com/apis/maps/documentation/javascript/overlays.html#BicyclingLayer
+ 126. http://code.google.com/apis/maps/documentation/javascript/examples/layer-georss.html
+ 127. http://code.google.com/apis/maps/documentation/javascript/examples/layer-kml.html
+ 128. http://code.google.com/apis/maps/documentation/javascript/examples/layer-kml-features.html
+ 129. http://code.google.com/labs/faq.html#experimental
+ 130. http://code.google.com/apis/fusiontables/
+ 131. http://code.google.com/apis/fusiontables/docs/developers_guide.html
+ 132. http://www.google.com/support/fusiontables/bin/answer.py?answer=1251925
+ 133. http://code.google.com/apis/maps/documentation/premier/fusiontables.html
+ 134. https://www.google.com/fusiontables
+ 135. http://code.google.com/apis/maps/documentation/javascript/examples/layer-fusiontables-simple.html
+ 136. http://code.google.com/apis/fusiontables/docs/developers_reference.html#Select
+ 137. http://code.google.com/apis/maps/documentation/javascript/examples/layer-fusiontables-query.html
+ 138. http://www.google.com/fusiontables/DataSource?dsrcid=308519
+ 139. http://www.google.com/fusiontables/DataSource?dsrcid=308519
+ 140. http://code.google.com/apis/maps/documentation/javascript/examples/layer-fusiontables-styling.html
+ 141. http://code.google.com/apis/maps/documentation/javascript/examples/layer-fusiontables-heatmap.html
+ 142. http://gmaps-samples.googlecode.com/svn/trunk/mapcoverage_filtered.html
+ 143. http://code.google.com/apis/maps/documentation/javascript/examples/layer-traffic.html
+ 144. http://code.google.com/apis/maps/documentation/javascript/examples/layer-bicycling.html
+ 145. http://code.google.com/apis/maps/documentation/javascript/basics.html#Libraries
+ 146. http://www.panoramio.com/
+ 147. http://www.panoramio.com/api/data/terms.html
+ 148. http://code.google.com/apis/maps/documentation/javascript/examples/layer-panoramio.html
+ 149. http://code.google.com/apis/maps/documentation/javascript/examples/layer-panoramio-tags.html
+ 150. http://www.panoramio.com/api/widget/api.html
+ 151. http://code.google.com/apis/maps/documentation/javascript/examples/layer-panoramio-widget.html
+ 152. http://www.panoramio.com/api/widget/api.html#js
+ 153. http://code.google.com/apis/maps/documentation/javascript/examples/overlay-simple.html
+ 154. http://code.google.com/apis/maps/documentation/javascript/examples/overlay-hideshow.html
+ 155. http://code.google.com/apis/maps/documentation/javascript/maptypes.html#StyledMaps
+ 156. http://code.google.com/apis/maps/documentation/javascript/maptypes.html#CustomMapTypes
+ 157. http://code.google.com/apis/maps/documentation/javascript/maptypes.html#Projections
+ 158. http://code.google.com/
+ 159. http://code.google.com/terms.html
+ 160. http://code.google.com/privacy.html
+ 161. http://code.google.com/more/
+ 162. http://code.google.com/intl/en/
+ 163. http://code.google.com/intl/es/
+ 164. http://code.google.com/intl/ja/
+ 165. http://code.google.com/intl/ko/
+ 166. http://code.google.com/intl/pt-BR/
+ 167. http://code.google.com/intl/ru/
+ 168. http://code.google.com/intl/zh-CN/
+ 169. http://code.google.com/intl/zh-TW/

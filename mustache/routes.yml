@@ -1,0 +1,455 @@
+--- 
+modes: 
+- group: subway
+  routes: 
+  - :route: Green Line
+    :trips_left: 322
+  - :route: Mattapan High-Speed Line
+    :trips_left: 66
+  - :route: Blue Line
+    :trips_left: 74
+  - :route: Orange Line
+    :trips_left: 79
+  - :route: Red Line
+    :trips_left: 133
+- group: commuter rail
+  routes: 
+  - :route: Fairmount Line
+    :trips_left: 6
+  - :route: Fitchburg/South Acton Line
+    :trips_left: 11
+  - :route: Framingham/Worcester Line
+    :trips_left: 13
+  - :route: Franklin Line
+    :trips_left: 11
+  - :route: Greenbush Line
+    :trips_left: 5
+  - :route: Haverhill Line
+    :trips_left: 13
+  - :route: Kingston/Plymouth Line
+    :trips_left: 7
+  - :route: Lowell Line
+    :trips_left: 12
+  - :route: Middleborough/Lakeville Line
+    :trips_left: 6
+  - :route: Needham Line
+    :trips_left: 9
+  - :route: Newburyport/Rockport Line
+    :trips_left: 16
+  - :route: Providence/Stoughton Line
+    :trips_left: 22
+- group: bus
+  routes: 
+  - :route: "1"
+    :trips_left: 76
+  - :route: "10"
+    :trips_left: 24
+  - :route: "100"
+    :trips_left: 17
+  - :route: "101"
+    :trips_left: 17
+  - :route: "104"
+    :trips_left: 18
+  - :route: "105"
+    :trips_left: 3
+  - :route: "106"
+    :trips_left: 16
+  - :route: "108"
+    :trips_left: 16
+  - :route: "109"
+    :trips_left: 29
+  - :route: "11"
+    :trips_left: 26
+  - :route: "110"
+    :trips_left: 18
+  - :route: "111"
+    :trips_left: 77
+  - :route: "112"
+    :trips_left: 6
+  - :route: "114"
+    :trips_left: 0
+  - :route: "116"
+    :trips_left: 20
+  - :route: 116/117
+    :trips_left: 13
+  - :route: "117"
+    :trips_left: 22
+  - :route: "119"
+    :trips_left: 9
+  - :route: "120"
+    :trips_left: 17
+  - :route: "121"
+    :trips_left: 0
+  - :route: "131"
+    :trips_left: 4
+  - :route: "132"
+    :trips_left: 3
+  - :route: "134"
+    :trips_left: 18
+  - :route: "136"
+    :trips_left: 3
+  - :route: "137"
+    :trips_left: 7
+  - :route: "14"
+    :trips_left: 4
+  - :route: "15"
+    :trips_left: 42
+  - :route: "16"
+    :trips_left: 32
+  - :route: "17"
+    :trips_left: 11
+  - :route: "170"
+    :trips_left: 0
+  - :route: "171"
+    :trips_left: 0
+  - :route: "18"
+    :trips_left: 0
+  - :route: "19"
+    :trips_left: 4
+  - :route: "191"
+    :trips_left: 0
+  - :route: "192"
+    :trips_left: 0
+  - :route: "193"
+    :trips_left: 0
+  - :route: "201"
+    :trips_left: 24
+  - :route: "202"
+    :trips_left: 1
+  - :route: "21"
+    :trips_left: 19
+  - :route: "210"
+    :trips_left: 2
+  - :route: "211"
+    :trips_left: 4
+  - :route: "212"
+    :trips_left: 2
+  - :route: "214"
+    :trips_left: 0
+  - :route: 214/216
+    :trips_left: 9
+  - :route: "215"
+    :trips_left: 13
+  - :route: "216"
+    :trips_left: 10
+  - :route: "217"
+    :trips_left: 1
+  - :route: "22"
+    :trips_left: 48
+  - :route: "220"
+    :trips_left: 18
+  - :route: "221"
+    :trips_left: 0
+  - :route: "222"
+    :trips_left: 16
+  - :route: "225"
+    :trips_left: 20
+  - :route: "23"
+    :trips_left: 57
+  - :route: "230"
+    :trips_left: 14
+  - :route: "236"
+    :trips_left: 5
+  - :route: "238"
+    :trips_left: 13
+  - :route: "24"
+    :trips_left: 4
+  - :route: "240"
+    :trips_left: 23
+  - :route: 24/27
+    :trips_left: 12
+  - :route: "245"
+    :trips_left: 3
+  - :route: "26"
+    :trips_left: 19
+  - :route: "27"
+    :trips_left: 3
+  - :route: "274"
+    :trips_left: 15
+  - :route: "275"
+    :trips_left: 8
+  - :route: "276"
+    :trips_left: 4
+  - :route: "277"
+    :trips_left: 0
+  - :route: "28"
+    :trips_left: 54
+  - :route: "29"
+    :trips_left: 21
+  - :route: "30"
+    :trips_left: 20
+  - :route: "31"
+    :trips_left: 42
+  - :route: "32"
+    :trips_left: 71
+  - :route: "325"
+    :trips_left: 1
+  - :route: "326"
+    :trips_left: 2
+  - :route: "33"
+    :trips_left: 5
+  - :route: "34"
+    :trips_left: 26
+  - :route: 34E
+    :trips_left: 20
+  - :route: "35"
+    :trips_left: 9
+  - :route: "350"
+    :trips_left: 14
+  - :route: "351"
+    :trips_left: 1
+  - :route: "352"
+    :trips_left: 0
+  - :route: "354"
+    :trips_left: 6
+  - :route: "355"
+    :trips_left: 0
+  - :route: "36"
+    :trips_left: 28
+  - :route: "37"
+    :trips_left: 9
+  - :route: "38"
+    :trips_left: 9
+  - :route: "39"
+    :trips_left: 75
+  - :route: "4"
+    :trips_left: 1
+  - :route: "40"
+    :trips_left: 7
+  - :route: 40/50
+    :trips_left: 2
+  - :route: "41"
+    :trips_left: 12
+  - :route: "411"
+    :trips_left: 6
+  - :route: "42"
+    :trips_left: 25
+  - :route: "424"
+    :trips_left: 0
+  - :route: "426"
+    :trips_left: 11
+  - :route: 426/439
+    :trips_left: 1
+  - :route: 426/455
+    :trips_left: 10
+  - :route: "428"
+    :trips_left: 1
+  - :route: "429"
+    :trips_left: 11
+  - :route: "43"
+    :trips_left: 27
+  - :route: "430"
+    :trips_left: 9
+  - :route: "431"
+    :trips_left: 0
+  - :route: "434"
+    :trips_left: 0
+  - :route: "435"
+    :trips_left: 9
+  - :route: "436"
+    :trips_left: 2
+  - :route: "439"
+    :trips_left: 2
+  - :route: "44"
+    :trips_left: 30
+  - :route: "441"
+    :trips_left: 6
+  - :route: 441/442
+    :trips_left: 2
+  - :route: "442"
+    :trips_left: 17
+  - :route: "448"
+    :trips_left: 1
+  - :route: "449"
+    :trips_left: 1
+  - :route: "45"
+    :trips_left: 31
+  - :route: "450"
+    :trips_left: 24
+  - :route: "451"
+    :trips_left: 2
+  - :route: "455"
+    :trips_left: 7
+  - :route: "456"
+    :trips_left: 0
+  - :route: "459"
+    :trips_left: 2
+  - :route: "465"
+    :trips_left: 2
+  - :route: "468"
+    :trips_left: 1
+  - :route: "47"
+    :trips_left: 21
+  - :route: "48"
+    :trips_left: 0
+  - :route: "5"
+    :trips_left: 0
+  - :route: "50"
+    :trips_left: 4
+  - :route: "500"
+    :trips_left: 2
+  - :route: "501"
+    :trips_left: 8
+  - :route: "502"
+    :trips_left: 4
+  - :route: "503"
+    :trips_left: 1
+  - :route: "504"
+    :trips_left: 5
+  - :route: "505"
+    :trips_left: 8
+  - :route: "51"
+    :trips_left: 10
+  - :route: "52"
+    :trips_left: 5
+  - :route: "55"
+    :trips_left: 18
+  - :route: "553"
+    :trips_left: 2
+  - :route: "554"
+    :trips_left: 3
+  - :route: "555"
+    :trips_left: 9
+  - :route: "556"
+    :trips_left: 3
+  - :route: "558"
+    :trips_left: 3
+  - :route: "57"
+    :trips_left: 66
+  - :route: 57A
+    :trips_left: 3
+  - :route: "59"
+    :trips_left: 6
+  - :route: "60"
+    :trips_left: 19
+  - :route: "62"
+    :trips_left: 8
+  - :route: "64"
+    :trips_left: 16
+  - :route: "65"
+    :trips_left: 6
+  - :route: "66"
+    :trips_left: 50
+  - :route: "67"
+    :trips_left: 5
+  - :route: "68"
+    :trips_left: 1
+  - :route: "69"
+    :trips_left: 26
+  - :route: "7"
+    :trips_left: 18
+  - :route: "70"
+    :trips_left: 32
+  - :route: 70A
+    :trips_left: 5
+  - :route: "71"
+    :trips_left: 52
+  - :route: "72"
+    :trips_left: 20
+  - :route: "73"
+    :trips_left: 58
+  - :route: "74"
+    :trips_left: 19
+  - :route: "75"
+    :trips_left: 4
+  - :route: "76"
+    :trips_left: 11
+  - :route: "77"
+    :trips_left: 105
+  - :route: "78"
+    :trips_left: 17
+  - :route: "79"
+    :trips_left: 14
+  - :route: "8"
+    :trips_left: 24
+  - :route: "80"
+    :trips_left: 17
+  - :route: "83"
+    :trips_left: 18
+  - :route: "84"
+    :trips_left: 1
+  - :route: "85"
+    :trips_left: 4
+  - :route: "86"
+    :trips_left: 25
+  - :route: "87"
+    :trips_left: 28
+  - :route: "88"
+    :trips_left: 27
+  - :route: "89"
+    :trips_left: 21
+  - :route: 89/93
+    :trips_left: 0
+  - :route: "9"
+    :trips_left: 38
+  - :route: "90"
+    :trips_left: 9
+  - :route: "91"
+    :trips_left: 14
+  - :route: "9109"
+    :trips_left: 0
+  - :route: "9111"
+    :trips_left: 0
+  - :route: "92"
+    :trips_left: 9
+  - :route: "93"
+    :trips_left: 22
+  - :route: "94"
+    :trips_left: 19
+  - :route: "95"
+    :trips_left: 16
+  - :route: "9501"
+    :trips_left: 0
+  - :route: "9507"
+    :trips_left: 0
+  - :route: "96"
+    :trips_left: 22
+  - :route: "97"
+    :trips_left: 1
+  - :route: "9701"
+    :trips_left: 0
+  - :route: "9702"
+    :trips_left: 0
+  - :route: "9703"
+    :trips_left: 0
+  - :route: "99"
+    :trips_left: 15
+  - :route: CT1
+    :trips_left: 5
+  - :route: CT2
+    :trips_left: 6
+  - :route: CT3
+    :trips_left: 5
+  - :route: Green Line Shuttle
+    :trips_left: 124
+  - :route: Massport Ferry Terminal Shuttle (44)
+    :trips_left: 1
+  - :route: Massport Subway / Ferry Terminal Shuttle (66)
+    :trips_left: 0
+  - :route: Massport Subway Shuttle (22)
+    :trips_left: 0
+  - :route: Massport Subway Shuttle (33)
+    :trips_left: 0
+  - :route: Massport Subway Shuttle (55)
+    :trips_left: 1
+  - :route: Silver Line
+    :trips_left: 6
+  - :route: Silver Line SL1
+    :trips_left: 65
+  - :route: Silver Line SL2
+    :trips_left: 65
+  - :route: Silver Line SL4
+    :trips_left: 42
+  - :route: Silver Line SL5
+    :trips_left: 73
+- group: boat
+  routes: 
+  - :route: Charlestown Ferry
+    :trips_left: 7
+  - :route: Hingham Ferry
+    :trips_left: 6
+  - :route: Quincy Ferry
+    :trips_left: 1
+  - :route: Quincy/Hull Ferry
+    :trips_left: 5
+---

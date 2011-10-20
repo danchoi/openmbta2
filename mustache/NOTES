@@ -1,0 +1,25 @@
+
+
+http://elegantcode.com/2009/07/01/jquery-playing-with-select-dropdownlistcombobox/
+
+<select id="ComboBox" >
+  <option value="1">Value 1</option>
+  <option value="2">Value 2</option>
+  <option value="3">Value 3</option>
+  <option value="4">Value 4</option>
+  <optgroup label="Group1">
+    <option value="5">Value 5</option>
+    <option value="6">Value 6</option>
+    <option value="7">Value 7</option>
+    <option value="8">Value 8</option>
+  </optgroup>
+</select>
+
+<script src="http://gist.github.com/1125458.js?file=stations.json"></script>
+
+
+
+http://docmatic.fr/temp/test.html
+
+
+
