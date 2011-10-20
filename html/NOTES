@@ -81,3 +81,20 @@ where trips.trip_id in (select trip_id from route_trips_today('Blue Line', 1))
 
   order by st1.arrival_time;
 
+
+
+1. keep all on one page
+2. when 2 stops checked, hide other stops, show next arrivals
+3. when < 2 stops checked, show all stop choices
+4. show time frame around now?
+5. websockets? a channel is one route, dir, + 2 stops
+6. google map resize and pan 
+
+- cache the route selector data ahead of time; make switching fast
+-
+
+http://stackoverflow.com/questions/3373219/how-can-i-get-the-smallest-latlngbounds-that-still-contains-a-set-of-lat-long-co
+
+
+
+
