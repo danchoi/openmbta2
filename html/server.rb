@@ -26,8 +26,8 @@ get '/' do
   }
 
   if (route = params[:route])
-    direction = params[:direction] || 0
-    trips = DB["select * from route_trips_today(?, ?)", route, direction.to_i].to_a
+    direction = (params[:direction] || 0).to_i
+    trips = DB["select * from route_trips_today(?, ?)", route, direction].to_a
 
     lines = []
     shapes = trips.select {|t| t[:shape_id]}.
@@ -65,9 +65,17 @@ get '/' do
       m
     end.values
 
+    view[:direction_buttons] = [[0, 'inbound'], [1, 'outbound']].map do |(d, label)|
+      checked = direction == d ? 'checked' : nil
+      {:direction_id => d, :label => label, :checked => checked}
+    end
+
     view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json, 
       :stops_json => stops.to_json, :stops => stops})
+
   end
+
+
   template = File.read 'index.html'
   Mustache.render template, view
 end

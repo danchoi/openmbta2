@@ -20,6 +20,9 @@ aside {
   display: table-cell;
   width: 40%;
 }
+aside ul {
+  min-height: 700px;
+}
     </style>
 
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
@@ -27,9 +30,10 @@ aside {
     <script>
 $(document).ready(function() {
 
-  $('#route').bind('change', function() {
-  var val = $(this).val();
-  $('#route_form').submit();
+  // jquery event handlers
+  $('#route_form input, #route_form select').bind('change', function() {
+    var val = $(this).val();
+    $('#route_form').submit();
   });
 
   {{#trips}}
@@ -116,6 +120,10 @@ $(document).ready(function() {
           </optgroup>
         {{/modes}}
       </select>
+
+      {{#direction_buttons}}
+        <input type="radio" name="direction" value="{{direction_id}}" {{checked}}/> {{label}}
+      {{/direction_buttons}}
     </form>
 
 
