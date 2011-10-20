@@ -21,12 +21,10 @@ $(document).ready(function() {
 
   {{#trips}}
   var trips = {{{trips}}};
-  console.log('{{{trips}}}');
   {{/trips}}
 
   {{#shapes}}
   var shapes = {{{shapes}}};
-  console.log('{{{shapes}}}');
   {{/shapes}}
 
   {{#region}}
@@ -35,7 +33,7 @@ $(document).ready(function() {
 
   var latlng = new google.maps.LatLng(region.center[1], region.center[0]);
   var myOptions = {
-    zoom: 12,
+    zoom: 14,
     center: latlng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };

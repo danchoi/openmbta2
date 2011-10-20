@@ -22,4 +22,27 @@ http://elegantcode.com/2009/07/01/jquery-playing-with-select-dropdownlistcombobo
 http://docmatic.fr/temp/test.html
 
 
+1. pick route and direction
+2. show stop list + map of all stops
+
+    pick from text list or from map  
+
+    deal with problem of spurs later
+      spurs means the map is a better interface for selecting stops
+  
+3. pick start and end stops
+4. show trips covering that pair of stops & times
+  
+    two columns, showing start and arrival
+
+    map: big circles for start and end, color coded same as in #2
+
+
+
+Step 2:
+
+  calculate all stops (with locations), shapes for route and direction. 
+
+Don't calculate trips data set until step 4.
+
 
