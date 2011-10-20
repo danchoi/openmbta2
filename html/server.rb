@@ -8,7 +8,7 @@ require 'json'
 DB = Sequel.connect 'postgres:///mbta'
 
 get '/' do
-  view = {}
+  view = {:route => params[:route], :direction => params[:direction]}
 
   # cache
   view['modes'] = DB["select * from view_available_routes"].to_a.group_by {|x|
@@ -101,7 +101,8 @@ end
 
 # call with params route, direction, and stops[] (2 stops)
 
-get 'trips' do
+get '/trips' do
+  params.inspect
 
 end
 

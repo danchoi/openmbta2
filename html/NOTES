@@ -50,3 +50,4 @@ select stop_id, stop_code, stop_name, stop_lat, stop_lon, trip_id, arrival_time,
 ision, trip_id varchar, arrival_time varchar, stop_sequence integer);
 
 EM for trips view? to update realtime
+

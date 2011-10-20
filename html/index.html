@@ -29,7 +29,7 @@ aside ul {
   padding-left: 0;
   font-size: 10px;
 }
-#route_form {
+#asideContent {
   min-height: 700px;
 }
     </style>
@@ -122,33 +122,42 @@ $(document).ready(function() {
 
     <div id="map_canvas"></div>
 
-    <aside id="stopSelector">
-      <h4>Route selector page</h4>
-      <form id="route_form" action="/" method="get">
-        <select id="route" name="route">
-          {{#modes}}
-            <optgroup label="{{group}}">
-              {{#routes}}
-                <option value="{{route}}"{{#selected}}selected='selected'{{/selected}}>{{route}} ({{trips_left}})</option>
-              {{/routes}}
-            </optgroup>
-          {{/modes}}
-        </select>
-        <p>
-          {{#direction_buttons}}
-            <input type="radio" name="direction" value="{{direction_id}}" {{checked}}/> {{label}}
-          {{/direction_buttons}}
-        </p>
-        <ul>
-          {{#stop_checkboxes}}
-            <li>
-              <input type="checkbox" name="stops[]" value="{{stop_id}}"{{#checked}}checked='checked'{{/checked}}/> 
-              {{stop_name}}
-            </li>
-          {{/stop_checkboxes}}
-        </ul>
-        <input type="submit" value="submit"/>
-      </form>
+    <aside>
+      <div id="asideContent">
+        <h4>Route selector page</h4>
+        <form id="route_form" action="/" method="get">
+          <select id="route" name="route">
+            {{#modes}}
+              <optgroup label="{{group}}">
+                {{#routes}}
+                  <option value="{{route}}"{{#selected}}selected='selected'{{/selected}}>{{route}} ({{trips_left}})</option>
+                {{/routes}}
+              </optgroup>
+            {{/modes}}
+          </select>
+          <p>
+            {{#direction_buttons}}
+              <input type="radio" name="direction" value="{{direction_id}}" {{checked}}/> {{label}}
+            {{/direction_buttons}}
+            <input type="submit" value="submit"/>
+          </p>
+          
+        </form>
+        
+        <form id="stops_form" action="/trips" method="get">
+          <input type="hidden" name="route" value="{{route}}"/>
+          <input type="hidden" name="direction" value="{{direction}}"/>
+          <ul>
+            {{#stop_checkboxes}}
+              <li>
+                <input type="checkbox" name="stops[]" value="{{stop_id}}"{{#checked}}checked='checked'{{/checked}}/> 
+                {{stop_name}}
+              </li>
+            {{/stop_checkboxes}}
+          </ul>
+          <input type="submit" value="show schedule"/>
+        </form>
+      </div>
     </aside>
 
   </div>
