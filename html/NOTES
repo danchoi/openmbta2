@@ -96,5 +96,63 @@ where trips.trip_id in (select trip_id from route_trips_today('Blue Line', 1))
 http://stackoverflow.com/questions/3373219/how-can-i-get-the-smallest-latlngbounds-that-still-contains-a-set-of-lat-long-co
 
 
+separate page for subway
+
+
+
+
+------------------------------------------------------------------------
+
+
+Make it possible to overlay an abritrary set of routes, so that user can
+compare for example red line vs bus 1. Also seen when routes
+interconnect.
+
+Instead of schedule tables, use a playhead to show movement of
+scheduled.  Try using the playhead interface as the main controller.
+
+
+text label on marker
+http://blog.mridey.com/2009/09/label-overlay-example-for-google-maps.html
+
+
+If we use a slider to represent time the paradigm changes. The slider
+itself could move forward with time by itself. But user can take control
+and move it forward. (Backward doesn't really make sense)?
+
+Does this make any sense?
+
+The other possibility is to just focus on trips and put a grid on the
+right? Doesn't work well for spurs.
+
+
+Slider. Move elements on left, trips on right 
+
+Show one box per "active" trip at time x, and show next stop predicted
+or scheduled arrival time. Change this box as the vehicle passes it as
+the slider moves.
+
+What's the object model?
+
+primary variable parameters:
+
+  route, direction, time
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
