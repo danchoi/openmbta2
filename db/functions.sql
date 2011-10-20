@@ -82,9 +82,10 @@ left outer join
   order by route_type, route, direction_id;
 $$ language sql;
 
+
 -- available_routes3() : no headsigns or directions
 CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
-select a.route_type, a.route, coalesce(b.trips_left, 0) from 
+select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
   -- a
   (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
     inner join routes r using (route_id) group by r.route_type, route) a
@@ -97,8 +98,21 @@ left outer join
     group by r.route_type, route) b
   -- back to main
   on (a.route_type = b.route_type and a.route = b.route)
-  order by route_type, route;
+  order by a.route_type, route;
 $$ language sql;
+
+
+
+
+
+
+-- used by transit_trips.rb
+
+CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
+select * from stop_times st where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_id, arrival_time, stop_sequence;
+$$ LANGUAGE SQL;
 
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
@@ -107,11 +121,20 @@ inner join routes r using (route_id)
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
-select * from stop_times st where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_id, arrival_time, stop_sequence;
-$$ LANGUAGE SQL;
 
-create or replace view view_available_routes as select * from available_routes3(now()) as (route_type smallint, route varchar, trips_left bigint);
+--
+
+create or replace function route_type_to_string(int) returns varchar as $$
+select case 
+when $1=0 then 'subway'
+when $1=1 then 'subway'
+when $1=2 then 'commuter rail'
+when $1=3 then 'bus'
+when $1=4 then 'boat'
+else 'undefined' 
+end;
+$$ language sql;
+
+create or replace view view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
+
 

@@ -1,0 +1,12 @@
+
+
+<select id="route">
+{{#modes}}
+  <optgroup label="{{group}}">
+    {{#routes}}
+      <option value="{{route}}">{{route}} ({{trips_left}})</option>
+    {{/routes}}
+  </optgroup>
+{{/modes}}
+
+
