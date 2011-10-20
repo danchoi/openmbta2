@@ -48,8 +48,8 @@ get '/' do
     region = if !lats.empty? && !lngs.empty?
       { 
         center: [((lngs.max + lngs.min) / 2), ((lats.max + lats.min) / 2)],
-        lat_span: (lats.max - lats.min),
-        lng_span: (lngs.max - lngs.min)
+        sw: [lats.min, lngs.min],
+        ne: [lats.max, lngs.max]
       }
     end
 
@@ -61,11 +61,12 @@ get '/' do
 
     stops = stoppings.reduce({}) do |m, s|
       key = s[:stop_id]
-      m[key] ||= s.delete_if {|k, v| [:arrival_time, :stop_sequence, :stop_id, :stop_code, :trip_id].include?(k)}
+      m[key] ||= s.delete_if {|k, v| [:arrival_time, :stop_sequence, :stop_code, :trip_id].include?(k)}
       m
-    end
+    end.values
 
-    view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json, :stops => stops.to_json})
+    view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json, 
+      :stops_json => stops.to_json, :stops => stops})
   end
   template = File.read 'index.html'
   Mustache.render template, view

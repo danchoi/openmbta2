@@ -4,9 +4,22 @@
     <title>MBTA Trip</title>
 
     <style>
-      html { height: 100% }
-      body { height: 100%; margin: 0; padding: 0 }
-      #map_canvas { height: 100% }
+
+html { height: 100% }
+body { height: 100%; margin: 0; padding: 0 }
+
+#routeContent {
+  display: table;
+  width: 100%;
+}
+#map_canvas { 
+  display: table-cell;
+  width: 60%;
+}
+aside {
+  display: table-cell;
+  width: 40%;
+}
     </style>
 
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
@@ -32,17 +45,19 @@ $(document).ready(function() {
   {{/region}}
 
   {{#stops}}
-  var stops = {{{stops}}};
+  var stops = {{{stops_json}}};
   {{/stops}}
 
-  var latlng = new google.maps.LatLng(region.center[1], region.center[0]);
+  var sw = new google.maps.LatLng(region.sw[0], region.sw[1]);
+  var ne = new google.maps.LatLng(region.ne[0], region.ne[1]);
+  var bounds = new google.maps.LatLngBounds(sw, ne);
   var myOptions = {
     zoom: 12,
-    center: latlng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
 
   var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  map.fitBounds(bounds);
 
   for (var shape_id in shapes) {
     console.log("shape_id key " + shape_id);
@@ -67,8 +82,9 @@ $(document).ready(function() {
   }
 
   // stops
-  for (var stop in stops) {
-    var center = new google.maps.LatLng(stops[stop].stop_lat, stops[stop].stop_lon);
+  for (var i in stops) {
+    var stop = stops[i];
+    var center = new google.maps.LatLng(stop.stop_lat, stop.stop_lon);
     var stopOptions = {
       strokeColor: "#FF0000",
       strokeOpacity: 0.8,
@@ -89,7 +105,6 @@ $(document).ready(function() {
   </head>
   <body>
     
-
     <!-- route selection -->
     <form id="route_form" action="/" method="get">
       <select id="route" name="route">
@@ -103,7 +118,21 @@ $(document).ready(function() {
       </select>
     </form>
 
-    <div id="map_canvas" style="width:100%;height:90%"></div>
+
+
+  <div id="routeContent">
+
+    <div id="map_canvas"></div>
+
+    <aside id="stopSelector">
+      <ul>
+        {{#stops}}
+          <li value="{{stop_id}}"{{#selected}}selected='selected'{{/selected}}>{{stop_name}}</li>
+        {{/stops}}
+      </ul>
+    </aside>
+
+  </div>
 
 
   </body>
