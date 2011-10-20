@@ -63,48 +63,6 @@ left outer join (select r.route_type, coalesce(nullif(r.route_long_name, ''), nu
 $$ language sql;
 
 
--- this one adds trip ids to the trip headsigns 
-CREATE OR REPLACE FUNCTION available_routes2(timestamp with time zone) RETURNS setof record AS $$
-select a.route_type, a.route, a.direction_id, 
-coalesce(b.trips_left, 0), b.headsign from 
-(select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
-from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id)
-group by r.route_type, route, trips.direction_id) a
-left outer join
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
-  trips.direction_id,
-  count(*) as trips_left,
-  array_to_string(array_agg(trip_headsign || ',' || trip_id), ';') as headsign
-  from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
-  where trips.finished_at > adjusted_time($1)
-  group by r.route_type, route, trips.direction_id) b
-  on (a.route_type = b.route_type and a.route = b.route and a.direction_id = b.direction_id)
-  order by route_type, route, direction_id;
-$$ language sql;
-
-
--- available_routes3() : no headsigns or directions
-CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
-select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
-  -- a
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
-    inner join routes r using (route_id) group by r.route_type, route) a
-left outer join
-  -- b
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
-    count(*) as trips_left
-    from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
-    where trips.finished_at > adjusted_time($1)
-    group by r.route_type, route) b
-  -- back to main
-  on (a.route_type = b.route_type and a.route = b.route)
-  order by a.route_type, route;
-$$ language sql;
-
-
-
-
-
 
 -- used by transit_trips.rb
 
@@ -122,7 +80,7 @@ where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif
 $$ LANGUAGE SQL;
 
 
---
+-- available_routes3() : no headsigns or directions
 
 create or replace function route_type_to_string(int) returns varchar as $$
 select case 
@@ -133,6 +91,24 @@ when $1=3 then 'bus'
 when $1=4 then 'boat'
 else 'undefined' 
 end;
+$$ language sql;
+
+
+CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
+select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
+  -- a
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
+    inner join routes r using (route_id) group by r.route_type, route) a
+left outer join
+  -- b
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
+    count(*) as trips_left
+    from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
+    where trips.finished_at > adjusted_time($1)
+    group by r.route_type, route) b
+  -- back to main
+  on (a.route_type = b.route_type and a.route = b.route)
+  order by a.route_type, route;
 $$ language sql;
 
 create or replace view view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
