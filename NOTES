@@ -964,6 +964,23 @@ select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
 
 use lib/polyline.rb to help generate data input to mustache.
 
+pass view 
+
+1. the list of trips from route_trips_today()
+2. get a dictionary of json polylines by shape_id
+3. get dictionary of stops per trip?
+
+
+For any given time, we can find out the trips active (started but not
+finished) at a certain time. Write a postgres function that added the
+started_at column and maybe another function that filters down to those
+active at time X.
+
+
+
+
+
+
 
 
 
