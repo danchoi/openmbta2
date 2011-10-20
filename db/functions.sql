@@ -82,7 +82,7 @@ $$ LANGUAGE SQL;
 
 -- available_routes3() : no headsigns or directions
 
-create or replace function route_type_to_string(int) returns varchar as $$
+CREATE OR REPLACE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
 select case 
 when $1=0 then 'subway'
 when $1=1 then 'subway'
@@ -111,6 +111,15 @@ left outer join
   order by a.route_type, route;
 $$ language sql;
 
-create or replace view view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
+CREATE OR REPLACE VIEW view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
+
+
+CREATE OR REPLACE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
+select stops.stop_id, stop_code, stop_name, stop_lat, stop_lon, stop_times.trip_id, arrival_time, stop_sequence from stops inner join stop_times using(stop_id) 
+inner join trips using(trip_id) where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_sequence, stop_id;
+$$ LANGUAGE sql;
+
 
 

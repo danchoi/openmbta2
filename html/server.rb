@@ -24,11 +24,11 @@ get '/' do
       }
     }
   }
-  puts view['modes'].inspect
 
   if (route = params[:route])
     direction = params[:direction] || 0
     trips = DB["select * from route_trips_today(?, ?)", route, direction.to_i].to_a
+
     lines = []
     shapes = trips.select {|t| t[:shape_id]}.
       map {|t| t[:shape_id]}.
@@ -52,7 +52,20 @@ get '/' do
         lng_span: (lngs.max - lngs.min)
       }
     end
-    view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json})
+
+    # find all stops
+
+    stoppings = DB["select stop_id, stop_code, stop_name, stop_lat, stop_lon, trip_id, arrival_time, stop_sequence 
+    from route_stops_today(?, ?) as 
+    (stop_id varchar, stop_code varchar, stop_name varchar, stop_lat double precision, stop_lon double precision, trip_id varchar, arrival_time varchar, stop_sequence integer)", route, direction].to_a
+
+    stops = stoppings.reduce({}) do |m, s|
+      key = s[:stop_id]
+      m[key] ||= s.delete_if {|k, v| [:arrival_time, :stop_sequence, :stop_id, :stop_code, :trip_id].include?(k)}
+      m
+    end
+
+    view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json, :stops => stops.to_json})
   end
   template = File.read 'index.html'
   Mustache.render template, view

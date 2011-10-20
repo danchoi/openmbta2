@@ -31,9 +31,13 @@ $(document).ready(function() {
   var region = {{{region}}};
   {{/region}}
 
+  {{#stops}}
+  var stops = {{{stops}}};
+  {{/stops}}
+
   var latlng = new google.maps.LatLng(region.center[1], region.center[0]);
   var myOptions = {
-    zoom: 14,
+    zoom: 12,
     center: latlng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
@@ -60,6 +64,22 @@ $(document).ready(function() {
     });
 
     tripPath.setMap(map);
+  }
+
+  // stops
+  for (var stop in stops) {
+    var center = new google.maps.LatLng(stops[stop].stop_lat, stops[stop].stop_lon);
+    var stopOptions = {
+      strokeColor: "#FF0000",
+      strokeOpacity: 0.8,
+      strokeWeight: 2,
+      fillColor: "#FFFFFF",
+      fillOpacity: 0.35,
+      map: map,
+      center: center,
+      radius: 20
+    }
+    stopCirlce = new google.maps.Circle(stopOptions);
   }
 
 
