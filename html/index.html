@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MBTA Trip</title>
+
+    <style>
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map_canvas { height: 100% }
+    </style>
+
+    <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script>
+$(document).ready(function() {
+
+  $('#route').bind('change', function() {
+  var val = $(this).val();
+  $('#route_form').submit();
+  });
+
+  {{#trips}}
+  var trips = {{{trips}}};
+  console.log('{{{trips}}}');
+  {{/trips}}
+
+  {{#shapes}}
+  var shapes = {{{shapes}}};
+  console.log('{{{shapes}}}');
+  {{/shapes}}
+
+  {{#region}}
+  var region = {{{region}}};
+  {{/region}}
+
+  var latlng = new google.maps.LatLng(region.center[1], region.center[0]);
+  var myOptions = {
+    zoom: 12,
+    center: latlng,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  };
+
+  var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+  for (var shape_id in shapes) {
+    console.log("shape_id key " + shape_id);
+
+    var line = shapes[shape_id];
+    var polyline = [];
+    for (var i = 0; i < line.length; i++) {
+      var lat = line[i][1]
+      var lng = line[i][0];
+      polyline.push( new google.maps.LatLng(lat, lng) );
+
+    };
+
+    var tripPath = new google.maps.Polyline({
+      path: polyline,
+      strokeColor: "#FF0000",
+      strokeOpacity: 1.0,
+      strokeWeight: 2
+    });
+
+    tripPath.setMap(map);
+  }
+
+
+});
+
+    </script>
+  </head>
+  <body>
+    
+
+    <!-- route selection -->
+    <form id="route_form" action="/" method="get">
+      <select id="route" name="route">
+        {{#modes}}
+          <optgroup label="{{group}}">
+            {{#routes}}
+              <option value="{{route}}"{{#selected}}selected='selected'{{/selected}}>{{route}} ({{trips_left}})</option>
+            {{/routes}}
+          </optgroup>
+        {{/modes}}
+      </select>
+    </form>
+
+    <div id="map_canvas" style="width:100%;height:90%"></div>
+
+
+  </body>
+</html>
+

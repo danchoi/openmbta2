@@ -988,3 +988,7 @@ trips that finish between time x and time x + interval.
 
   640  rlib lib/tripview2.rb '1' 0 > mustache/trip.yml 
   636  cat mustache/trip.yml mustache/trip.mustache | mustache > mustache/trip.html && open mustache/trip.html
+
+Start a sinatra app
+
+
