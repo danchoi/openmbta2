@@ -951,18 +951,18 @@ trips, and a dictionary of linestrings or JSON.
 
 mbta=# select * from route_trips_today('1', 0);
 
-mbta=# select * from route_trips_today('1', 0) order by finished_at;
+mbta=# select * from route_trips_today('1', 0) order by finished_at limit 2;
 
-does the job
+ route_id |         service_id         | trip_id  |         trip_headsign          | direction_id | block_id | shape_id | finished_at
+----------+----------------------------+----------+--------------------------------+--------------+----------+----------+-------------
+ 01       | BUSS41-hbc41011-Weekday-02 | 15869056 | Harvard Station via Mass. Ave. |            0 | C01-1    | 010017   | 04:57:00
+ 01       | BUSS41-hbc41011-Weekday-02 | 15869078 | Harvard Station via Mass. Ave. |            0 | C01-5    | 010017   | 05:17:00
+(2 rows)
 
-
-select ST_AsGeoJSON(geog) from polylines where shape_id = '';
-
-select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
-
-convert this to sequel ruby
 
 select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
+
+use lib/polyline.rb to help generate data input to mustache.
 
 
 
