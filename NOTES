@@ -976,12 +976,15 @@ finished) at a certain time. Write a postgres function that added the
 started_at column and maybe another function that filters down to those
 active at time X.
 
+Write a Ruby program that generates this json. Then feed it into
+mustache.
+
+
+Too much data to show all the stop times for the day, filter down to
+trips that finish between time x and time x + interval.
 
 
 
 
-
-
-
-
-
+  640  rlib lib/tripview2.rb '1' 0 > mustache/trip.yml 
+  636  cat mustache/trip.yml mustache/trip.mustache | mustache > mustache/trip.html && open mustache/trip.html
