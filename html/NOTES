@@ -51,3 +51,33 @@ ision, trip_id varchar, arrival_time varchar, stop_sequence integer);
 
 EM for trips view? to update realtime
 
+
+
+ trip_id  |                s1_name                 | s1_arrives | s1_seq |          s2_name           | s2_arrives | s2_seq
+
+
+
+
+
+select
+  trips.trip_id,
+
+  (select stop_name from stops where stop_id = '70040') s1_name,
+  st1.arrival_time s1_arrives,
+  st1.stop_sequence s1_seq,
+
+  (select stop_name from stops where stop_id = '70048') s2_name,
+  st2.arrival_time s2_arrives,
+  st2.stop_sequence s2_seq
+
+from trips
+  inner join stop_times st1 using (trip_id)
+  inner join stop_times st2 using (trip_id)
+
+
+where trips.trip_id in (select trip_id from route_trips_today('Blue Line', 1))
+  and st1.stop_id = '70040'
+  and st2.stop_id = '70048'
+
+  order by st1.arrival_time;
+

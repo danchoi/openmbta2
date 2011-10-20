@@ -102,8 +102,22 @@ end
 # call with params route, direction, and stops[] (2 stops)
 
 get '/trips' do
-  params.inspect
+  route = params[:route]
+  direction = params[:direction].to_i
+  s1, s2 = *params[:stops]
 
+  query = <<-END
+select trip_id, s1_arrives, s1_seq, s2_arrives, s2_seq
+from trips_for_route_direction_stops(?, ?, ?, ?) as
+(trip_id varchar, s1_arrives varchar, s1_seq integer, s2_arrives varchar, s2_seq integer)
+  END
+  schedule = DB[query, route, direction, s1, s2].to_a
+  puts schedule.inspect
+  s1 = DB[:stops].first(:stop_id => s1)
+  s2 = DB[:stops].first(:stop_id => s2)
+  view = {:schedule => schedule, :s1 => s1, :s2 => s2}
+  template = File.read 'route.html'
+  Mustache.render template, view
 end
 
 

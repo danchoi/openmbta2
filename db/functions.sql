@@ -114,6 +114,8 @@ $$ language sql;
 CREATE OR REPLACE VIEW view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
 
 
+-- used by dynamic html version
+
 CREATE OR REPLACE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
 select stops.stop_id, stop_code, stop_name, stop_lat, stop_lon, stop_times.trip_id, arrival_time, stop_sequence from stops inner join stop_times using(stop_id) 
 inner join trips using(trip_id) where trip_id in 
@@ -121,5 +123,28 @@ inner join trips using(trip_id) where trip_id in
 order by stop_sequence, stop_id;
 $$ LANGUAGE sql;
 
+
+CREATE OR REPLACE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
+select
+  trips.trip_id,
+  -- stop 1
+    st1.arrival_time s1_arrives,
+    st1.stop_sequence s1_seq,
+  -- stop 2
+    st2.arrival_time s2_arrives,
+    st2.stop_sequence s2_seq
+from trips
+  inner join stop_times st1 using (trip_id)
+  inner join stop_times st2 using (trip_id)
+-- maybe later make the time variable
+where trips.trip_id in (select trip_id from route_trips_today($1, $2))
+  and st1.stop_id = $3
+  and st2.stop_id = $4
+  order by st1.arrival_time;
+$$ LANGUAGE SQL;
+
+Rubyfied
+
+[{:trip_id=>"15489385", :s1_arrives=>"05:30:00", :s1_seq=>2, :s2_arrives=>"05:38:00", :s2_seq=>6}, {:trip_id=>"15489161", :s1_arrives=>"05:37:00", :s1_seq=>2, :s2_arrives=>"05:45:00", :s2_seq=>6}, {:trip_id=>"15489178", :s1_arrives=>"05:43:00", :s1_seq=>2, :s2_arrives=>"05:51:00", :s2_seq=>6}, {:trip_id=>"15489234", :s1_arrives=>"05:50:00", :s1_seq=>2, :s2_arrives=>"05:58:00", :s2_seq=>6}, {:trip_id=>"15489242", :s1_arrives=>"05:56:
 
 
