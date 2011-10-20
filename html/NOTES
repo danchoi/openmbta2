@@ -49,3 +49,4 @@ Don't calculate trips data set until step 4.
 select stop_id, stop_code, stop_name, stop_lat, stop_lon, trip_id, arrival_time, stop_sequence from route_stops_today('1', 0) as (stop_id varchar, stop_code varchar, stop_name varchar, stop_lat double precision, stop_lon double prec
 ision, trip_id varchar, arrival_time varchar, stop_sequence integer);
 
+EM for trips view? to update realtime

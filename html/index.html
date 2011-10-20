@@ -6,7 +6,11 @@
     <style>
 
 html { height: 100% }
-body { height: 100%; margin: 0; padding: 0 }
+body { 
+  font-family: Verdana, Arial;
+  font-size: 13px;
+  height: 100%; margin: 0; padding: 0 
+}
 
 #routeContent {
   display: table;
@@ -21,6 +25,11 @@ aside {
   width: 40%;
 }
 aside ul {
+  list-style-type: none;
+  padding-left: 0;
+  font-size: 10px;
+}
+#route_form {
   min-height: 700px;
 }
     </style>
@@ -31,10 +40,10 @@ aside ul {
 $(document).ready(function() {
 
   // jquery event handlers
-  $('#route_form input, #route_form select').bind('change', function() {
+  /* $('#route_form input, #route_form select').bind('change', function() {
     var val = $(this).val();
     $('#route_form').submit();
-  });
+  }); */
 
   {{#trips}}
   var trips = {{{trips}}};
@@ -48,9 +57,9 @@ $(document).ready(function() {
   var region = {{{region}}};
   {{/region}}
 
-  {{#stops}}
+  {{#stops_json}}
   var stops = {{{stops_json}}};
-  {{/stops}}
+  {{/stops_json}}
 
   var sw = new google.maps.LatLng(region.sw[0], region.sw[1]);
   var ne = new google.maps.LatLng(region.ne[0], region.ne[1]);
@@ -90,16 +99,16 @@ $(document).ready(function() {
     var stop = stops[i];
     var center = new google.maps.LatLng(stop.stop_lat, stop.stop_lon);
     var stopOptions = {
-      strokeColor: "#FF0000",
+      strokeColor: (stop.selected ? "blue" : "#FF0000"),
       strokeOpacity: 0.8,
       strokeWeight: 2,
       fillColor: "#FFFFFF",
-      fillOpacity: 0.35,
+      fillOpacity: 1,
       map: map,
       center: center,
-      radius: 20
+      radius: (stop.selected ? 50 : 20)
     }
-    stopCirlce = new google.maps.Circle(stopOptions);
+    stopCircle = new google.maps.Circle(stopOptions);
   }
 
 
@@ -109,35 +118,37 @@ $(document).ready(function() {
   </head>
   <body>
     
-    <!-- route selection -->
-    <form id="route_form" action="/" method="get">
-      <select id="route" name="route">
-        {{#modes}}
-          <optgroup label="{{group}}">
-            {{#routes}}
-              <option value="{{route}}"{{#selected}}selected='selected'{{/selected}}>{{route}} ({{trips_left}})</option>
-            {{/routes}}
-          </optgroup>
-        {{/modes}}
-      </select>
-
-      {{#direction_buttons}}
-        <input type="radio" name="direction" value="{{direction_id}}" {{checked}}/> {{label}}
-      {{/direction_buttons}}
-    </form>
-
-
-
   <div id="routeContent">
 
     <div id="map_canvas"></div>
 
     <aside id="stopSelector">
-      <ul>
-        {{#stops}}
-          <li value="{{stop_id}}"{{#selected}}selected='selected'{{/selected}}>{{stop_name}}</li>
-        {{/stops}}
-      </ul>
+      <h4>Route selector page</h4>
+      <form id="route_form" action="/" method="get">
+        <select id="route" name="route">
+          {{#modes}}
+            <optgroup label="{{group}}">
+              {{#routes}}
+                <option value="{{route}}"{{#selected}}selected='selected'{{/selected}}>{{route}} ({{trips_left}})</option>
+              {{/routes}}
+            </optgroup>
+          {{/modes}}
+        </select>
+        <p>
+          {{#direction_buttons}}
+            <input type="radio" name="direction" value="{{direction_id}}" {{checked}}/> {{label}}
+          {{/direction_buttons}}
+        </p>
+        <ul>
+          {{#stop_checkboxes}}
+            <li>
+              <input type="checkbox" name="stops[]" value="{{stop_id}}"{{#checked}}checked='checked'{{/checked}}/> 
+              {{stop_name}}
+            </li>
+          {{/stop_checkboxes}}
+        </ul>
+        <input type="submit" value="submit"/>
+      </form>
     </aside>
 
   </div>

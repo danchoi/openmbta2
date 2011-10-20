@@ -7,9 +7,10 @@ require 'json'
 
 DB = Sequel.connect 'postgres:///mbta'
 
-
 get '/' do
   view = {}
+
+  # cache
   view['modes'] = DB["select * from view_available_routes"].to_a.group_by {|x|
     x[:route_type]
   }.map {|(group, values)|
@@ -27,12 +28,18 @@ get '/' do
 
   if (route = params[:route])
     direction = (params[:direction] || 0).to_i
+
+    # cache this
     trips = DB["select * from route_trips_today(?, ?)", route, direction].to_a
+
+    selected_stops = params[:stops] || []
 
     lines = []
     shapes = trips.select {|t| t[:shape_id]}.
       map {|t| t[:shape_id]}.
       inject({}) do |m, s|
+
+        # cache?
         r = DB["select ST_AsGeoJSON(geog) as json from polylines where shape_id = ?", s].first
         next m if r.nil?
         r = r[:json]
@@ -55,13 +62,18 @@ get '/' do
 
     # find all stops
 
+    # cache
     stoppings = DB["select stop_id, stop_code, stop_name, stop_lat, stop_lon, trip_id, arrival_time, stop_sequence 
+
     from route_stops_today(?, ?) as 
     (stop_id varchar, stop_code varchar, stop_name varchar, stop_lat double precision, stop_lon double precision, trip_id varchar, arrival_time varchar, stop_sequence integer)", route, direction].to_a
 
     stops = stoppings.reduce({}) do |m, s|
       key = s[:stop_id]
       m[key] ||= s.delete_if {|k, v| [:arrival_time, :stop_sequence, :stop_code, :trip_id].include?(k)}
+      if selected_stops.include?(s[:stop_id])
+        m[key][:selected] = true
+      end
       m
     end.values
 
@@ -69,6 +81,12 @@ get '/' do
       checked = direction == d ? 'checked' : nil
       {:direction_id => d, :label => label, :checked => checked}
     end
+
+    view[:stop_checkboxes] = stops.map do |s|
+      checked = selected_stops.include?(s[:stop_id]) ? 'checked' : nil
+      {:stop_id => s[:stop_id], :stop_name => s[:stop_name], :checked => checked}
+    end
+
 
     view.merge!({:trips => trips.to_json, :shapes => shapes.to_json, :region => region.to_json, 
       :stops_json => stops.to_json, :stops => stops})
@@ -80,6 +98,12 @@ get '/' do
   Mustache.render template, view
 end
 
+
+# call with params route, direction, and stops[] (2 stops)
+
+get 'trips' do
+
+end
 
 
 
