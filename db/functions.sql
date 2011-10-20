@@ -101,6 +101,19 @@ left outer join
   order by a.route_type, route;
 $$ language sql;
 
+
+
+
+
+
+-- used by transit_trips.rb
+
+CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
+select * from stop_times st where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_id, arrival_time, stop_sequence;
+$$ LANGUAGE SQL;
+
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
 from active_trips(date(now())) as trips 
@@ -108,11 +121,8 @@ inner join routes r using (route_id)
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
-select * from stop_times st where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_id, arrival_time, stop_sequence;
-$$ LANGUAGE SQL;
+
+--
 
 create or replace function route_type_to_string(int) returns varchar as $$
 select case 
@@ -126,4 +136,5 @@ end;
 $$ language sql;
 
 create or replace view view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
+
 

@@ -13,3 +13,4 @@ x = DB["select * from view_available_routes"].to_a.group_by {|x|
 
 puts({'modes' => x}.to_yaml)
 puts '---' # for mustache
+

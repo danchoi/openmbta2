@@ -904,3 +904,67 @@ See doc/view_available_routes.txt for output.
 
 
 
+Great idea for animation
+http://dl.dropbox.com/u/10755342/eq/earthquakes.html
+http://groups.google.com/group/d3-js/browse_thread/thread/c9aad0aa4b8dd813
+
+
+http://bl.ocks.org/1263239
+
+This is a simple slippy map that keeps the absolute coordinates of all 
+tiles/location static, but moves the SVG viewbox as the user pans and 
+zooms around. We can then draw SVG objects directly on the coordinate 
+system and do not have to update location when the viewBox is changed. 
+There are two components to this, both standalone. 
+
+1) svg_interact: provides pan and zoom to any svg-object by moving the 
+viewBox 
+
+2) svg_map: a tiler that watches the viewbox location and size at 
+regular intervals and fetches the appropriate cloudmake tiles to cover 
+the viewbox with some extra padding. This tiler uses the .data() 
+method to enter and exit tiles. Another alternative might be to keep 
+an array and push old items out as new come in. (We need to discard 
+old tiles as number of open images affects performance. The graphic 
+contents are however automatically cached by the browser) 
+
+I would really appreciate any feedback, particularly helpful hints on 
+making this better and more d3 compatible (i.e. using pv.behavior to 
+get better mouse functions).
+
+
+Slider for time, and d3 animates motion of trains.
+
+
+
+
+Start naming postgres function with a prefix mbta_ to distinguish from
+postgis.
+
+Concentrate on one route view.
+
+Get all data for trips for the day or hour.
+
+Write postgres function that returns a dictionary of stops, a list of
+trips, and a dictionary of linestrings or JSON.
+
+
+mbta=# select * from route_trips_today('1', 0);
+
+mbta=# select * from route_trips_today('1', 0) order by finished_at;
+
+does the job
+
+
+select ST_AsGeoJSON(geog) from polylines where shape_id = '';
+
+select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
+
+convert this to sequel ruby
+
+select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
+
+
+
+
+
