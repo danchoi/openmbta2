@@ -38,3 +38,4 @@ region = {
 r = {'trips' => trips.to_json, 'shapes' => shapes.to_json, 'region' => region.to_json}
 puts r.to_yaml
 puts '---'
+
