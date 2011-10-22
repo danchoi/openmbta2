@@ -24,14 +24,13 @@ CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) A
 DECLARE
   h integer;
   m integer;
-  s  integer;
 BEGIN
   h := extract(hour from x);
   m := extract(minutes from x);
   IF h  < 4 THEN 
     h := h + 24;
   END IF;
-  RETURN lpad(h::text, 2, '0') || ':' || m || ':00';
+  RETURN lpad(h::text, 2, '0') || ':' || lpad(m::text, 2, '0') || ':00';
 END;
 $$ LANGUAGE plpgsql;
 
