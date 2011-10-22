@@ -142,8 +142,3 @@ where trips.trip_id in (select trip_id from route_trips_today($1, $2))
   order by st1.arrival_time;
 $$ LANGUAGE SQL;
 
-Rubyfied
-
-[{:trip_id=>"15489385", :s1_arrives=>"05:30:00", :s1_seq=>2, :s2_arrives=>"05:38:00", :s2_seq=>6}, {:trip_id=>"15489161", :s1_arrives=>"05:37:00", :s1_seq=>2, :s2_arrives=>"05:45:00", :s2_seq=>6}, {:trip_id=>"15489178", :s1_arrives=>"05:43:00", :s1_seq=>2, :s2_arrives=>"05:51:00", :s2_seq=>6}, {:trip_id=>"15489234", :s1_arrives=>"05:50:00", :s1_seq=>2, :s2_arrives=>"05:58:00", :s2_seq=>6}, {:trip_id=>"15489242", :s1_arrives=>"05:56:
-
-
