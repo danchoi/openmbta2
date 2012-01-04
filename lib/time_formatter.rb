@@ -5,6 +5,9 @@ module TimeFormatter
     # strip off seconds
     hour, min = *time.split(':')[0,2]
     time_string = time[/^(\d{2}:\d{2})/, 1]
+		if time_string.nil?
+	    return [time, -1]
+		end
     now_hour = Time.now.hour
 
     if now_hour < 4 # 24 hour clock, 1 am
