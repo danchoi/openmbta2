@@ -24,14 +24,13 @@ CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) A
 DECLARE
   h integer;
   m integer;
-  s  integer;
 BEGIN
   h := extract(hour from x);
   m := extract(minutes from x);
   IF h  < 4 THEN 
     h := h + 24;
   END IF;
-  RETURN lpad(h::text, 2, '0') || ':' || m || ':00';
+  RETURN lpad(h::text, 2, '0') || ':' || lpad(m::text, 2, '0') || ':00';
 END;
 $$ LANGUAGE plpgsql;
 
@@ -52,9 +51,7 @@ coalesce(b.trips_left, 0), b.headsign from
 (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
 from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id)
 group by r.route_type, route, trips.direction_id) a
-left outer join
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
-  trips.direction_id,
+left outer join (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id,
   count(*) as trips_left,
   array_to_string(array_agg(trip_headsign), ';') as headsign
   from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
@@ -66,6 +63,13 @@ $$ language sql;
 
 
 
+-- used by transit_trips.rb
+
+CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
+select * from stop_times st where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_id, arrival_time, stop_sequence;
+$$ LANGUAGE SQL;
 
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
@@ -74,10 +78,67 @@ inner join routes r using (route_id)
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;
 
-CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
-select * from stop_times st where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_id, arrival_time, stop_sequence;
-$$ LANGUAGE SQL;
 
+-- available_routes3() : no headsigns or directions
+
+CREATE OR REPLACE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
+select case 
+when $1=0 then 'subway'
+when $1=1 then 'subway'
+when $1=2 then 'commuter rail'
+when $1=3 then 'bus'
+when $1=4 then 'boat'
+else 'undefined' 
+end;
+$$ language sql;
+
+
+CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
+select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
+  -- a
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
+    inner join routes r using (route_id) group by r.route_type, route) a
+left outer join
+  -- b
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
+    count(*) as trips_left
+    from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
+    where trips.finished_at > adjusted_time($1)
+    group by r.route_type, route) b
+  -- back to main
+  on (a.route_type = b.route_type and a.route = b.route)
+  order by a.route_type, route;
+$$ language sql;
+
+CREATE OR REPLACE VIEW view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
+
+
+-- used by dynamic html version
+
+CREATE OR REPLACE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
+select stops.stop_id, stop_code, stop_name, stop_lat, stop_lon, stop_times.trip_id, arrival_time, stop_sequence from stops inner join stop_times using(stop_id) 
+inner join trips using(trip_id) where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_sequence, stop_id;
+$$ LANGUAGE sql;
+
+
+CREATE OR REPLACE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
+select
+  trips.trip_id,
+  -- stop 1
+    st1.arrival_time s1_arrives,
+    st1.stop_sequence s1_seq,
+  -- stop 2
+    st2.arrival_time s2_arrives,
+    st2.stop_sequence s2_seq
+from trips
+  inner join stop_times st1 using (trip_id)
+  inner join stop_times st2 using (trip_id)
+-- maybe later make the time variable
+where trips.trip_id in (select trip_id from route_trips_today($1, $2))
+  and st1.stop_id = $3
+  and st2.stop_id = $4
+  order by st1.arrival_time;
+$$ LANGUAGE SQL;
 

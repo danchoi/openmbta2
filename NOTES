@@ -794,3 +794,203 @@ Options: You can moderate through email. Respond in the body with "Delete". Resp
 
 Or use the moderate panel: http://openmbta.disqus.com/admin/moderate/
 To turn off notifications, go to: http://disqus.com/account/
+
+
+
+------------------------------------------------------------------------
+HTML map
+
+
+We can join the two tables; realtime bus plus trip ids
+
+mbta=# select triptag, trip_id from view_bus_predictions inner join trips on (trip_id = triptag);
+
+mbta=# select stop_name, trip_headsign, arrival_time, triptag, trip_id from view_bus_predictions inner join trips on (trip_id = triptag);
+
+12800 realtime bus predictions result from this. Not historical information
+
+  Can calculate whether bus is ahead of or behind schedule.
+
+
+create view bus_realtime_compact as 
+SELECT trips.route_id, view_bus_predictions.stop_name,
+ trips.trip_headsign, view_bus_predictions.arrival_time,
+ view_bus_predictions.triptag, trips.trip_id
+    FROM view_bus_predictions
+       JOIN trips ON trips.trip_id::text =
+       view_bus_predictions.triptag::text
+         ORDER BY trips.route_id;
+
+
+Try to plot a line using shapes;
+
+Trips has a shape_id
+
+route_id 01 (Bus 1)
+
+one trip_id is 15868005
+
+> select * from shapes where shape_id = (select shape_id from trips where trip_id = '15868005') order by shape_pt_sequence asc;
+
+Sample output:
+
+ shape_id | shape_pt_lat  |  shape_pt_lon  | shape_pt_sequence | shape_dist_traveled
+----------+---------------+----------------+-------------------+---------------------
+ 010017   |  42.329848413 | -71.0838758549 |             10001 |
+ 010017   | 42.3297880369 | -71.0832682623 |             10002 |
+ 010017   | 42.3300890857 | -71.0831982323 |             10003 |
+ 010017   | 42.3302964049 | -71.0831609938 |             10004 |
+ 010017   | 42.3304927064 | -71.0831123629 |             10005 |
+ 010017   | 42.3306434636 |  -71.083065881 |             10006 |
+ 010017   | 42.3308174283 | -71.0829870708 |             10007 |
+ 010017   | 42.3309835788 | -71.0827966229 |             10008 |
+ 010017   | 42.3309835788 | -71.0827966229 |             20001 |
+ 010017   | 42.3310546312 | -71.0827155314 |             20002 |
+ 010017   | 42.3313706037 | -71.0823724624 |             20003 |
+ 010017   | 42.3317515377 | -71.0819339134 |             20004 |
+ 010017   | 42.3319398162 | -71.0817166855 |             20005 |
+
+What if we just have three trips per headsign, showing realtime.
+
+Or write a function that will return a JSON array of lat, lng sufficient to draw a polyline
+for a trip on a google map;
+
+Also another function to determine whether a trip has the same shape <- this is valuable.
+
+
+------------------------------------------------------------------------
+postgis installation
+
+sudo apt-get install postgresql-8.4-postgis
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis-1.5/spatial_ref_sys.sql
+psql -d mbta -f /usr/share/postgresql/8.4/contrib/postgis_comments.sql
+
+then load db/linestrings.sql
+
+------------------------------------------------------------------------
+postgis installation guide:
+  http://blog.smartlogicsolutions.com/2010/03/04/installing-postgis-1-5-0-on-postgresql-8-4-on-ubuntu-9-10/
+
+------------------------------------------------------------------------
+
+example queries
+
+-- select shape_id, ST_NumPoints(geom)  from polylines;
+
+-- select shape_id, ST_Length(geom) from polylines;
+-- select shape_id, ST_Summary(geom) from polylines;
+-- select ST_AsGeoJSON(ST_Transform(geom, 4263)) from polylines limit 1;
+
+select ST_AsGeoJSON(geog) from polylines where shape_id = (select shape_id from trips where trip_id = '15868005');
+
+
+
+------------------------------------------------------------------------
+Tue Oct 18 21:52:12 EDT 2011
+
+THis query is good and reasonably fast:
+
+select * from available_routes(now()) as (route_type smallint, route
+varchar, direction_id smallint, trips_left bigint, headsign varchar);
+
+create view select * from available_routes(now()) as (route_type smallint, route
+varchar, direction_id smallint, trips_left bigint, headsign varchar);
+
+ruby -Ilib lib/available_routes.rb
+
+See doc/view_available_routes.txt for output.
+
+
+
+
+Great idea for animation
+http://dl.dropbox.com/u/10755342/eq/earthquakes.html
+http://groups.google.com/group/d3-js/browse_thread/thread/c9aad0aa4b8dd813
+
+
+http://bl.ocks.org/1263239
+
+This is a simple slippy map that keeps the absolute coordinates of all 
+tiles/location static, but moves the SVG viewbox as the user pans and 
+zooms around. We can then draw SVG objects directly on the coordinate 
+system and do not have to update location when the viewBox is changed. 
+There are two components to this, both standalone. 
+
+1) svg_interact: provides pan and zoom to any svg-object by moving the 
+viewBox 
+
+2) svg_map: a tiler that watches the viewbox location and size at 
+regular intervals and fetches the appropriate cloudmake tiles to cover 
+the viewbox with some extra padding. This tiler uses the .data() 
+method to enter and exit tiles. Another alternative might be to keep 
+an array and push old items out as new come in. (We need to discard 
+old tiles as number of open images affects performance. The graphic 
+contents are however automatically cached by the browser) 
+
+I would really appreciate any feedback, particularly helpful hints on 
+making this better and more d3 compatible (i.e. using pv.behavior to 
+get better mouse functions).
+
+
+Slider for time, and d3 animates motion of trains.
+
+
+
+
+Start naming postgres function with a prefix mbta_ to distinguish from
+postgis.
+
+Concentrate on one route view.
+
+Get all data for trips for the day or hour.
+
+Write postgres function that returns a dictionary of stops, a list of
+trips, and a dictionary of linestrings or JSON.
+
+
+mbta=# select * from route_trips_today('1', 0);
+
+mbta=# select * from route_trips_today('1', 0) order by finished_at limit 2;
+
+ route_id |         service_id         | trip_id  |         trip_headsign          | direction_id | block_id | shape_id | finished_at
+----------+----------------------------+----------+--------------------------------+--------------+----------+----------+-------------
+ 01       | BUSS41-hbc41011-Weekday-02 | 15869056 | Harvard Station via Mass. Ave. |            0 | C01-1    | 010017   | 04:57:00
+ 01       | BUSS41-hbc41011-Weekday-02 | 15869078 | Harvard Station via Mass. Ave. |            0 | C01-5    | 010017   | 05:17:00
+(2 rows)
+
+
+select ST_AsGeoJSON(geog) as json from polylines where shape_id = '010017';
+
+use lib/polyline.rb to help generate data input to mustache.
+
+pass view 
+
+1. the list of trips from route_trips_today()
+2. get a dictionary of json polylines by shape_id
+3. get dictionary of stops per trip?
+
+
+For any given time, we can find out the trips active (started but not
+finished) at a certain time. Write a postgres function that added the
+started_at column and maybe another function that filters down to those
+active at time X.
+
+Write a Ruby program that generates this json. Then feed it into
+mustache.
+
+
+Too much data to show all the stop times for the day, filter down to
+trips that finish between time x and time x + interval.
+
+
+
+
+  640  rlib lib/tripview2.rb '1' 0 > mustache/trip.yml 
+  636  cat mustache/trip.yml mustache/trip.mustache | mustache > mustache/trip.html && open mustache/trip.html
+
+Start a sinatra app
+
+
+
+

@@ -1,4 +1,6 @@
 
+
+
 -- This makes linestrings
 -- select AddGeometryColumn('shapes', 'geom', 2163, 'POINT', 2);
 alter table shapes add column geog geography(POINT,4326);

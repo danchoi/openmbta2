@@ -2,13 +2,12 @@
 
 A clean rewrite of OpenMBTA.
 
-
 ## Setup
 
-Assumes PostgreSQL. 
+Assumes PostgreSQL and PostGIS extensions. 
 
-To populate the database, downloda the GTFS data to `data/` and then run
-`db/recreate.sh`
+To populate the database, download the GTFS data CSV files into `data/`
+and then run `db/recreate.sh`
 
 
 
