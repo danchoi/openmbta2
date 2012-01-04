@@ -1,0 +1,10 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+USER=zoe
+GEM_HOME=/home/zoe/.gems
+
+* * * * * (cd /home/zoe && /usr/local/bin/ruby monit.rb) >> /home/zoe/monit.log
+*/2 * * * * (cd /home/zoe/openmbta2 && /usr/local/bin/ruby -Ilib app/models/alert.rb >> log/alert.log)
+* * * * * (cd /home/zoe/openmbta2 && /usr/local/bin/ruby -Ilib lib/cr_feeds.rb  >> log/crfeeds.log)
+
+
