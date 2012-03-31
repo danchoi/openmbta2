@@ -14,16 +14,21 @@ module NextbusFeeds
       url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=routeList&a=mbta'
       puts `curl -I '#{url}'`
       xml = `curl -sL '#{url}'`
+      puts xml
       Nokogiri::XML.parse(xml).search("route").each do |r|
         params = {
           tag: r[:tag],
           title: r[:title]
         }
-        DB[:nextbus_routes].insert params
+        unless DB[:nextbus_routes].first(params)
+          puts params.inspect
+          DB[:nextbus_routes].insert params
+        end
       end
     end
 
     def populate_route_configs
+      DB[:nextbus_route_configs].delete
       DB[:nextbus_routes].all.each do |route|
         get_route_config route[:tag]
       end
@@ -42,8 +47,10 @@ module NextbusFeeds
             stoptag: stop[:tag],
             stoptitle: stop[:title]
           }
-          puts params.inspect
-          DB[:nextbus_route_configs].insert params
+          unless DB[:nextbus_route_configs].first(params)
+            puts params.inspect
+            DB[:nextbus_route_configs].insert params
+          end
         end
       end
     end
