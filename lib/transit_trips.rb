@@ -71,6 +71,7 @@ class TransitTrips
     end
   end
 
+  # This should be a self-contained file and tool.
   def make_grid
     @grid = [] 
     @first_stops = Set.new
