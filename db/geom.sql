@@ -1,4 +1,7 @@
 
+-- add Geom column to stops
+select AddGeometryColumn('stops', 'geom', 4326, 'POINT', 2);
+update stops set geom = ST_GeomFromText('POINT(' || stop_lon || ' ' || stop_lat || ')', 4326);
 
 
 -- This makes linestrings
