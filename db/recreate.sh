@@ -56,7 +56,7 @@ ruby -Ilib lib/prepare_realtime_tables.rb
 
 echo "Optional: Please download PostGIS and install into the mbta database."
 echo "Then run:"
-echo "psql mbta < db/linestrings.sql"
+echo "psql mbta < db/geom.sql"
 
 echo "Done"
 # source db/postgis.sh
