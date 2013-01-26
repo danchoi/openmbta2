@@ -35,4 +35,6 @@ psql mbta < db/load.sql
 echo "running denormalize.sql"
 psql mbta < db/denormalize.sql
 
+echo "creating indexes"
+psql mbta < db/create_indexes.sql
 exit 
