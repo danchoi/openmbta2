@@ -58,8 +58,9 @@ create table stop_times (
   drop_off_type smallint,
   PRIMARY KEY (trip_id, stop_sequence)
 ) ;
+CREATE INDEX stop_times_trip_id_idx ON stop_times(trip_id);
+CREATE INDEX stop_times_stop_id_idx ON stop_times(stop_id);
 
-CREATE INDEX stop_id_idx ON stop_times(stop_id);
 /* alter table stop_times add index trip_id (trip_id(5)); */
 
 create table stops (
