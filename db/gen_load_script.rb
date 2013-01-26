@@ -25,7 +25,6 @@ copy #{table} from  '#{path}'
 DELIMITER AS ',' CSV HEADER;
 SQL
   puts sql
-  $stderr.puts sql
 end
 
 require 'csv'
