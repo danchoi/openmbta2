@@ -45,7 +45,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
+CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
 (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips.direction_id
@@ -64,13 +64,6 @@ $$ language sql;
 
 
 -- used by transit_trips.rb
-
-CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
-select * from stop_times st where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_id, arrival_time, stop_sequence;
-$$ LANGUAGE SQL;
-
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
 from active_trips(date(now())) as trips 
@@ -79,9 +72,16 @@ where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif
 $$ LANGUAGE SQL;
 
 
+CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
+select * from stop_times st where trip_id in 
+(select trip_id from route_trips_today($1, $2))
+order by stop_id, arrival_time, stop_sequence;
+$$ LANGUAGE SQL;
+
+
 -- available_routes3() : no headsigns or directions
 
-CREATE OR REPLACE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
+CREATE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
 select case 
 when $1=0 then 'subway'
 when $1=1 then 'subway'
@@ -93,7 +93,7 @@ end;
 $$ language sql;
 
 
-CREATE OR REPLACE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
+CREATE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
 select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
   -- a
   (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
@@ -115,7 +115,7 @@ CREATE OR REPLACE VIEW view_available_routes as select * from available_routes3(
 
 -- used by dynamic html version
 
-CREATE OR REPLACE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
+CREATE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
 select stops.stop_id, stop_code, stop_name, stop_lat, stop_lon, stop_times.trip_id, arrival_time, stop_sequence from stops inner join stop_times using(stop_id) 
 inner join trips using(trip_id) where trip_id in 
 (select trip_id from route_trips_today($1, $2))
@@ -123,7 +123,7 @@ order by stop_sequence, stop_id;
 $$ LANGUAGE sql;
 
 
-CREATE OR REPLACE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
+CREATE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
 select
   trips.trip_id,
   -- stop 1

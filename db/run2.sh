@@ -4,5 +4,5 @@
 
 echo "adding functions"
 createlang plpgsql mbta;
-psql mbta < db/functions.sql
+psql mbta < db/create_functions.sql
 
