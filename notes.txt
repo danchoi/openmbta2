@@ -44,3 +44,6 @@ Now openmbta/db/postgis.sql loads!
 Next psql mbta < linestrings.sql
 
 
+select stops.stop_name, st.* from stop_times st inner join stops using(stop_id) where trip_id in (select trip_id from route_trips_today('1', '0')) order by stop_id, arrival_time, stop_sequence
+
+

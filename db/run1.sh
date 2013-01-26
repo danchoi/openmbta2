@@ -26,15 +26,8 @@ echo "database created, loading data"
 ruby db/gen_load_script.rb > db/load.sql
 
 # clean up incomplete stop time strings, e.g. 9:38:00 => 09:38:00
-if [[ ! -e data/stop_times.orig ]]
-then
-  echo "Fixing bad stop times"
-  sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
-  mv data/stop_times.txt data/stop_times.orig
-  mv data/stop_times.fixed data/stop_times.txt
-else
-  echo "Bad stop times seems to have been fixed already"
-fi
+echo "Fixing bad stop times"
+sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
 
 echo "running load.sql"
 psql mbta < db/load.sql
@@ -42,6 +35,7 @@ psql mbta < db/load.sql
 echo "running denormalize.sql"
 psql mbta < db/denormalize.sql
 
+exit 
 echo "adding functions"
 createlang plpgsql mbta;
 psql mbta < db/functions.sql
