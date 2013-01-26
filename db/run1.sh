@@ -5,13 +5,13 @@ if [ ! -d  $datadir ]
 then
   mkdir $datadir
   echo "Please put GTFS csv files in $datadir/"
-  exit
+  exit 1
 fi
 
 if [ ! -e data/agency.txt ]
 then
   echo "GTFS files missing from $datadir/"
-  exit
+  exit 1
 fi
 
 echo "Dropping mbta"
@@ -36,23 +36,3 @@ echo "running denormalize.sql"
 psql mbta < db/denormalize.sql
 
 exit 
-echo "adding functions"
-createlang plpgsql mbta;
-psql mbta < db/functions.sql
-
-echo "adding realtime tables"
-psql mbta < db/realtime_tables.sql
-
-echo "preparing realtime tables"
-ruby -Ilib lib/prepare_realtime_tables.rb
-
-# postgis installation will vary for each user
-
-echo "Optional: Please download PostGIS and install into the mbta database."
-echo "Then run:"
-echo "psql mbta < db/geom.sql"
-
-echo "Done"
-# source db/postgis.sh
-
-exit
