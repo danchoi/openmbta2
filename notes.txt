@@ -49,9 +49,154 @@ select stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop
 
 explain select stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) inner join trips using(trip_id) where trip_id in (select trip_id from route_trips_today('66', '0')) order by stop_sequence, stop_id, arrival_time;
 
+explain analyze select stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) inner join trips using(trip_id) where trip_id in (select trip_id from route_trips_today('66', '0')) ;
+
+explain select stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) where trip_id in (select trip_id from route_trips_today('66', '0')) ; 
+
+explain analyze select stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops on (st.stop_id = stops.stop_id)  where st.trip_id in (select trip_id from route_trips_today('66', '0')) ; 
+
+select trips.service_id, trips.route_id, trips.direction_id, stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) inner join trips using(trip_id) where trip_id in (select trip_id from route_trips_today('66', '0')) ;
 \d trips
 
 select service_id from trips limit 20;
 
+
+select trips.service_id, trips.route_id, trips.direction_id, stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) inner join trips using(trip_id) where trip_id in (select trip_id from route_trips_today('1', '0')) and stop_name like '%Sidney%' order by arrival_time desc;
+
+select trips.service_id, trips.route_id, trips.direction_id, stops.stop_id, stops.stop_code, stops.stop_name, st.arrival_time, st.stop_sequence, st.trip_id from stop_times st inner join stops using(stop_id) inner join trips using(trip_id) where trip_id in (select trip_id from route_trips_today('1', '0')) order by trips.finished_at asc, stop_sequence asc;
+
+
+
+\d trips
+
+
+
+Stops lookup
+
+nearby_stops is a view
+
+select * from nearby_stops where stop_id = '70110';
+
+select * from nearby_stops where stop_id != '70110' 
+  and st_distance((select geom from stops where stop_id = '70110'), nearby_stops.geom) < 1000
+  order by st_distance((select geom from stops where stop_id = '70110'), nearby_stops.geom);
+
+select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, t.service_id, s.stop_id, s.stop_code, s.stop_name,
+    s.stop_lat, s.stop_lon, s.geom
+    from stops s
+    inner join stop_times st using (stop_id) 
+    inner join trips t using (trip_id)
+    inner join routes r using (route_id)
+    where route_type in (0,1,3) 
+    order by r.route_type, t.route_id ;
+
+
+
+create table nearby_stops(
+  route_type smallint, 
+  route_id varchar,
+  route_name varchar,
+  stop_id varchar,
+  stop_code varchar, 
+  parent_station varchar,
+  stop_name varchar
+);
+select AddGeometryColumn('nearby_stops', 'geom', 4326, 'POINT', 2);
+create index idx_nearby_stops_geom on nearby_stops using gist(geom);
+
+
+drop table nearby_stops;
+select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) as route_name, s.stop_id, s.stop_code, s.parent_station, s.stop_name, s.geom
+    into nearby_stops
+    from stops s
+    inner join stop_times st using (stop_id) 
+    inner join trips t using (trip_id)
+    inner join routes r using (route_id)
+    where route_type in (0,1,3) 
+    group by r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')), s.stop_id, s.stop_code, s.parent_station, s.stop_name, s.geom
+    order by r.route_type, r.route_id ;
+
+
+
+select *,
+      st_distance((select geom from stops where stop_id = '70110'), n.geom) 
+from nearby_stops n
+      where
+      st_distance((select geom from stops where stop_id = '70110'), n.geom) < 1000
+      and stop_id != '70110'
+      order by 
+      st_distance((select geom from stops where stop_id = '70110'), n.geom) asc
+      limit 50;
+
+
+PREPARE nearbyplan (varchar) AS
+  select *,
+        st_distance(st_transform((select geom from stops where stop_id = $1), 2163), st_transform(n.geom, 2163)) 
+  from nearby_stops n
+        where
+        st_distance(st_transform((select geom from stops where stop_id = $1), 2163), st_transform(n.geom, 2163))  < 1000
+        and stop_id != $1
+        order by 
+        st_distance(st_transform((select geom from stops where stop_id = $1), 2163), st_transform(n.geom, 2163))  asc
+        limit 50;
+EXECUTE nearbyplan('101'); 
+
+
+select * from stops where stop_name like '%Sidney St%';
+
+
+
+:'<,'>w !psql mbta
+PREPARE
+ route_type | route_id | route_name | stop_id | stop_code | parent_station |             stop_name             |                        geom                        |   st_distance    
+------------+----------+------------+---------+-----------+----------------+-----------------------------------+----------------------------------------------------+------------------
+          3 | 70A      | 70A        | 73      | 73        |                | Massachusetts Ave @ Sidney St     | 0101000020E6100000FFE7305F5EC651C0D26D895C702E4540 | 20.8665823709929
+          3 | 701      | CT1        | 73      | 73        |                | Massachusetts Ave @ Sidney St     | 0101000020E6100000FFE7305F5EC651C0D26D895C702E4540 | 20.8665823709929
+          3 | 64       | 64         | 73      | 73        |                | Massachusetts Ave @ Sidney St     | 0101000020E6100000FFE7305F5EC651C0D26D895C702E4540 | 20.8665823709929
+          3 | 01       | 1          | 73      | 73        |                | Massachusetts Ave @ Sidney St     | 0101000020E6100000FFE7305F5EC651C0D26D895C702E4540 | 20.8665823709929
+          3 | 70       | 70         | 73      | 73        |                | Massachusetts Ave @ Sidney St     | 0101000020E6100000FFE7305F5EC651C0D26D895C702E4540 | 20.8665823709929
+          3 | 64       | 64         | 730     | 730       |                | Franklin St @ Sidney St           | 0101000020E6100000315C1D0071C651C02AC6F99B502E4540 | 161.871136940616
+          3 | 70       | 70         | 730     | 730       |                | Franklin St @ Sidney St           | 0101000020E6100000315C1D0071C651C02AC6F99B502E4540 | 161.871136940616
+          3 | 70A      | 70A        | 730     | 730       |                | Franklin St @ Sidney St           | 0101000020E6100000315C1D0071C651C02AC6F99B502E4540 | 161.871136940616
+          3 | 47       | 47         | 1816    | 1816      |                | Brookline St @ Green St           | 0101000020E61000008081204086C651C0C440D7BE802E4540 |  201.60015209534
+          3 | 01       | 1          | 100     | 100       |                | Massachusetts Ave @ Front St      | 0101000020E61000000400C79E3DC651C013D21A834E2E4540 | 208.902246591671
+          3 | 01       | 1          | 731     | 731       |                | Massachusetts Ave @ Landsdowne St | 0101000020E61000000F60915F3FC651C087E123624A2E4540 | 212.140139768457
+          3 | 70A      | 70A        | 2755    | 2755      |                | Green St @ Pearl St               | 0101000020E6100000FAD51C2098C651C069C70DBF9B2E4540 |   312.7083560856
+          3 | 64       | 64         | 2755    | 2755      |                | Green St @ Pearl St               | 0101000020E6100000FAD51C2098C651C069C70DBF9B2E4540 |   312.7083560856
+          3 | 47       | 47         | 2755    | 2755      |                | Green St @ Pearl St               | 0101000020E6100000FAD51C2098C651C069C70DBF9B2E4540 |   312.7083560856
+          3 | 70       | 70         | 2755    | 2755      |                | Green St @ Pearl St               | 0101000020E6100000FAD51C2098C651C069C70DBF9B2E4540 |   312.7083560856
+          3 | 47       | 47         | 1817    | 1817      |                | Pearl St @ Franklin St            | 0101000020E6100000AD8905BEA2C651C05182FE428F2E4540 | 349.051241179801
+          3 | 70A      | 70A        | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 01       | 1          | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 64       | 64         | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 70       | 70         | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 701      | CT1        | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 47       | 47         | 72      | 72        |                | Massachusetts Ave @ Pearl St      | 0101000020E610000070067FBF98C651C020ED7F80B52E4540 | 359.467863556047
+          3 | 01       | 1          | 74      | 74        |                | Massachusetts Ave @ Albany St     | 0101000020E610000023F94A2025C651C049BC3C9D2B2E4540 | 377.608852672977
+          3 | 01       | 1          | 99      | 99        |                | Massachusetts Ave @ Albany St     | 0101000020E6100000DEE8633E20C651C0FBEAAA402D2E4540 | 392.067010644116
+          1 | 933_     | Red Line   | 70069   | 70069     | place-cntsq    | Central Sq - Inbound              | 0101000020E61000009AD024B1A4C651C0AB92C83EC82E4540 | 444.830261804482
+          3 | 01       | 1          | 102     | 102       | place-cntsq    | Massachusetts Ave @ Prospect St   | 0101000020E61000009AD024B1A4C651C0AB92C83EC82E4540 | 444.830261804482
+          1 | 931_     | Red Line   | 70070   | 70070     | place-cntsq    | Central Sq - Outbound             | 0101000020E61000009AD024B1A4C651C0AB92C83EC82E4540 | 444.830261804482
+          1 | 931_     | Red Line   | 70069   | 70069     | place-cntsq    | Central Sq - Inbound              | 0101000020E61000009AD024B1A4C651C0AB92C83EC82E4540 | 444.830261804482
+          1 | 933_     | Red Line   | 70070   | 70070     | place-cntsq    | Central Sq - Outbound             | 0101000020E61000009AD024B1A4C651C0AB92C83EC82E4540 | 444.830261804482
+          3 | 47       | 47         | 1123    | 1123      |                | Green St @ Magazine St            | 0101000020E6100000365CE49EAEC651C0971DE21FB62E4540 | 451.447506054436
+          3 | 64       | 64         | 1123    | 1123      |                | Green St @ Magazine St            | 0101000020E6100000365CE49EAEC651C0971DE21FB62E4540 | 451.447506054436
+          3 | 70A      | 70A        | 1123    | 1123      |                | Green St @ Magazine St            | 0101000020E6100000365CE49EAEC651C0971DE21FB62E4540 | 451.447506054436
+          3 | 70       | 70         | 1123    | 1123      |                | Green St @ Magazine St            | 0101000020E6100000365CE49EAEC651C0971DE21FB62E4540 | 451.447506054436
+          3 | 83       | 83         | 1060    | 1060      |                | Magazine St @ Green St            | 0101000020E61000006CEBA7FFACC651C0889FFF1EBC2E4540 | 454.652934401448
+          3 | 91       | 91         | 1060    | 1060      |                | Magazine St @ Green St            | 0101000020E61000006CEBA7FFACC651C0889FFF1EBC2E4540 | 454.652934401448
+          3 | 64       | 64         | 1060    | 1060      |                | Magazine St @ Green St            | 0101000020E61000006CEBA7FFACC651C0889FFF1EBC2E4540 | 454.652934401448
+          3 | 701      | CT1        | 1060    | 1060      |                | Magazine St @ Green St            | 0101000020E61000006CEBA7FFACC651C0889FFF1EBC2E4540 | 454.652934401448
+          3 | 47       | 47         | 1814    | 1814      |                | Brookline St @ Tudor St           | 0101000020E6100000070C923EADC651C0302C7FBE2D2E4540 | 468.878633237178
+          3 | 91       | 91         | 2446    | 2446      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000001EC6A4BF97C651C0AEB9A3FFE52E4540 | 474.279985125033
+          3 | 64       | 64         | 2446    | 2446      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000001EC6A4BF97C651C0AEB9A3FFE52E4540 | 474.279985125033
+          3 | 83       | 83         | 2446    | 2446      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000001EC6A4BF97C651C0AEB9A3FFE52E4540 | 474.279985125033
+          3 | 47       | 47         | 1764    | 1764      |                | Pearl St @ Cottage St             | 0101000020E6100000FFCF61BEBCC651C0F3052D24602E4540 | 476.268612113594
+          3 | 91       | 91         | 2443    | 2443      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000000536E7E099C651C09C1A683EE72E4540 | 483.920417627711
+          3 | 64       | 64         | 2443    | 2443      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000000536E7E099C651C09C1A683EE72E4540 | 483.920417627711
+          3 | 83       | 83         | 2443    | 2443      |                | Prospect St @ Bishop Allen Dr     | 0101000020E61000000536E7E099C651C09C1A683EE72E4540 | 483.920417627711
+          3 | 747      | CT2        | 11771   | 11771     |                | Vassar St @ Mass Ave              | 0101000020E61000009E44847F11C651C00F09DFFB1B2E4540 | 485.266998730937
+          3 | 747      | CT2        | 21773   | 21773     |                | Vassar St @ Mass Ave              | 0101000020E61000001CB4571F0FC651C0B134F0A31A2E4540 | 497.197160304414
+          3 | 64       | 64         | 1122    | 1122      |                | Magazine St @ Auburn St           | 0101000020E6100000A180ED60C4C651C09D836742932E4540 |  514.18744399546
 
 
