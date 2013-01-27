@@ -70,6 +70,7 @@ module NextbusFeeds
       url += "&" + params
 
       # TODO change this to also save out the file
+      # Use system('curl ... > file') and if true, read in the file
 
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
       DB.run("delete from nextbus_predictions where routetag = '#{route_tag}'")
