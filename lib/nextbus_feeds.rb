@@ -68,6 +68,9 @@ module NextbusFeeds
       url = 'http://webservices.nextbus.com/service/publicXMLFeed?command=predictionsForMultiStops&a=mbta'
       params = get_stop_tags(route_tag).map {|stoptag| "stops=#{route_tag}|null|#{stoptag}"}.join('&')
       url += "&" + params
+
+      # TODO change this to also save out the file
+
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
       DB.run("delete from nextbus_predictions where routetag = '#{route_tag}'")
       Nokogiri::XML.parse(xml).xpath('//predictions').each do |s|
