@@ -59,65 +59,9 @@ announcements from the MBTA.</p>
 find any bugs or have a good feature or user interface suggestion, please let
 us know on the <%= link_to "Support & Feedback Page", "/support" %>.  </p>
 
-<a name="how-to"></a>
-
-<h2>How to use the app</h2>
-
-<p> 
-These instructions are primarily for the iPhone app, but should carry over
-easily to the iPad and Android apps.
-</p>
-
-
-<p>Let's just run through a basic use case. Say you're somewhere in
-Cambridgeport, and you want to know where the nearest stop for the Number 1 Bus
-to the Boston side of the Charles River is and when it's going to arrive next.</p>
-
-<p>Starting at the main menu, you want to press <b>Bus</b>.</p> 
-
-<p>The next screen will show you all the bus routes with trips still scheduled 
-today, ordered by number. If the bus you're interested in has a high number, you
-can navigate to it more quickly using the number index along the right. In this
-case, we don't need to do that because Bus 1 is at the top of the list. </p>
-
-<p>For every bus route, you'll see all the headsigns for that route. Usually
-this means that there is one headsign for each direction, but some routes are
-more complicated and have more than two headsigns. For each headsign, you'll
-also see the number of trips left for today.</p>
-
-<p> Please note that if a bus route isn't in service today, it won't show up at all on this list. </p>
-
-<p>We've found Bus 1 going toward Boston, so let's tap that. </p>
-
-<%= image_tag "screens/bus-routes-annotated.jpg", :class => "screenshot" %>
-
-<p>The next screen is the heart of the application. It is actually two views.
-By default, you'll see the map view. If you tap on the "Schedule"
-button, you'll see a scrollable schedule. The map view will show real-time information when a real-time data
-feed for that route is available; otherwise, it shows next scheduled arrival
-times. The schedule view always presents scheduled arrival times.</p>
-
-<%= image_tag "screens1.3/IMG_0004.jpg", :class => 'screenshot' %>
-<%= image_tag "screens1.3/IMG_0008.jpg", :class => 'screenshot' %>
-
-<%= render :partial => 'help/guide' %>
-
-
 <p>
-You can also bookmark routes using the bookmark button the top of the map or
-schedule screens. Bookmarked routes will show up at the top of the main
-menu.
+<a href="/home/mobile_howto">How to use the mobile app</a>
 </p>
-
-<p>
-Finally, check out the T-Alerts and the Twitter #mbta feed screens. 
-</p>
-
-
-<%= image_tag "screens1.2/IMG_0011.PNG", :class => 'screenshot' %>
-<%= image_tag "screens1.2/IMG_0010.PNG", :class => 'screenshot' %>
-
-<%= render :partial => 'help/guide3' %>
 
 <hr/>
 
