@@ -4,6 +4,18 @@ select AddGeometryColumn('stops', 'geom', 4326, 'POINT', 2);
 update stops set geom = ST_GeomFromText('POINT(' || stop_lon || ' ' || stop_lat || ')', 4326);
 create index idx_stops_geom on stops using gist(geom);
 
+-- nearby_stops table for nearby stop lookups
+select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) as route_name, s.stop_id, s.stop_code, s.parent_station, s.stop_name, s.geom
+    into nearby_stops
+    from stops s
+    inner join stop_times st using (stop_id) 
+    inner join trips t using (trip_id)
+    inner join routes r using (route_id)
+    where route_type in (0,1,3) 
+    group by r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')), s.stop_id, s.stop_code, s.parent_station, s.stop_name, s.geom
+    order by r.route_type, r.route_id ;
+
+create index idx_nearby_stops_geom on nearby_stops using gist(geom);
 
 -- This makes linestrings
 -- select AddGeometryColumn('shapes', 'geom', 2163, 'POINT', 2);
@@ -30,4 +42,6 @@ insert into polylines (shape_id, geog) select shapes.shape_id, ST_Makeline(shape
 -- select shape_id, ST_Length(geom) from polylines;
 -- select shape_id, ST_Summary(geom) from polylines;
 -- select ST_AsGeoJSON(ST_Transform(geom, 4263)) from polylines limit 1;
+
+
 
