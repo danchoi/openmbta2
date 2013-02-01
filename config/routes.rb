@@ -1,9 +1,7 @@
 require 'openmbta2'
-require 'test_sinatra'
 
 Openmbta2::Application.routes.draw do
 
-  mount(TestSinatra, :at => "sinatra")
   match '/routes/:transport_type' => 'routes#index'
   match '/trips' => 'trips#index'
   match '/alerts' => 'alerts#index'
