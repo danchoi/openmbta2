@@ -163,6 +163,10 @@ TODO filter nearby stops by what links to realtime bus or subway
 select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
       where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ?" 
 
+
+TODO add direciton
+
+
 :'<,'>w !psql mbta
 PREPARE
  route_type | route_id | route_name | stop_id | stop_code | parent_station |             stop_name             |                        geom                        |   st_distance    
