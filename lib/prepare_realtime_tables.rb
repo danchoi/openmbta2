@@ -1,3 +1,5 @@
+require 'sequel'
+DB = Sequel.connect 'postgres:///mbta'
 require 'nextbus_feeds'
 require 'subway_feed'
 

@@ -1,7 +1,9 @@
 require 'sequel'
 require 'logger'
 #DB = Sequel.connect 'postgres:///mbta', :logger => Logger.new(STDOUT)
-DB = Sequel.connect 'postgres:///mbtaold'
+unless defined?(DB)
+  DB = Sequel.connect 'postgres:///mbta'
+end
 
 
 
