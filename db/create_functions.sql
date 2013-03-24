@@ -143,15 +143,6 @@ where trips.trip_id in (select trip_id from route_trips_today($1, $2))
 $$ LANGUAGE SQL;
 
 
-create view nearby_stops as  select r.route_type, r.route_id, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, t.service_id, s.stop_id, s.stop_code, s.stop_name,
-    s.stop_lat, s.stop_lon, st.arrival_time, s.geom
-    from stops s
-    inner join stop_times st using (stop_id) 
-    inner join trips t using (trip_id)
-    inner join routes r using (route_id)
-    where route_type in (0,1,3) 
-    order by r.route_type, t.route_id ;
-
 /*
 drop view nearby_stops;
 */
