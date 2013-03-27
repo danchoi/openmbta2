@@ -1,5 +1,8 @@
 #!/bin/bash
 
+db=${1:-mbta2}
+
+echo Using DB: $db
 datadir=data
 if [ ! -d  $datadir ]
 then
@@ -15,13 +18,13 @@ then
 fi
 
 echo "Dropping mbta"
-dropdb mbta 
+dropdb $db
 echo "Exit status $?"
 echo "Dropped mbta"
-createdb mbta
+createdb $db
 echo "Created mbta"
 sleep 1
-psql mbta < db/create.sql
+psql $db < db/create.sql
 echo "database created, loading data"
 ruby db/gen_load_script.rb > db/load.sql
 
@@ -30,11 +33,11 @@ echo "Fixing bad stop times"
 sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
 
 echo "running load.sql"
-psql mbta < db/load.sql
+psql $db  < db/load.sql
 
 echo "running denormalize.sql"
-psql mbta < db/denormalize.sql
+psql $db < db/denormalize.sql
 
 echo "creating indexes"
-psql mbta < db/create_indexes.sql
+psql $db < db/create_indexes.sql
 exit 
