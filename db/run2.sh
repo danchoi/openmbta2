@@ -4,7 +4,7 @@
 
 db=${1:-mbta2}
 
-echo "adding functions"
+echo "adding functions to $db"
 createlang plpgsql $db;
 psql $db < db/create_functions.sql
 
