@@ -2,7 +2,7 @@ require 'open-uri'
 require 'openmbta2'
 
 class Alert
-  FEED_URL = "http://talerts.com/rssfeed/alertsrss.aspx"
+  FEED_URL = "http://realtime.mbta.com/alertsrss/rssfeed2"
 
   def self.update
     puts "Updating t-alerts at #{Time.now}"
