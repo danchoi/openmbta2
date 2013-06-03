@@ -2,9 +2,11 @@
 
 # Part 2 of recreate data process. Run run1.sh first.
 
-echo "adding functions"
-createlang plpgsql mbta;
-psql mbta < db/create_functions.sql
+db=${1:-mbta2}
+
+echo "adding functions to $db"
+createlang plpgsql $db;
+psql $db < db/create_functions.sql
 
 echo Now run run3.sh
 

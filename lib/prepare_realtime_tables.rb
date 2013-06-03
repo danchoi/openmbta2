@@ -1,5 +1,8 @@
 require 'sequel'
-DB = Sequel.connect 'postgres:///mbta'
+
+db = ARGV.first || 'mbta2'
+DB = Sequel.connect "postgres:///#{db}"
+
 require 'nextbus_feeds'
 require 'subway_feed'
 

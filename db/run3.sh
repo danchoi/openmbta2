@@ -2,10 +2,12 @@
 
 # Part 3 of recreate data process. Postgis and postgis functions
 
-source db/postgis.sh
+db=${1:-mbta2}
+
+db/postgis.sh $db
 
 echo "psql mbta < db/geom.sql"
-psql mbta < db/geom.sql
+psql $db < db/geom.sql
 
 echo Now run run4.sh
 exit
