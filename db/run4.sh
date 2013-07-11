@@ -5,6 +5,6 @@ echo "adding realtime tables"
 psql $db < db/realtime_tables.sql
 
 echo "preparing realtime tables"
-ruby -Ilib lib/prepare_realtime_tables.rb
+ruby -Ilib lib/prepare_realtime_tables.rb $db
 
 echo Done creating mbta database

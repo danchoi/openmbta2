@@ -3,6 +3,8 @@ require 'sequel'
 db = ARGV.first || 'mbta2'
 DB = Sequel.connect "postgres:///#{db}"
 
+puts "Preparing Realtime Tables with database: #{db}"
+sleep 4
 require 'nextbus_feeds'
 require 'subway_feed'
 
