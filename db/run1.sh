@@ -17,12 +17,12 @@ then
   exit 1
 fi
 
-echo "Dropping mbta"
+echo "Dropping $db"
 dropdb $db
 echo "Exit status $?"
-echo "Dropped mbta"
+echo "Dropped $db"
 createdb $db
-echo "Created mbta"
+echo "Created $db"
 sleep 1
 psql $db < db/create.sql
 echo "database created, loading data"
