@@ -1,4 +1,4 @@
-require'database'
+require 'database'
 require 'nokogiri'
 require 'open-uri'
 require 'csv'
