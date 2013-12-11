@@ -79,8 +79,6 @@ order by stop_id, arrival_time, stop_sequence;
 $$ LANGUAGE SQL;
 
 
--- available_routes3() : no headsigns or directions
-
 CREATE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
 select case 
 when $1=0 then 'subway'
@@ -91,26 +89,6 @@ when $1=4 then 'boat'
 else 'undefined' 
 end;
 $$ language sql;
-
-
-CREATE FUNCTION available_routes3(timestamp with time zone) RETURNS setof record AS $$
-select route_type_to_string(a.route_type) as mode, a.route, coalesce(b.trips_left, 0) from 
-  -- a
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route from active_trips(adjusted_date($1)) as trips 
-    inner join routes r using (route_id) group by r.route_type, route) a
-left outer join
-  -- b
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, 
-    count(*) as trips_left
-    from active_trips(adjusted_date($1)) as trips inner join routes r using (route_id) 
-    where trips.finished_at > adjusted_time($1)
-    group by r.route_type, route) b
-  -- back to main
-  on (a.route_type = b.route_type and a.route = b.route)
-  order by a.route_type, route;
-$$ language sql;
-
-CREATE OR REPLACE VIEW view_available_routes as select * from available_routes3(now()) as (route_type varchar, route varchar, trips_left bigint);
 
 
 -- used by dynamic html version
