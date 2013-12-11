@@ -45,6 +45,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- transit_routes.rb
 CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
