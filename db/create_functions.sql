@@ -3,6 +3,7 @@ CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$ select
 coalesce(nullif($1, ''), nullif($2, '')); $$ LANGUAGE SQL;
 
 
+-- used in active_trips() function 
 CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
 select service_id from (
   select service_id from calendar 
@@ -15,6 +16,8 @@ EXCEPT
   select service_id from calendar_dates 
   where exception_type = 'remove' and date = $1;
 $$ language sql;
+
+-- used in available_routes() function
 
 CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
 select * from trips where service_id in (select active_services($1) as service_id);
@@ -46,6 +49,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- transit_routes.rb
+
 CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
@@ -65,6 +69,7 @@ $$ language sql;
 
 
 -- used by transit_trips.rb
+
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
 from active_trips(date(now())) as trips 
@@ -74,6 +79,7 @@ $$ LANGUAGE SQL;
 
 
 -- transit_trips.rb
+
 CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
 select * from stop_times st where trip_id in 
 (select trip_id from route_trips_today($1, $2))
@@ -94,14 +100,6 @@ $$ language sql;
 
 
 -- used by dynamic html version
-
-CREATE FUNCTION route_stops_today(varchar, int) RETURNS SETOF record AS $$
-select stops.stop_id, stop_code, stop_name, stop_lat, stop_lon, stop_times.trip_id, arrival_time, stop_sequence from stops inner join stop_times using(stop_id) 
-inner join trips using(trip_id) where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_sequence, stop_id;
-$$ LANGUAGE sql;
-
 
 CREATE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
 select
