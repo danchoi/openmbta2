@@ -17,8 +17,8 @@ EXCEPT
   where exception_type = 'remove' and date = $1;
 $$ language sql;
 
--- used in available_routes() function
-
+-- used in available_routes() and many other functions
+-- key point of optimization
 CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
 select * from trips where service_id in (select active_services($1) as service_id);
 $$ LANGUAGE SQL;
@@ -50,6 +50,7 @@ $$ LANGUAGE plpgsql;
 
 -- transit_routes.rb
 -- select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ? order by route, - direction_id 
+-- calls active_trips(adjusted_date($1))
 CREATE FUNCTION available_routes(timestamp with time zone) RETURNS setof record AS $$
 select a.route_type, a.route, a.direction_id, 
 coalesce(b.trips_left, 0), b.headsign from 
@@ -70,7 +71,7 @@ $$ language sql;
 
 
 -- used by transit_trips.rb
-
+-- calls active_trips(date(now()));
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
 select trips.* 
 from active_trips(date(now())) as trips 
@@ -80,7 +81,7 @@ $$ LANGUAGE SQL;
 
 
 -- transit_trips.rb
-
+-- calls route_trips_today()
 CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
 select * from stop_times st where trip_id in 
 (select trip_id from route_trips_today($1, $2))
