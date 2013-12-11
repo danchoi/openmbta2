@@ -4,6 +4,7 @@ coalesce(nullif($1, ''), nullif($2, '')); $$ LANGUAGE SQL;
 
 
 -- used in active_trips() function 
+
 CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
 select service_id from (
   select service_id from calendar 
@@ -19,8 +20,9 @@ $$ language sql;
 
 -- used in available_routes() and many other functions
 -- key point of optimization
+DROP FUNCTION IF EXISTS active_trips(date);
 CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
-select * from trips where service_id in (select active_services($1) as service_id);
+select * from trips_today;
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) AS $$
@@ -73,8 +75,7 @@ $$ language sql;
 -- used by transit_trips.rb
 -- calls active_trips(date(now()));
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
-select trips.* 
-from active_trips(date(now())) as trips 
+select trips.* from active_trips(date(now())) as trips 
 inner join routes r using (route_id) 
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;

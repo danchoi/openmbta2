@@ -91,4 +91,20 @@ create table trips (
   shape_id varchar(255)
 ) ;
 
+drop table if exists trips_today; 
+create table trips_today (
+  route_id varchar(255),
+  service_id varchar(255),
+  trip_id varchar(255) primary key,
+  trip_headsign varchar(255),
+  direction_id smallint,
+  block_id varchar(255),
+  shape_id varchar(255),
+  finished_at varchar
+) ;
+create index trips_today_route_id_idx on trips_today (route_id);
+
+-- must do this every day
+delete from trips_today;
+insert into trips_today select * from trips where service_id in (select active_services(adjusted_date(now())) as service_id);
 
