@@ -11,3 +11,6 @@ and then run `db/recreate.sh`
 
 
 
+ssh zoe@openmbta.org "pg_dump mbta2  -t nextbus_predictions | gzip -c " | gunzip -c | psql mbta2
+
+Include -a if this is repeated 

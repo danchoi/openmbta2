@@ -6,7 +6,35 @@ require 'realtime_bus'
 class TransitRoutes
   def self.routes(route_types)
     sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ? order by route, - direction_id"
+
+
+    sql = <<SQL
+
+select a.route_type, a.route, a.direction_id, 
+coalesce(b.trips_left, 0), b.headsign from 
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips_today.direction_id
+    from 
+    trips_today 
+    inner join routes r using (route_id)
+    group by r.route_type, route, trips_today.direction_id) a
+left outer join 
+  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips_today.direction_id,
+    count(*) as trips_left,
+    array_to_string(array_agg(trip_headsign), ';') as headsign
+    from trips_today 
+    inner join routes r using (route_id) 
+    where trips_today.finished_at > adjusted_time(now())
+    group by r.route_type, route, trips_today.direction_id) b
+    on (a.route_type = b.route_type and a.route = b.route and a.direction_id = b.direction_id)
+where a.route_type in ?
+order by route_type, route, - a.direction_id ;
+SQL
+
     routes = DB[sql, route_types]
+
+    $stderr.puts( DB[sql, route_types].sql )
+    exit
+
     res = {:data => []}
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
