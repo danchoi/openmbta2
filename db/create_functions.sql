@@ -72,6 +72,7 @@ where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif
 $$ LANGUAGE SQL;
 
 
+-- transit_trips.rb
 CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
 select * from stop_times st where trip_id in 
 (select trip_id from route_trips_today($1, $2))

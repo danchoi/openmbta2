@@ -21,7 +21,6 @@ class TransitTrips
     calc_next_arrivals
     make_grid
     fix_grid_stop_ids
-    add_polylines
   end
 
   def result
@@ -105,6 +104,7 @@ class TransitTrips
     end
   end
 
+  # Deprecated
   def add_polylines
     shape_ids = DB["select shape_id from trips where trips.trip_id in ? group by shape_id", @trip_order].to_a.map {|x| x[:shape_id] }
     shapes = shape_ids.map {|shape_id| DB["select shape_pt_lat lat, shape_pt_lon lng from shapes where shape_id = ?", shape_id].to_a.map {|x| [x[:lat], x[:lng]]}}
