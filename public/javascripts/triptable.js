@@ -183,12 +183,5 @@ function initialize() {
 		navigator.geolocation.getCurrentPosition(foundLocation, noLocation);
 	}
   togglePageLinks();
-  addSwipeListener(document.body, function(e) { 
-      if (e.direction == 'left') 
-        pageRight();
-      else if (e.direction == 'right') 
-        pageLeft();
-      //alert(e.direction); 
-  });
 }
 
