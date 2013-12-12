@@ -35,3 +35,11 @@ real  0m3.434s
 user  0m0.010s
 sys 0m0.021s
 
+
+[choi@sparta openmbta2]$ time ruby -Ilib lib/transit_trips.rb 'Green Line' 0 > out                                                                                                                                                                            
+
+real    0m3.406s
+user    0m2.969s
+sys     0m0.099s
+
+

@@ -40,11 +40,18 @@ class TransitTrips
   end
 
   def calc_next_arrivals
-    query = "select stops.stop_name, st.* from stop_times st
-              inner join stops using(stop_id) where trip_id in
-             (select trip_id from trips_today where route_coalesced_name = ? and direction_id = ?)
+#    query = "select stops.stop_name, st.* from stop_times st
+#              inner join stops using(stop_id) where trip_id in
+#             (select trip_id from trips_today where route_coalesced_name = ? and direction_id = ?)
+#             order by stop_id, arrival_time, stop_sequence"
+
+    query = "select stt.* from stop_times_today stt 
+        inner join trips_today using (trip_id) 
+        where trips_today.route_coalesced_name = ? and trips_today.direction_id = ? 
              order by stop_id, arrival_time, stop_sequence"
+
     @trip_order = []
+    $stderr.puts(DB[query, @route, @direction_id].sql)
     DB[query, @route, @direction_id].each do |row|
       stopping = { 
         arrival_time: row[:arrival_time], 

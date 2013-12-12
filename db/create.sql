@@ -134,3 +134,29 @@ delete from route_directions_today;
 insert into route_directions_today 
   select route_type, route_coalesced_name route, direction_id, count(*) as total_trips_today from trips_today  group by route_type, route_coalesced_name, direction_id;
 
+drop table if exists stop_times_today;
+create table stop_times_today (
+  trip_id varchar(255),
+  arrival_time varchar(12),
+  departure_time varchar(12),
+  stop_id varchar(255),
+  stop_sequence int,
+  stop_headsign varchar(255),
+  pickup_type smallint,
+  drop_off_type smallint,
+  stop_name varchar,
+  PRIMARY KEY (trip_id, stop_sequence)
+);
+create index stop_times_today_trip_id_idx  on stop_times_today (trip_id);
+create index trips_today_trip_id_idx on trips_today (trip_id);
+
+insert into stop_times_today 
+  select st.trip_id, st.arrival_time, st.departure_time, st.stop_id, st.stop_sequence, 
+    st.stop_headsign, st.pickup_type, st.drop_off_type, stops.stop_name from stop_times st
+    inner join stops using (stop_id) 
+    inner join trips_today using (trip_id);
+
+
+
+
+
