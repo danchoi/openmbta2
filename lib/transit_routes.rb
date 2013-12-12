@@ -30,7 +30,7 @@ SQL
 
     res = {:data => []}
     
-    $stderr.puts(routes.all.group_by {|x| x[:route]})
+    # $stderr.puts(routes.all.group_by {|x| x[:route]})
 
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
