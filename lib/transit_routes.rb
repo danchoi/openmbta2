@@ -3,6 +3,8 @@ require 'direction'
 require 'bus_routes'
 require 'realtime_bus'
 
+require 'pp'
+
 class TransitRoutes
   def self.routes(route_types)
     sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ? order by route, - direction_id"
@@ -10,38 +12,32 @@ class TransitRoutes
 
     sql = <<SQL
 
-select a.route_type, a.route, a.direction_id, 
-coalesce(b.trips_left, 0), b.headsign from 
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips_today.direction_id
-    from 
-    trips_today 
-    inner join routes r using (route_id)
-    group by r.route_type, route, trips_today.direction_id) a
-left outer join 
-  (select r.route_type, coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) route, trips_today.direction_id,
-    count(*) as trips_left,
-    array_to_string(array_agg(trip_headsign), ';') as headsign
-    from trips_today 
-    inner join routes r using (route_id) 
-    where trips_today.finished_at > adjusted_time(now())
-    group by r.route_type, route, trips_today.direction_id) b
-    on (a.route_type = b.route_type and a.route = b.route and a.direction_id = b.direction_id)
-where a.route_type in ?
-order by route_type, route, - a.direction_id ;
+select rdt.route_type, rdt.route, rdt.direction_id, coalesce(count(tt.finished_at), 0) trips_left, array_to_string(array_agg(distinct tt.trip_headsign), ';') headsigns
+  from route_directions_today rdt
+  left outer join 
+    trips_today tt on 
+    (tt.route_type = rdt.route_type and tt.route_coalesced_name = rdt.route and tt.direction_id = rdt.direction_id and tt.finished_at > adjusted_time(now())) 
+    where tt.route_type in ?
+  group by rdt.route_type, rdt.route, rdt.direction_id
+  order by rdt.route_type, rdt.route, - rdt.direction_id ;
 SQL
 
     routes = DB[sql, route_types]
 
-    $stderr.puts( DB[sql, route_types].sql )
-    exit
+    # $stderr.puts( DB[sql, route_types].sql )
+    # exit
+    # time this far for route type 3 0.7s
 
     res = {:data => []}
+    
+    $stderr.puts(routes.all.group_by {|x| x[:route]})
+
     routes.all.group_by {|x| x[:route]}.each do |route, directions|
       data = {:route_short_name => BusRoutes.abbreviate(route), :headsigns => []}
       directions.each do |d|
         
         headsigns = (d[:headsign] || '').split(';')
-        headsign = if route!= 'Green Line'
+        headsign = if route != 'Green Line'
                      most_common_value(headsigns)
                    end
 

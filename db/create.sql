@@ -100,11 +100,37 @@ create table trips_today (
   direction_id smallint,
   block_id varchar(255),
   shape_id varchar(255),
-  finished_at varchar
-) ;
+  finished_at varchar,
+  route_type integer, 
+  route_coalesced_name varchar(255)
+);
 create index trips_today_route_id_idx on trips_today (route_id);
+create index trips_today_route_coalesced_name_idx on trips_today (route_coalesced_name); 
+create index trips_today_route_type_idx on trips_today (route_type); 
+create index trips_today_direction_id_idx on trips_today (direction_id); 
+
+drop table if exists route_directions_today ;
+create table route_directions_today (
+  route_type integer,
+  route varchar,
+  direction_id smallint,
+  total_trips integer
+);
+create index route_directions_today_route_type_idx on route_directions_today (route_type); 
+create index route_directions_today_route_idx on route_directions_today (route); 
+create index route_directions_today_direction_id_idx on route_directions_today (direction_id); 
 
 -- must do this every day
 delete from trips_today;
-insert into trips_today select * from trips where service_id in (select active_services(adjusted_date(now())) as service_id);
+insert into trips_today select route_id,
+  service_id, trip_id, trip_headsign, direction_id, block_id, 
+  shape_id,
+  finished_at,
+  route_type,
+  coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, ''))
+  from trips inner join routes r using (route_id) where service_id in (select active_services(adjusted_date(now())) as service_id);
+
+delete from route_directions_today;
+insert into route_directions_today 
+  select route_type, route_coalesced_name route, direction_id, count(*) as total_trips_today from trips_today  group by route_type, route_coalesced_name, direction_id;
 
