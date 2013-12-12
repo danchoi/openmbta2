@@ -3,7 +3,6 @@ CREATE FUNCTION coalesce2(varchar, varchar) RETURNS varchar AS $$ select
 coalesce(nullif($1, ''), nullif($2, '')); $$ LANGUAGE SQL;
 
 
--- used in active_trips() function 
 
 CREATE FUNCTION active_services(date) RETURNS setof varchar AS $$
 select service_id from (
@@ -18,11 +17,6 @@ EXCEPT
   where exception_type = 'remove' and date = $1;
 $$ language sql;
 
--- key point of optimization
-DROP FUNCTION IF EXISTS active_trips(date);
-CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
-select route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id from trips_today;
-$$ LANGUAGE SQL;
 
 CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) AS $$
 DECLARE
@@ -50,26 +44,6 @@ $$ LANGUAGE plpgsql;
 
 
 
-
--- used by transit_trips.rb
--- calls active_trips(date(now()));
-drop function if exists route_trips_today(varchar, int);
-CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
-select trips.* from trips_today as trips 
-inner join routes r using (route_id) 
-where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
-$$ LANGUAGE SQL;
-
-
--- transit_trips.rb
--- calls route_trips_today()
-CREATE FUNCTION stop_times_today(varchar, int) RETURNS SETOF stop_times AS $$
-select * from stop_times st where trip_id in 
-(select trip_id from route_trips_today($1, $2))
-order by stop_id, arrival_time, stop_sequence;
-$$ LANGUAGE SQL;
-
-
 CREATE FUNCTION route_type_to_string(int) RETURNS VARCHAR as $$
 select case 
 when $1=0 then 'subway'
@@ -83,25 +57,6 @@ $$ language sql;
 
 
 -- used by dynamic html version
-
-CREATE FUNCTION trips_for_route_direction_stops(varchar, int, varchar, varchar) RETURNS setof record AS $$
-select
-  trips.trip_id,
-  -- stop 1
-    st1.arrival_time s1_arrives,
-    st1.stop_sequence s1_seq,
-  -- stop 2
-    st2.arrival_time s2_arrives,
-    st2.stop_sequence s2_seq
-from trips
-  inner join stop_times st1 using (trip_id)
-  inner join stop_times st2 using (trip_id)
--- maybe later make the time variable
-where trips.trip_id in (select trip_id from route_trips_today($1, $2))
-  and st1.stop_id = $3
-  and st2.stop_id = $4
-  order by st1.arrival_time;
-$$ LANGUAGE SQL;
 
 
 /*
