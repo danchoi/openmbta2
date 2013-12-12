@@ -43,3 +43,13 @@ user    0m2.969s
 sys     0m0.099s
 
 
+zoe@li321-67:~/openmbta2$ ruby -Ilib lib/transit_trips.rb 'Green Line' 0  1>/dev/null
+select stops.stop_name, st.* from stop_times st
+              inner join stops using(stop_id) where trip_id in
+             (select trip_id from trips_today where route_coalesced_name = 'Green Line' and direction_id = 0)
+             order by stop_id, arrival_time, stop_sequence
+calc_next_arrivals took 1.511933737 seconds
+make_grid took 3.588673105 seconds
+fix_grid_stop_ids took 0.000191765 seconds
+
+
