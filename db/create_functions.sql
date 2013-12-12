@@ -21,7 +21,7 @@ $$ language sql;
 -- key point of optimization
 DROP FUNCTION IF EXISTS active_trips(date);
 CREATE FUNCTION active_trips(date) RETURNS SETOF trips AS $$
-select * from trips_today;
+select route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id from trips_today;
 $$ LANGUAGE SQL;
 
 CREATE FUNCTION adjusted_time(x timestamp with time zone) RETURNS character(8) AS $$
@@ -53,8 +53,9 @@ $$ LANGUAGE plpgsql;
 
 -- used by transit_trips.rb
 -- calls active_trips(date(now()));
+drop function if exists route_trips_today(varchar, int);
 CREATE FUNCTION route_trips_today(varchar, int) RETURNS SETOF trips AS $$
-select trips.* from active_trips(date(now())) as trips 
+select trips.* from trips_today as trips 
 inner join routes r using (route_id) 
 where trips.direction_id = $2 and coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) = $1;
 $$ LANGUAGE SQL;

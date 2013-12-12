@@ -44,7 +44,7 @@ class TransitTrips
     # query = "select stops.stop_name, st.* from stop_times_today(?, ?) st join stops using(stop_id) order by arrival_time asc"
     query = "select stops.stop_name, st.* from stop_times st
               inner join stops using(stop_id) where trip_id in
-             (select trip_id from route_trips_today(?, ?))
+             (select trip_id from trips_today where route_coalesced_name = ? and direction_id = ?)
              order by stop_id, arrival_time, stop_sequence"
     @trip_order = []
     DB[query, @route, @direction_id].each do |row|
