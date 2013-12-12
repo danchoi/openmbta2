@@ -7,12 +7,10 @@ require 'pp'
 
 class TransitRoutes
   def self.routes(route_types)
-    sql = "select * from available_routes(now()) as (route_type smallint, route varchar, direction_id smallint, trips_left bigint, headsign varchar) where route_type in ? order by route, - direction_id"
-
 
     sql = <<SQL
 
-select rdt.route_type, rdt.route, rdt.direction_id, coalesce(count(tt.finished_at), 0) trips_left, array_to_string(array_agg(distinct tt.trip_headsign), ';') headsigns
+select rdt.route_type, rdt.route, rdt.direction_id, coalesce(count(tt.finished_at), 0) trips_left, array_to_string(array_agg(distinct tt.trip_headsign), ';') headsign
   from route_directions_today rdt
   left outer join 
     trips_today tt on 
