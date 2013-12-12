@@ -94,6 +94,7 @@ class TransitTrips
       next_grid_row = 0
       stoppings.each_with_index do |stopping, i|
         stop_id = stopping[:stop_id]
+        # method in lib/time_formatter.rb
         time = format_and_flag_time stopping[:arrival_time]
         add_next_arrival(stop_id, stopping[:arrival_time], stopping[:trip_id])
         pos = stopping[:stop_sequence]

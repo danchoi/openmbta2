@@ -3,7 +3,7 @@ module TimeFormatter
   def format_and_flag_time(time) # time is HH:MM:SS
     return unless time
     # strip off seconds
-    hour, min = *time.split(':')[0,2]
+    hour, min = *time.split(':')[0,2]  # this line can  be deleted
     time_string = time[/^(\d{2}:\d{2})/, 1]
 		if time_string.nil?
 	    return [time, -1]
