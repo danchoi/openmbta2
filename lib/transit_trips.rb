@@ -12,15 +12,24 @@ class TransitTrips
   NEXT_ARRIVALS_MAX = 3
 
   attr :trips, :grid, :stops
+
+
+  def time(method)
+    x = Time.now
+    yield
+    y = Time.now - x
+    $stderr.puts("#{method} took #{y} seconds")
+  end 
+
   def initialize(route, direction_id)
     @route = route # a route name
     @direction_id = direction_id # let direction by 0 or 1
     @trips = Hash.new {|hash, key| hash[key] = []}
     @stops = {}
     @next_arrivals = {}
-    calc_next_arrivals
-    make_grid
-    fix_grid_stop_ids
+    time("calc_next_arrivals") { calc_next_arrivals }
+    time("make_grid") { make_grid }
+    time("fix_grid_stop_ids") { fix_grid_stop_ids }
   end
 
   def result
@@ -45,6 +54,7 @@ class TransitTrips
              (select trip_id from trips_today where route_coalesced_name = ? and direction_id = ?)
              order by stop_id, arrival_time, stop_sequence"
     @trip_order = []
+    $stderr.puts(DB[query, @route, @direction_id].sql)
     DB[query, @route, @direction_id].each do |row|
       stopping = { 
         arrival_time: row[:arrival_time], 
