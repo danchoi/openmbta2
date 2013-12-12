@@ -23,3 +23,15 @@ real    0m2.076s
 user    0m0.006s
 sys     0m0.004s
 
+After:
+real    0m0.884s
+user    0m0.006s
+sys     0m0.004s
+
+
+Now to get number 1 trips:
+
+real  0m3.434s
+user  0m0.010s
+sys 0m0.021s
+
