@@ -56,9 +56,5 @@ end;
 $$ language sql;
 
 
--- used by dynamic html version
 
 
-/*
-drop view nearby_stops;
-*/
