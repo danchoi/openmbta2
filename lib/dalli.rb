@@ -1,9 +1,9 @@
 require 'dalli'
-options = { :namespace => "openmbta", :compress => true }
-dc = Dalli::Client.new('localhost:11211', options)
+options = { }
+dc = Dalli::Client.new()
 puts dc.get('abc').inspect
 puts dc.get('abc1').inspect
-dc.set('abc', 123, 2)
+dc.set('abc', 123, 5)
 value = dc.get('abc')
-puts value
+puts value.inspect
 
