@@ -25,7 +25,7 @@ class TransitTrips
     @route = route # a route name
     @direction_id = direction_id # let direction by 0 or 1
     @key = "TRIPS,#{@route},#{direction_id}"
-    @ttl = 60
+    @ttl = 120
     if (@result = MEMCACHED.get(@key))
       # set the cached result
       return
@@ -232,7 +232,7 @@ if __FILE__ == $0
   route = ARGV.first || 'Providence/Stoughton Line'
   direction_id = (ARGV[1] || 1).to_i
   tt = TransitTrips.new route, direction_id
-  pp tt.result
+  puts  tt.result
 end
 
 __END__
