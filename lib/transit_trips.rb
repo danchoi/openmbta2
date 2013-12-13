@@ -24,6 +24,13 @@ class TransitTrips
   def initialize(route, direction_id)
     @route = route # a route name
     @direction_id = direction_id # let direction by 0 or 1
+    @key = "TRIPS,#{@route},#{direction_id}"
+    @ttl = 60
+    if (@result = MEMCACHED.get(@key))
+      # set the cached result
+      return
+    end
+
     @trips = Hash.new {|hash, key| hash[key] = []}
     @stops = {}
     @next_arrivals = {}
@@ -33,6 +40,7 @@ class TransitTrips
   end
 
   def result
+    return @result if @result  
     r = {
       stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
@@ -45,6 +53,9 @@ class TransitTrips
     if @next_arrivals.empty?
       r[:message] = {title: 'Alert', body: 'No more trips for the day.'}
     end
+    # CACHE
+    # TTL is second
+    MEMCACHED.set(@key, r, @ttl)
     r
   end
 

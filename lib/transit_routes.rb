@@ -6,7 +6,13 @@ require 'realtime_bus'
 require 'pp'
 
 class TransitRoutes
+
   def self.routes(route_types)
+    @key = "ROUTES,#{route_types.join(',')}"
+    @ttl = 60
+    if (res = MEMCACHED.get(@key))
+      return res
+    end
 
     sql = <<SQL
 
@@ -64,6 +70,7 @@ SQL
         name
       end
     }
+    MEMCACHED.set(@key, res, @ttl)
     res
   end
 
