@@ -40,7 +40,9 @@ class TransitTrips
   end
 
   def result
-    return @result if @result  
+    if @result
+      return @result 
+    end
     r = {
       stops: use_int_keys(@stops),
       first_stop: @first_stops.to_a,
