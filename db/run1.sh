@@ -40,4 +40,7 @@ psql $db < db/denormalize.sql
 
 echo "creating indexes"
 psql $db < db/create_indexes.sql
+
+echo "creating cache tables"
+psql $db < db/cache_tables.sql
 exit 
