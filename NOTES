@@ -994,3 +994,13 @@ Start a sinatra app
 
 
 
+
+bus 350 not working 
+
+  For agency=mbta stop s=16901 is on none of the directions for r=350 so cannot determine which stop to provide data for.
+
+
+
+      res = DB["select stoptag from nextbus_route_configs where routetag = ?", route_tag].map {|s| s[:stoptag]}
+
+
