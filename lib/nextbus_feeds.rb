@@ -47,6 +47,7 @@ module NextbusFeeds
             stoptag: stop[:tag],
             stoptitle: stop[:title]
           }
+          $stderr.puts params.inspect
           unless DB[:nextbus_route_configs].first(params)
             puts params.inspect
             DB[:nextbus_route_configs].insert params
@@ -74,7 +75,18 @@ module NextbusFeeds
 
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
       DB.run("delete from nextbus_predictions where routetag = '#{route_tag}'")
-      Nokogiri::XML.parse(xml).xpath('//predictions').each do |s|
+      doc = Nokogiri::XML.parse(xml)
+      if doc.at("//Error")
+        $stderr.puts "ERROR: Result:\n#{xml}" 
+        msg = doc.at("//Error").text 
+        s = msg[/s=(\w+) is on none of the directions/, 1]
+        puts "Delete stop tag #{s}"
+        puts DB.run("delete from nextbus_route_configs where routetag = '#{route_tag}' and 
+            stoptag = '#{s}'")
+    
+        return
+      end
+      doc.xpath('//predictions').each do |s|
         stop_tag = s[:stopTag] 
         s.xpath('./direction/prediction').each do |p|
           params = {
@@ -86,6 +98,7 @@ module NextbusFeeds
             block: p[:block],
             triptag: p[:tripTag]
           }
+          puts params.inspect
           DB[:nextbus_predictions].insert params
         end
       end
