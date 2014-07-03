@@ -86,6 +86,7 @@ create table trips (
   service_id varchar(255),
   trip_id varchar(255) primary key,
   trip_headsign varchar(255),
+  trip_short_name varchar(255),
   direction_id smallint,
   block_id varchar(255),
   shape_id varchar(255)
