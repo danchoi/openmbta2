@@ -6,8 +6,17 @@ A clean rewrite of OpenMBTA.
 
 Assumes PostgreSQL and PostGIS extensions. 
 
+    gem install pg
+
+
 To populate the database, download the GTFS data CSV files into `data/`
-and then run `db/recreate.sh`
+and then run `db/runall.sh`
+
+Then run 
+
+    psql mbta < trips-today.sql
+
+
 
 
 
