@@ -1,0 +1,26 @@
+select active_services(adjusted_date(now())); -- works
+
+select trip_id, service_id from trips;
+-- trips are empty
+
+select * from routes;
+
+select route_id,
+  service_id, trip_id, trip_headsign, direction_id, block_id, 
+  shape_id,
+  finished_at,
+  route_type,
+  coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, ''))
+  from trips 
+  inner join routes r 
+    using (route_id) where service_id in (select active_services(adjusted_date(now())) as service_id);
+
+
+copy trips from  '/Users/choi/p/mbta/openmbta2/data/trips.txt' DELIMITER AS ',' CSV HEADER;
+
+ERROR:  invalid input syntax for integer: ""
+CONTEXT:  COPY trips, line 2, column direction_id: ""
+
+New column to trips: trip_short_name 
+
+Write csv parser for trips.txt
