@@ -6,7 +6,7 @@ db=${1:-mbta2}
 
 db/postgis.sh $db
 
-echo "psql mbta < db/geom.sql"
+echo "psql $db < db/geom.sql"
 psql $db < db/geom.sql
 
 echo Now run run4.sh

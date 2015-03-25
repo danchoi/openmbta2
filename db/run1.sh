@@ -35,6 +35,10 @@ sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
 echo "running load.sql"
 psql $db  < db/load.sql
 
+echo "pausing for 10 seconds"
+sleep 10
+
+
 echo "running denormalize.sql"
 psql $db < db/denormalize.sql
 

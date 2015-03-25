@@ -36,7 +36,8 @@ create table routes (
   route_type smallint,
   route_url varchar(255),
   route_color varchar(255),
-  route_text_color varchar(255)
+  route_text_color varchar(255),
+  route_sort_order int
 ) ;
 
 create table shapes (
@@ -71,7 +72,8 @@ create table stops (
   zone_id varchar(255), /* what is this? not sure of type */
   stop_url varchar(255),
   location_type smallint,
-  parent_station varchar(255)
+  parent_station varchar(255),
+  wheelchair_boarding smallint
 ) ;
 
 create table transfers (
@@ -89,7 +91,8 @@ create table trips (
   trip_short_name varchar(255),
   direction_id smallint,
   block_id varchar(255),
-  shape_id varchar(255)
+  shape_id varchar(255),
+  wheelchair_accessible smallint
 ) ;
 
 
