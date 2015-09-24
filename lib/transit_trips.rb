@@ -49,7 +49,8 @@ class TransitTrips
       imminent_stop_ids: imminent_stop_ids.map{|x| to_int_key(x).to_s}.uniq,
       ordered_stop_ids: ordered_stop_ids,
       region: region,
-      grid: @grid
+      grid: @grid,
+      route_id: find_route_id
     }
 
     if @next_arrivals.empty?
@@ -59,6 +60,11 @@ class TransitTrips
     # TTL is second
     MEMCACHED.set(@key, r, @ttl)
     r
+  end
+
+  def find_route_id 
+    r = DB["select route_id from trips_today where route_coalesced_name = ?", @route].to_a.first
+    r && r[:route_id]
   end
 
   def calc_next_arrivals
