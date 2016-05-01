@@ -4,7 +4,9 @@ require 'dalli'
 
 #DB = Sequel.connect 'postgres:///mbta', :logger => Logger.new(STDOUT)
 unless defined?(DB)
-  DB = Sequel.connect 'postgres:///mbta2'
+  db = File.read('DATABASE').strip
+  puts "Using db: #{db}"
+  DB = Sequel.connect 'postgres:///#{db}'
 end
 
 MEMCACHED = Dalli::Client.new

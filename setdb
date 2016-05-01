@@ -1,0 +1,5 @@
+#!/bin/bash
+x=$(cat DATABASE)
+echo DATABASE: $x
+touch tmp/restart.txt
+./setdb
