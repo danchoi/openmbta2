@@ -6,7 +6,7 @@ require 'dalli'
 unless defined?(DB)
   db = File.read('DATABASE').strip
   puts "Using db: #{db}"
-  DB = Sequel.connect 'postgres:///#{db}'
+  DB = Sequel.connect "postgres:///#{db}"
 end
 
 MEMCACHED = Dalli::Client.new
