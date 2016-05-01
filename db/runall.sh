@@ -1,6 +1,7 @@
 rm -rf MBTA_GFTS.zip
 rm data/*
 wget http://mbta.com/uploadedfiles/MBTA_GTFS.zip
+unzip -d data/ MBTA_GTFS.zip
 db=${1:-mbta}
 db/run1.sh $db
 db/run2.sh $db
