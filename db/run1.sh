@@ -32,8 +32,12 @@ ruby db/gen_load_script.rb > db/load.sql
 echo "Fixing bad stop times"
 sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
 
+# Remove column from trips
+psql $db -c 'alter table trips drop column finished_at'
+
 echo "running load.sql"
 psql $db  < db/load.sql
+
 
 echo "pausing for 10 seconds"
 sleep 10
