@@ -57,6 +57,7 @@ create table stop_times (
   stop_headsign varchar(255),
   pickup_type smallint,
   drop_off_type smallint,
+  timepoint smallint default 0,
   PRIMARY KEY (trip_id, stop_sequence)
 ) ;
 
