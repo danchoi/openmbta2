@@ -21,8 +21,7 @@ Dir["data/*.txt"].
   $stderr.print "#{path}\n"
   sql = <<SQL
 truncate #{table};
-copy #{table} from  '#{path}'
-DELIMITER AS ',' CSV HEADER;
+copy #{table} from  '#{path}' DELIMITER AS ',' CSV HEADER;
 SQL
   puts sql
 end

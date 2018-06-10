@@ -11,6 +11,7 @@ module SubwayFeed
       `curl -Ls '#{url}'`
     end
 
+# broken 
     def populate_keys
       url = 'http://developer.mbta.com/RT_Archive/RealTimeHeavyRailKeys.csv'
       handle = open(url)

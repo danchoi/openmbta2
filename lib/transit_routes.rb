@@ -11,7 +11,7 @@ class TransitRoutes
     @key = "ROUTES,#{route_types.join(',')}"
     @ttl = 60
     if (res = MEMCACHED.get(@key))
-      return res
+      #return res
     end
 
     sql = <<SQL
@@ -21,11 +21,11 @@ select rdt.route_type, rdt.route, rdt.direction_id, coalesce(count(tt.finished_a
   left outer join 
     trips_today tt on 
     (tt.route_type = rdt.route_type and tt.route_coalesced_name = rdt.route and tt.direction_id = rdt.direction_id and tt.finished_at > adjusted_time(now())) 
-    where tt.route_type in ?
+    where rdt.route_type in ?
   group by rdt.route_type, rdt.route, rdt.direction_id
   order by rdt.route_type, rdt.route, - rdt.direction_id ;
 SQL
-
+    
     routes = DB[sql, route_types]
 
     # $stderr.puts( DB[sql, route_types].sql )

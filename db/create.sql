@@ -58,6 +58,7 @@ create table stop_times (
   pickup_type smallint,
   drop_off_type smallint,
   timepoint smallint default 0,
+  something  smallint default 0,
   PRIMARY KEY (trip_id, stop_sequence)
 ) ;
 
@@ -93,7 +94,8 @@ create table trips (
   direction_id smallint,
   block_id varchar(255),
   shape_id varchar(255),
-  wheelchair_accessible smallint
+  wheelchair_accessible smallint,
+  something varchar(10)
 ) ;
 
 

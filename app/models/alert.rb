@@ -30,5 +30,6 @@ class Alert
 end
 
 if __FILE__ == $0
-  Alert.update
+  # The alerts feed is no longer working 
+  # Alert.update
 end

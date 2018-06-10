@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 db=${1:-mbta2}
 
@@ -26,17 +27,23 @@ echo "Created $db"
 sleep 1
 psql $db < db/create.sql
 echo "database created, loading data"
-ruby db/gen_load_script.rb > db/load.sql
+ruby db/gen_load_script.rb | grep -v checkpoints | grep -v multi_route_trips > db/load.sql
 
 # clean up incomplete stop time strings, e.g. 9:38:00 => 09:38:00
+
 echo "Fixing bad stop times"
-sed 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt > data/stop_times.fixed
+
+# Time point may be corrupted and a "" instead of 1
+
+sed -e 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt  | 
+  sed -E 's/"",([^,]*)$/0,\1/' |
+  awk 'BEGIN {OFS=","; FS="," } { $NF="1"; print }' > data/stop_times.fixed
 
 # Remove column from trips
-psql $db -c 'alter table trips drop column finished_at'
+# psql $db -c 'alter table trips drop column finished_at'
 
 echo "running load.sql"
-psql $db  < db/load.sql
+psql $db  < db/load.sql >/dev/null
 
 
 echo "pausing for 10 seconds"

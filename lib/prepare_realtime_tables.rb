@@ -11,6 +11,5 @@ require 'subway_feed'
 
 NextbusFeeds.populate_route_list
 NextbusFeeds.populate_route_configs
-SubwayFeed.populate_keys
-
+# Broken on 4 2018
 # nothing to do for cr predictions
