@@ -1004,3 +1004,40 @@ bus 350 not working
       res = DB["select stoptag from nextbus_route_configs where routetag = ?", route_tag].map {|s| s[:stoptag]}
 
 
+
+------------------------------------------------------------------------
+
+Sun Jun 10 14:53:02 EDT 2018
+
+
+ERROR:  relation "facilities_properties" does not exist
+ERROR:  relation "facilities_properties" does not exist
+ERROR:  could not open file "/home/choi/kaja/openmbta2/data/agency.txt"
+for reading: Permission denied
+ERROR:  relation "facilities" does not exist
+ERROR:  relation "facilities" does not exist
+ERROR:  could not open file "/home/choi/kaja/openmbta2/data/stops.txt"
+for reading: Permission denied
+ERROR:  relation "facilities_properties_definitions" does not exist
+ERROR:  relation "facilities_properties_definitions" does not exist
+ERROR:  could not open file "/home/choi/kaja/openmbta2/data/shapes.txt"
+for reading: Permission denied
+ERROR:  relation "pathways" does not exist
+ERROR:  relation "pathways" does not exist
+ERROR:  relation "levels" does not exist
+ERROR:  relation "levels" does not exist
+ERROR:  could not open file
+"/home/choi/kaja/openmbta2/data/stop_times.fixed" for reading:
+Permission denied
+ERROR:  could not open file "/home/choi/kaja/openmbta2/data/trips.txt"
+for reading: Permission denied
+ERROR:  could not open file
+"/home/choi/kaja/openmbta2/data/frequencies.txt" for reading: Permission
+denied
+ERROR:  could not open file "/home/choi/kaja/openmbta2/data/routes.txt"
+for reading: Permission denied
+ERROR:  could not open file
+"/home/choi/kaja/openmbta2/data/transfers.txt" for reading: Permission
+denied
+pausing for 10 seconds
+
