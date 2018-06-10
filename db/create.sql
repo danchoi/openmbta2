@@ -68,11 +68,15 @@ create table stops (
   stop_id varchar(255) PRIMARY KEY,
   stop_code varchar(255),
   stop_name varchar(255),
+  platform_code varchar(255),
+  platform_name varchar(255),
   stop_desc varchar(255),
   stop_lat float,
   stop_lon float,
+  stop_address varchar(255),
   zone_id varchar(255), /* what is this? not sure of type */
   stop_url varchar(255),
+  level_id varchar(255),
   location_type smallint,
   parent_station varchar(255),
   wheelchair_boarding smallint
