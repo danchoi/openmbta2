@@ -4,7 +4,7 @@ insert into trips_today select route_id,
   shape_id,
   finished_at,
   route_type,
-  coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, ''))
+  (case when r.route_type = 3 then r.route_id else  coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) end) 
   from trips inner join routes r using (route_id) where service_id in (select active_services(adjusted_date(now())) as service_id);
 
 delete from route_directions_today;
