@@ -238,7 +238,7 @@ if __FILE__ == $0
   route = ARGV.first || 'Providence/Stoughton Line'
   direction_id = (ARGV[1] || 1).to_i
   tt = TransitTrips.new route, direction_id
-  puts  tt.result
+  puts  tt.result.to_json
 end
 
 __END__
