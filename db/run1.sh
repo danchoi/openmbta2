@@ -49,19 +49,19 @@ psql $db  < db/load.sql >/dev/null
 echo "pausing for 10 seconds"
 sleep 10
 
-
 echo "running denormalize.sql"
 psql $db < db/denormalize.sql
 
 echo "creating indexes"
 psql $db < db/create_indexes.sql
 
-echo "creating cache tables"
-psql $db < db/cache_tables.sql
-
 echo "adding functions to $db"
 createlang plpgsql $db;
 psql $db < db/create_functions.sql
+
+
+echo "creating cache tables"
+psql $db < db/cache_tables.sql
 
 db/postgis.sh $db
 
