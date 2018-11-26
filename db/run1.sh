@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-db=${1:-mbta2}
+db=${1:-mbta}
 
 echo Using DB: $db
 datadir=data
