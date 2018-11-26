@@ -1,7 +1,6 @@
-rm MBTA_GTFS.zip*
-rm data/*
-curl -L https://cdn.mbta.com/MBTA_GTFS.zip > MBTA_GTFS.zip
-unzip -d data/ MBTA_GTFS.zip
+
+make data/routes.txt
+
 db=${1:-mbta}
 
 db/run1.sh $db
