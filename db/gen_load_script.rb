@@ -3,7 +3,7 @@
 require 'csv'
 Dir["data/*.txt"].
   select {|f| 
-    f !~ /calendar|feed_info|facilities|levels|pathways/
+    f !~ /calendar|feed_info|facilities|levels|pathways|transfers/
   }.each do |file|
 
   $stderr.print "Processing file: #{file} -> "

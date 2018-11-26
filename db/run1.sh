@@ -58,4 +58,23 @@ psql $db < db/create_indexes.sql
 
 echo "creating cache tables"
 psql $db < db/cache_tables.sql
+
+echo "adding functions to $db"
+createlang plpgsql $db;
+psql $db < db/create_functions.sql
+
+db/postgis.sh $db
+
+echo "psql $db < db/geom.sql"
+psql $db < db/geom.sql
+
+echo "adding realtime tables"
+psql $db < db/realtime_tables.sql
+
+
 exit 
+
+
+
+
+
