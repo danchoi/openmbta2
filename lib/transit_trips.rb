@@ -1,4 +1,5 @@
 require 'database'
+require 'json'
 # don't put semicolon at the end of sequel query
 require 'yaml'
 require 'set'

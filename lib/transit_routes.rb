@@ -87,5 +87,6 @@ end
 
 if __FILE__ == $0
   require 'pp'
-  pp TransitRoutes.routes([ARGV.first.to_i])
+  require 'json'
+  puts TransitRoutes.routes([ARGV.first.to_i]).to_json
 end
