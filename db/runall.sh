@@ -1,5 +1,5 @@
 
-make data/routes.txt
+echo make data/routes.txt
 
 db=${1:-mbta}
 
