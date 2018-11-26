@@ -79,7 +79,8 @@ create table stops (
   level_id varchar(255),
   location_type smallint,
   parent_station varchar(255),
-  wheelchair_boarding smallint
+  wheelchair_boarding smallint,
+  stop_address varchar(255)
 ) ;
 
 create table transfers (
