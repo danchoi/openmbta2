@@ -1,5 +1,5 @@
-#!/bin/bash
-set -e
+
+
 data/routes.txt: MBTA_GTFS.zip
 	unzip -d data/ $<
 
