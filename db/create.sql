@@ -100,7 +100,8 @@ create table trips (
   block_id varchar(255),
   shape_id varchar(255),
   wheelchair_accessible smallint,
-  something varchar(10)
+  trip_route_type varchar,
+  bikes_allowed varchar
 ) ;
 
 
