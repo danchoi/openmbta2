@@ -74,6 +74,7 @@ module NextbusFeeds
       # Use system('curl ... > file') and if true, read in the file
 
       xml = `curl -s '#{url}'` # open-uri doesn't work on this long url
+#STDERR.puts xml
       DB.run("delete from nextbus_predictions where routetag = '#{route_tag}'")
       doc = Nokogiri::XML.parse(xml)
       if doc.at("//Error")
