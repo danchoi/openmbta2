@@ -101,3 +101,19 @@ create table rt_cr_predictions (
   lateness int,
   created timestamp DEFAULT now()
 );
+
+
+
+-- new real time
+
+
+drop table if exists gtfsrt cascade;
+create table gtfsrt (
+  route_id varchar,
+  trip_id varchar,
+  stop_sequence integer,
+  stop_id varchar,
+  arrival_time integer -- epoch
+);
+
+
