@@ -1,30 +1,3 @@
-# generates the "load data local infile" script load.sql from the data/*.txt
-# NOW FOR POSTGRESQL, not MySQL
-require 'csv'
-Dir["data/*.txt"].
-  select {|f| 
-    f !~ /calendar|feed_info|facilities|levels|pathways|transfers/
-  }.each do |file|
-
-  $stderr.print "Processing file: #{file} -> "
-  table = File.basename(file, ".txt")
-  head = `head -1 #{file}`.split("\r\n")[0]
-  begin
-    fields = CSV.parse_line(head)
-  rescue
-    raise $!
-  end
-  #$stderr.puts fields.inspect
-  outfile = (file =~ /stop_times/) ? file.sub(".txt", ".fixed") : file
-  path = File.expand_path "../#{outfile}", File.dirname(__FILE__) 
-  $stderr.print "#{path}\n"
-  sql = <<SQL
-truncate #{table};
-copy #{table} from  '#{path}' DELIMITER AS ',' CSV HEADER;
-SQL
-  puts sql
-end
-
 require 'csv'
 # improve the calendar schema
 file = 'data/calendar.txt'

@@ -27,6 +27,7 @@ echo "Created $db"
 sleep 1
 psql $db < db/create.sql
 echo "database created, loading data"
+ruby db/gen_load1.rb $db > db/load1.sh 
 ruby db/gen_load_script.rb | grep -v checkpoints | grep -v multi_route_trips > db/load.sql
 
 # clean up incomplete stop time strings, e.g. 9:38:00 => 09:38:00
@@ -42,12 +43,11 @@ sed -e 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt  |
 # Remove column from trips
 # psql $db -c 'alter table trips drop column finished_at'
 
-echo "running load.sql"
+echo "running load1.sh and load.sql"
+bash db/load1.sh 
 psql $db  < db/load.sql >/dev/null
 
 
-echo "pausing for 10 seconds"
-sleep 10
 
 echo "running denormalize.sql"
 psql $db < db/denormalize.sql
