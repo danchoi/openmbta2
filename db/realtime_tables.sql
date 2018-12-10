@@ -113,7 +113,7 @@ create table gtfsrt (
   trip_id varchar,
   stop_sequence integer,
   stop_id varchar,
-  arrival_time integer -- epoch
+  arrival_time timestamp
 );
 
 

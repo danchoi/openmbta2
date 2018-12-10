@@ -74,5 +74,3 @@ echo "Adding realtime data"
 curl -sL https://cdn.mbta.com/realtime/TripUpdates.pb | gtfs-realtime t | rt/import.sh $db
 
 
-
-
