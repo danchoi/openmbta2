@@ -42,13 +42,13 @@ END
 
   def results
     @stops = Hash.new {|h,k| h[k] = []}
-    DB[SQL, @route_id, @direction_id.to_s].each { |x|
+    DB[SQL, @route_id, @direction_id].each { |x|
       item = [x[:arrival_time], x[:trip_id]] # use trip_id as vehicle id
       # because the above SQL query can return dup routes (in service at different times)
-      if @stops[x[:stoptag]] &&  @stops[x[:stoptag]].detect {|y| y == item }
+      if @stops[x[:stop_id]] &&  @stops[x[:stop_id]].detect {|y| y == item }
         next
       end
-      @stops[x[:stoptag]] << item
+      @stops[x[:stop_id]] << item
     }
     @stops
   end
@@ -69,7 +69,7 @@ end
 
 if __FILE__ == $0
   require 'pp'
-  route = ARGV.first
+  route = ARGV[0]
   dir = ARGV[1].to_i
   x = RealtimeGtfs.new route, dir
   pp x.results

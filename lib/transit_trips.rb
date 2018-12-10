@@ -24,7 +24,8 @@ class TransitTrips
 
   def initialize(route, direction_id)
     @route = route # a route name
-    @direction_id = direction_id # let direction by 0 or 1
+    @direction_id = direction_id.is_a?(String) ? direction_id.to_i : direction_id  # let direction by 0 or 1
+
     @key = "TRIPS,#{@route},#{direction_id}"
     @ttl = 120
     if (@result = MEMCACHED.get(@key))
