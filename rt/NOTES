@@ -1,0 +1,3 @@
+psql mbta -c "
+  select gtfsrt.* from gtfsrt;  
+"
