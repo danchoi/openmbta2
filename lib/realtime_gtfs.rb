@@ -13,7 +13,7 @@ gtfsrt.arrival_time,
 coalesce(trips.direction_id, 
   (select direction_id from trips inner join stop_times using (trip_id) where stop_id = gtfsrt.stop_id  limit 1)
 ) direction_id,
-to_char(to_timestamp(gtfsrt.arrival_time), 'HH24:MI') as fmtime
+to_char(gtfsrt.arrival_time, 'HH24:MI') as fmtime
 from gtfsrt left join trips using (trip_id)
 where gtfsrt.route_id = ? and direction_id = ?
 END
