@@ -71,7 +71,7 @@ psql $db < db/realtime_tables.sql
 psql $db < trips-today.sql
 
 echo "Adding realtime data"
-curl -L https://cdn.mbta.com/realtime/TripUpdates.pb | gtfs-realtime t | rt/import.sh $db
+curl -sL https://cdn.mbta.com/realtime/TripUpdates.pb | gtfs-realtime t | rt/import.sh $db
 
 
 
