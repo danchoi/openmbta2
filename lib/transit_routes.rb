@@ -54,8 +54,8 @@ SQL
         if !([0, 1] & route_types).empty?
           data[:headsigns][-1] << route
         # if realtime bus data is available, flag the route as realtime-data-available
-        elsif route_types == [3] && RealtimeGtfs.available?(route, d[:direction_id])
-          data[:headsigns][-1] << "+ realtime data"
+        # elsif route_types == [3] && RealtimeGtfs.available?(route, d[:direction_id])
+        #  data[:headsigns][-1] << "+ realtime data"
         end 
       end
       res[:data] << data
