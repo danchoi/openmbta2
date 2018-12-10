@@ -2,7 +2,7 @@ require 'csv'
 DB=ARGV[0] || abort("DB name as 1st arg")
 Dir["data/*.txt"].
   select {|f| 
-    f !~ /calendar|feed_info|facilities|levels|pathways|transfers/
+    f !~ /calendar|feed_info|facilities|levels|pathways|transfers|checkpoints/
   }.each do |file|
 
   $stderr.print "Processing file: #{file} -> "
