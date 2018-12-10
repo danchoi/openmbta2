@@ -52,6 +52,7 @@ end
 
 if __FILE__ == $0
   require 'pp'
+  require 'json'
   #realtime = RealtimeBus.new('1', 1)
   #sched_trips = TransitTrips.new('1', 1).result
   #realtime = RealtimeSubway.new('Red Line', 'Northbound')
@@ -60,6 +61,6 @@ if __FILE__ == $0
   realtime = RealtimeGtfs.new ARGV[0], ARGV[1]
   sched_trips = TransitTrips.new(ARGV[0], ARGV[1]).result
   # pp sched_trips
-  pp realtime.results
-  pp MergeRealtime.merge(sched_trips, realtime, :subway)
+  # pp realtime.results
+  puts MergeRealtime.merge(sched_trips, realtime, :subway).to_json
 end

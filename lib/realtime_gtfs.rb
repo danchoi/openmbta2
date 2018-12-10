@@ -20,10 +20,12 @@ END
 
 
   def self.available?(route, direction_id)
-    dataset = DB["select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
-      where (case when routes.route_type = 3 then coalesce(routes.route_short_name, routes.route_id) else  coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) end ) = ?
-        and split_part(dirtag, '_', 2) = ? and arrival_time > now()", route, direction_id.to_s].first
-    dataset[:count] > 0
+    RealtimeGtfs.new(route, direction_id).available?
+  end
+
+  def available?
+    dataset = DB[SQL, @route_id, @direction_id]
+    dataset.count > 0
   end
 
 
@@ -74,4 +76,5 @@ if __FILE__ == $0
   x = RealtimeGtfs.new route, dir
   pp x.results
   pp x.imminent_stops
+  pp x.available?
 end

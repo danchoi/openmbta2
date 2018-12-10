@@ -1,7 +1,7 @@
 require 'database'
 require 'direction'
 require 'bus_routes'
-require 'realtime_bus'
+require 'realtime_gtfs'
 
 require 'pp'
 
@@ -15,7 +15,6 @@ class TransitRoutes
     end
 
     sql = <<SQL
-
 select rdt.route_type, rdt.route, rdt.direction_id, coalesce(count(tt.finished_at), 0) trips_left, array_to_string(array_agg(distinct tt.trip_headsign), ';') headsign
   from route_directions_today rdt
   left outer join 
@@ -55,7 +54,7 @@ SQL
         if !([0, 1] & route_types).empty?
           data[:headsigns][-1] << route
         # if realtime bus data is available, flag the route as realtime-data-available
-        elsif route_types == [3] && RealtimeBus.available?(route, d[:direction_id])
+        elsif route_types == [3] && RealtimeGtfs.available?(route, d[:direction_id])
           data[:headsigns][-1] << "+ realtime data"
         end 
       end
