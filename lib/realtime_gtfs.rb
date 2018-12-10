@@ -16,6 +16,7 @@ coalesce(trips.direction_id,
 to_char(gtfsrt.arrival_time, 'HH24:MI') as fmtime
 from gtfsrt left join trips using (trip_id)
 where gtfsrt.route_id = ? and direction_id = ?
+order by gtfsrt.arrival_time asc
 END
 
 
