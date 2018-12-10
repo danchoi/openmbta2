@@ -19,9 +19,6 @@ END
 
 
   def self.available?(route, direction_id)
-    #dataset = DB["select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
-    #  where coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) = ? and split_part(dirtag, '_', 2) = ? and arrival_time > now()", route, direction_id.to_s].first
-
     dataset = DB["select count(*) from nextbus_predictions inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
       where (case when routes.route_type = 3 then coalesce(routes.route_short_name, routes.route_id) else  coalesce(nullif(routes.route_long_name, ''), nullif(routes.route_short_name, '')) end ) = ?
         and split_part(dirtag, '_', 2) = ? and arrival_time > now()", route, direction_id.to_s].first
@@ -34,9 +31,14 @@ END
     @direction_id = direction_id # let direction by 0 or 1
   end
 
+  def find_route_id
+    r = DB["select route_id from routes where (case when r.route_type = 3 then coalesce(r.route_short_name, r.route_id) else coalesce(nullif(r.route_long_name, ''), nullif(r.route_short_name, '')) end)  = 
+    
+    trips_today where route_coalesced_name = ?", @route].to_a.first
+    r && r[:route_id]
+  end
+
   def results
-    # direction can be inferred from tail of dirtag
-    # 8_80007v0_0
     @stops = Hash.new {|h,k| h[k] = []}
     DB["select * from nextbus_predictions 
       inner join routes on (trim(leading '0' from  split_part(routes.route_id, '-', 1)) = nextbus_predictions.routetag)     
