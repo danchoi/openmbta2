@@ -11,17 +11,8 @@ class TripsController < ApplicationController
       direction_id = Direction.name2id(direction, route) # now inbound or outbound
       x = TransitTrips.new(route, direction_id)
       result = x.result
-      resp = if params[:transport_type] =~ /bus/i && RealtimeBus.available?(route, direction_id) 
-               realtime = RealtimeBus.new(route, direction_id) 
-               MergeRealtime.merge(result, realtime) 
-             elsif params[:transport_type] =~ /subway/i && RealtimeSubway.available?(route, direction) 
-               realtime = RealtimeSubway.new(route, direction)  # use direction label
-               MergeRealtime.merge(result, realtime, :subway) 
-             elsif params[:transport_type] =~ /rail/i
-               MergeRealtimeCommuterRail.merge(result)
-             else 
-               result 
-             end
+      realtime = RealtimeGtfs.new(route, direction_id) 
+      resp = MergeRealtime.merge(result, realtime) 
       resp.merge!(:ads => "iAds")
       # This may cause mismatches for bus routes like "Green Line", but OK for now
       alert = 
