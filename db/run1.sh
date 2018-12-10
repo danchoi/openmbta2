@@ -47,8 +47,6 @@ echo "running load1.sh and load.sql"
 bash db/load1.sh 
 psql $db  < db/load.sql >/dev/null
 
-
-
 echo "running denormalize.sql"
 psql $db < db/denormalize.sql
 
@@ -56,24 +54,24 @@ echo "creating indexes"
 psql $db < db/create_indexes.sql
 
 echo "adding functions to $db"
+set +e
 createlang plpgsql $db;
 psql $db < db/create_functions.sql
-
+set -e
 
 echo "creating cache tables"
 psql $db < db/cache_tables.sql
 
-db/postgis.sh $db
-
-echo "psql $db < db/geom.sql"
-psql $db < db/geom.sql
+# db/postgis.sh $db
+# echo "psql $db < db/geom.sql"
+# psql $db < db/geom.sql
 
 echo "adding realtime tables"
 psql $db < db/realtime_tables.sql
+psql $db < trips-today.sql
 
-
-exit 
-
+echo "Adding realtime data"
+curl -L https://cdn.mbta.com/realtime/TripUpdates.pb | gtfs-realtime t | rt/import.sh $db
 
 
 
