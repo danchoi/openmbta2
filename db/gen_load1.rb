@@ -2,7 +2,7 @@ require 'csv'
 DB=ARGV[0] || abort("DB name as 1st arg")
 Dir["data/*.txt"].
   select {|f| 
-    f !~ /calendar|feed_info|facilities|levels|pathways|transfers|checkpoints/
+    f !~ /calendar|feed_info|facilities|levels|pathways|transfers|checkpoints|lines|multi_route_trips/
   }.each do |file|
 
   $stderr.print "Processing file: #{file} -> "
@@ -18,6 +18,7 @@ Dir["data/*.txt"].
   path = File.expand_path "../#{outfile}", File.dirname(__FILE__) 
   $stderr.print "#{path}\n"
   sql = <<SQL
+echo 'loading table #{table}'
 psql #{DB} -c 'truncate #{table};'
 cat #{path} | psql #{DB} -c "copy #{table} from STDIN WITH DELIMITER ','  CSV HEADER;"
 SQL

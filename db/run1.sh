@@ -44,7 +44,7 @@ sed -e 's/\<[[:digit:]]\{1\}:/0&/g' data/stop_times.txt  |
 # psql $db -c 'alter table trips drop column finished_at'
 
 echo "running load1.sh and load.sql"
-bash db/load1.sh 
+bash -e db/load1.sh 
 psql $db  < db/load.sql >/dev/null
 
 echo "running denormalize.sql"
