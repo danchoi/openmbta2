@@ -37,7 +37,10 @@ create table routes (
   route_url varchar(255),
   route_color varchar(255),
   route_text_color varchar(255),
-  route_sort_order int
+  route_sort_order int,
+  route_fare_class varchar(100),
+  line_id varchar(100) null,
+  listed_route boolean
 ) ;
 
 create table shapes (
