@@ -20,7 +20,8 @@ class TripsController < ApplicationController
       if alert
         resp[:message] = {title: 'T-Alert', body: alert[:description]}
       end
-    rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection
+    rescue TransitTrips::NoRouteData, OpenMBTA::InvalidDirection => ex
+      Rails.logger.error("Exception: #{ex} params: #{params.inspect} direction_id: #{direction_id} route: #{route}")
       resp = {message: {title: 'Invalid Bookmark', body: 'Because of recent database changes, please delete all your old bookmarks. Tap the blue Bookmarked button to unbookmark this and other routes that show this message.'}}
       respond_to do |format|
         format.json {

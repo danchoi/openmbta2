@@ -23,8 +23,6 @@ module BusRoutes
     case route 
     when /Massport/ 
       DB["select route_long_name from routes where route_long_name like ?", "%#{route[/\d+/,0]}%"].first[:route_long_name]
-    when /SL\d/
-      DB["select route_long_name from routes where route_short_name = ?", route].first[:route_long_name]
     when "Green Line"
       "Green Line Shuttle"
     else
