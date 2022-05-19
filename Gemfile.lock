@@ -42,7 +42,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.16)
     mini_portile2 (2.8.0)
-    nokogiri (1.13.2)
+    nokogiri (1.13.5)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     pg (0.10.1)
