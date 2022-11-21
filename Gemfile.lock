@@ -30,7 +30,7 @@ GEM
     activesupport (3.0.5)
     arel (2.0.10)
     builder (2.1.2)
-    dalli (2.6.4)
+    dalli (3.2.3)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     haml (3.1.1)
